@@ -1,0 +1,20 @@
+# Use uma imagem base do Python
+FROM python:3.9-slim-buster
+
+# Defina o diretório de trabalho dentro do contêiner
+WORKDIR /app
+
+# Copie os arquivos de dependência
+COPY requirements.txt /app/
+
+# Instale as dependências
+RUN pip install -r requirements.txt
+
+# Copie o código fonte do projeto (o conteúdo de 'backend' vai para '/app'
+COPY . /app/
+
+# Exponha a porta que o Django usa (padrão: 8000)
+EXPOSE 8000
+
+# Comando para executar o Django (ajustado para o caminho correto do manage.py)
+CMD ["python", "/app/top_pet/manage.py", "runserver", "0.0.0.0:8000"]

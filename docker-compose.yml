@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  web:
+    build: ./backend
+    # Comando para executar o Django (ajustado para o caminho correto do manage.py)
+    command: python top_pet/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/app # Mapeia o diretório 'backend' local para '/app' no contêiner
+      - media_data:/app/media #volume para persistir as imagens
+    ports:
+      - 8000:8000
+    depends_on:
+      - db  # Se você estiver usando um banco de dados separado (recomendo para este projeto)
+
+  db:  # Serviço de banco de dados PostgreSQL
+    image: postgres:13
+    environment:
+      POSTGRES_DB: top_pet_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/ # Persistência dos dados do banco
+
+volumes:
+  postgres_data: # Volume para persistir os dados do PostgreSQL
+  media_data: #volume para persistir as imagens carregadas

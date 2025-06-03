@@ -1,0 +1,33 @@
+# Ignorar arquivos de cache e ambiente
+
+.env
+*.pyc
+__pychache__/
+*.sqlite3
+db.sqlite3
+.DS_Store
+
+#ignorar pastas de ambiente virtual Python
+
+venv/
+env/
+.venv/
+
+# ignorar logs e arquivos temporarios
+
+*.log
+*.temp
+
+#ignorar arquivos de midia (imagens, uploads)
+media/
+
+#docker espec[ificos
+#Ignorar volumes persistentes do doker que n'ao devem ser versionados
+## Ignorar arquivos de ambiente do Node.js 
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+.cache/
+dist/
+build/
