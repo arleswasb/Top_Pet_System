@@ -1,3 +1,5 @@
+#chave acesso cc985e6f3927e604c585ffbadb27b53126dc47b0
+
 version: '3.8'
 services:
   web:
