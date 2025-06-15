@@ -1,28 +1,49 @@
-#chave acesso cc985e6f3927e604c585ffbadb27b53126dc47b0
+#usuario: arleswasb
+#senha: 123456
+#repositório: top-pet
+#dockerhub: arleswasb/top-pet
+#docker-compose:
+#chave acesso 850b5842543d3c56cbfaf3f0b44027a2fe4c625e
+
+#cliente1
+#chave acesso 0b92a820a05247d1815b5c06c1cb0c803f6cd8c7
+
+
+
+
+
+
+
+
 
 version: '3.8'
 services:
   web:
     build: ./backend
-    # Comando para executar o Django (ajustado para o caminho correto do manage.py)
-    command: python top_pet/manage.py runserver 0.0.0.0:8000
+    command: /app/entrypoint.sh
     volumes:
-      - ./backend:/app # Mapeia o diretório 'backend' local para '/app' no contêiner
-      - media_data:/app/media #volume para persistir as imagens
+      - ./backend:/app
+      - media_data:/app/media
     ports:
-      - 8000:8000
+      - "8000:8000"
     depends_on:
-      - db  # Se você estiver usando um banco de dados separado (recomendo para este projeto)
+      db:
+        condition: service_healthy
 
-  db:  # Serviço de banco de dados PostgreSQL
+  db:
     image: postgres:13
     environment:
       POSTGRES_DB: top_pet_db
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     volumes:
-      - postgres_data:/var/lib/postgresql/data/ # Persistência dos dados do banco
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d top_pet_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
-  postgres_data: # Volume para persistir os dados do PostgreSQL
-  media_data: #volume para persistir as imagens carregadas
+  postgres_data:
+  media_data:

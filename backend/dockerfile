@@ -13,7 +13,10 @@ RUN pip install -r requirements.txt
 # Copie o código fonte do projeto (o conteúdo de 'backend' vai para '/app'
 COPY . /app/
 
-# Exponha a porta que o Django usa (padrão: 8000)
+# Linha para dar permissão de execução ao script
+RUN chmod +x /app/entrypoint.sh
+
+# Expor a porta que o Django usa (padrão: 8000)
 EXPOSE 8000
 
 # Comando para executar o Django (ajustado para o caminho correto do manage.py)
