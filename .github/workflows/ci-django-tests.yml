@@ -23,9 +23,26 @@ jobs:
       - name: Aguardar o banco de dados estabilizar
         run: sleep 10
 
+      # Nosso passo de debug principal para ver por que o 'web' pode ter parado
+      - name: Mostrar logs ANTES dos testes
+        run: docker compose logs
+
       - name: Executar os testes do Django
         run: docker compose exec web python manage.py test
+
+      # --- Seus passos foram adicionados aqui ao final do workflow ---
+      - name: Mostrar logs FINAIS após os testes
+        if: always()
+        run: docker compose logs
 
       - name: Parar os contêineres
         if: always()
         run: docker compose down
+      
+      - name: Limpar volumes não utilizados
+        if: always()
+        run: docker volume prune -f
+
+      - name: Exibir informações do Docker
+        if: always()
+        run: docker info
