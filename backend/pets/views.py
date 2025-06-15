@@ -4,6 +4,8 @@ from .models import Pet
 from .serializers import PetSerializer
 from .permissions import IsOwnerOrAdminOrFuncionario 
 
+# Testando o pipeline de CI
+
 logger = logging.getLogger(__name__)
 # views.py
 
