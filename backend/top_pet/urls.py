@@ -8,7 +8,9 @@ urlpatterns = [
     # Inclui todas as URLs do app 'pets' sob o prefixo 'api/'
     path('api/', include('pets.urls')),
     # Adicionaremos as URLs do app 'users'
-     path('api/', include('users.urls')),
+    path('api/', include('users.urls')),
+    # Adiciona as URLs do app 'agendamentos'
+    path('api/', include('agendamentos.urls')),
 ]
 
 # Adiciona as URLs para servir os arquivos de mídia (fotos) em modo de desenvolvimento

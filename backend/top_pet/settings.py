@@ -30,7 +30,8 @@ INSTALLED_APPS = [
     'pets',
     'rest_framework',
     'rest_framework.authtoken',
-    'users', 
+    'users',
+    'agendamentos',  
 ]
 
 # Configuração de autenticação do DRF 

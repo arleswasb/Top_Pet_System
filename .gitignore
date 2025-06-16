@@ -31,4 +31,7 @@ yarn-debug.log*
 .cache/
 dist/
 build/
-logs/
+# Ignora todo o conteúdo da pasta logs...
+logs/*
+# ...EXCETO o arquivo .gitkeep, que queremos que seja rastreado.
+!logs/.gitkeep
