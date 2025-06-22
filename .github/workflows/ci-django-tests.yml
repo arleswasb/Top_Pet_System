@@ -73,8 +73,15 @@ jobs:
       - run: pip install requests
       - run: python teste_api.py
         env:
-          TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
-          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
-          TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
-          TEST_CLIENTE_PASSWORD: ${{ secrets.TEST_CLIENTE_PASSWORD }}
-          TEST_FUNC_USER: ${{ secrets.TEST_FUNC_
+          # --- CORREÇÃO APLICADA AQUI ---
+          # Adicionamos aspas simples em volta de cada secret
+          TEST_ADMIN_USER: '${{ secrets.TEST_ADMIN_USER }}'
+          TEST_ADMIN_PASSWORD: '${{ secrets.TEST_ADMIN_PASSWORD }}'
+          TEST_CLIENTE_USER: '${{ secrets.TEST_CLIENTE_USER }}'
+          TEST_CLIENTE_PASSWORD: '${{ secrets.TEST_CLIENTE_PASSWORD }}'
+          TEST_FUNC_USER: '${{ secrets.TEST_FUNC_USER }}'
+          TEST_FUNC_PASSWORD: '${{ secrets.TEST_FUNC_PASSWORD }}'
+
+      - name: Mostrar logs para depuração
+        if: always()
+        run: docker compose logs
