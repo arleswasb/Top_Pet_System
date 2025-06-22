@@ -1,4 +1,4 @@
-name: CI Definitiva do Django
+name: CI Completa do Django (Unidade + Endpoints)
 
 on:
   push:
@@ -7,9 +7,6 @@ on:
     branches: [ "main" ]
 
 jobs:
-  # ----------------------------------------------------
-  # JOB 1: Testes Unitários (Rápidos)
-  # ----------------------------------------------------
   unit-tests:
     runs-on: ubuntu-latest
     services:
@@ -27,25 +24,19 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      # CORREÇÃO: Cria um .env para este job, pois o docker-compose.yml agora o exige.
-      # As credenciais aqui devem bater com as do serviço 'postgres' acima.
-      - name: Criar arquivo .env para testes unitários
-        run: |
-          echo "POSTGRES_NAME=test_db" >> .env
-          echo "POSTGRES_USER=test_user" >> .env
-          echo "POSTGRES_PASSWORD=test_password" >> .env
-          echo "POSTGRES_HOST=postgres" >> .env
-
+      # --- PASSO ADICIONADO AQUI ---
       - name: Tornar entrypoint.sh executável
         run: chmod +x backend/entrypoint.sh
+      # ---------------------------
       
       - name: Executar os testes unitários do Django
-        # O 'env:' aqui foi removido, pois o docker-compose run lerá o .env que criamos.
         run: docker compose run --rm web python manage.py test
-  
-  # ----------------------------------------------------
-  # JOB 2: Testes de Ponta a Ponta (API Completa)
-  # ----------------------------------------------------
+        env:
+          POSTGRES_NAME: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_HOST: postgres
+
   endpoint-tests:
     runs-on: ubuntu-latest
     needs: unit-tests
@@ -57,45 +48,61 @@ jobs:
       - name: Tornar entrypoint.sh executável
         run: chmod +x backend/entrypoint.sh
 
-      - name: Criar arquivo .env com Secrets do GitHub
-        run: |
-          echo "POSTGRES_NAME=top_pet_db" >> .env
-          echo "POSTGRES_USER=user" >> .env
-          echo "POSTGRES_PASSWORD=password" >> .env
-          echo "POSTGRES_HOST=db" >> .env
-          echo "TEST_ADMIN_USER=${{ secrets.TEST_ADMIN_USER }}" >> .env
-          echo "TEST_ADMIN_PASSWORD=${{ secrets.TEST_ADMIN_PASSWORD }}" >> .env
-          echo "TEST_CLIENTE_USER=${{ secrets.TEST_CLIENTE_USER }}" >> .env
-          echo "TEST_CLIENTE_PASSWORD=${{ secrets.TEST_CLIENTE_PASSWORD }}" >> .env
-          echo "TEST_FUNC_USER=${{ secrets.TEST_FUNC_USER }}" >> .env
-          echo "TEST_FUNC_PASSWORD=${{ secrets.TEST_FUNC_PASSWORD }}" >> .env
-
-      - name: Subir serviços com Docker Compose
+      - name: Construir e iniciar os contêineres em background
         run: docker compose up -d --build
 
       - name: Aguardar os serviços estabilizarem
         run: sleep 20
-
-      - name: Povoar o banco de dados com usuários de teste
+      
+      - name: Povoar o banco de dados com dados de teste
         run: docker compose exec web python manage.py seed_data
-        
-      - name: Verificar status dos contêineres (Debug)
-        run: docker ps -a
-        
-      - name: Configurar Python e Rodar Testes de API
+        env:
+          # Passa as credenciais para o comando de seed
+          TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
+          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
+          TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
+          TEST_CLIENTE_PASSWORD: ${{ secrets.TEST_CLIENTE_PASSWORD }}
+          TEST_FUNC_USER: ${{ secrets.TEST_FUNC_USER }}
+          TEST_FUNC_PASSWORD: ${{ secrets.TEST_FUNC_PASSWORD }}
+
+      - name: Configurar Python no Runner
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-      - run: pip install requests
-      - run: python teste_api.py
-        env:
-          TEST_ADMIN_USER: '${{ secrets.TEST_ADMIN_USER }}'
-          TEST_ADMIN_PASSWORD: '${{ secrets.TEST_ADMIN_PASSWORD }}'
-          TEST_CLIENTE_USER: '${{ secrets.TEST_CLIENTE_USER }}'
-          TEST_CLIENTE_PASSWORD: '${{ secrets.TEST_CLIENTE_PASSWORD }}'
-          TEST_FUNC_USER: '${{ secrets.TEST_FUNC_USER }}'
-          TEST_FUNC_PASSWORD: '${{ secrets.TEST_FUNC_PASSWORD }}'
 
-      - name: Mostrar logs para depuração
+      - name: Instalar dependências do script de teste
+        run: pip install requests
+      
+      # --- AQUI ESTÁ A MUDANÇA ---
+      # Em vez de um passo, agora temos vários, um para cada teste.
+      - name: ✅ Teste de Endpoint - Criar Serviço
+        run: python teste_api.py criar_servico
+        env:
+          # ... (copie todas as variáveis de env com os secrets aqui)
+          TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
+          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
+          TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
+          TEST_CLIENTE_PASSWORD: ${{ secrets.TEST_CLIENTE_PASSWORD }}
+          TEST_FUNC_USER: ${{ secrets.TEST_FUNC_USER }}
+          TEST_FUNC_PASSWORD: ${{ secrets.TEST_FUNC_PASSWORD }}
+
+      - name: ✅ Teste de Endpoint - Criar Pet
+        run: python teste_api.py criar_pet
+        env:
+          # ... (copie todas as variáveis de env com os secrets aqui também)
+          TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
+          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
+          TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
+          TEST_CLIENTE_PASSWORD: ${{ secrets.TEST_CLIENTE_PASSWORD }}
+          TEST_FUNC_USER: ${{ secrets.TEST_FUNC_USER }}
+          TEST_FUNC_PASSWORD: ${{ secrets.TEST_FUNC_PASSWORD }}
+
+      # Você pode adicionar mais testes aqui no futuro
+      # - name: ✅ Teste de Endpoint - Criar Agendamento
+      #   run: python teste_api.py criar_agendamento
+      #   env:
+      #     ...
+
+      - name: Mostrar logs dos contêineres (para depuração)
         if: always()
         run: docker compose logs
