@@ -52,10 +52,7 @@ jobs:
       - name: Aguardar os serviços estabilizarem
         run: sleep 20
         
-      # --- CORREÇÃO PRINCIPAL AQUI ---
       - name: Povoar o banco de dados com dados de teste
-        # Trocamos 'exec' por 'run'. O 'run' cria um contêiner temporário,
-        # passa as variáveis de ambiente, executa o comando e sai.
         run: docker compose run --rm web python manage.py seed_data
         env:
           # Estas variáveis são passadas para o comando seed_data
@@ -74,6 +71,9 @@ jobs:
 
       - name: Instalar dependências do script de teste
         run: pip install requests
+
+      - name: Verificar status dos contêineres ANTES dos testes de API
+        run: docker ps -a
       
       - name: ✅ Teste de Endpoint - Criar Serviço
         run: python teste_api.py criar_servico
