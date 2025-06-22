@@ -53,6 +53,17 @@ jobs:
 
       - name: Aguardar os serviços estabilizarem
         run: sleep 20
+      
+      - name: Povoar o banco de dados com dados de teste
+        run: docker compose exec web python manage.py seed_data
+        env:
+          # Passa as credenciais para o comando de seed
+          TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
+          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
+          TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
+          TEST_CLIENTE_PASSWORD: ${{ secrets.TEST_CLIENTE_PASSWORD }}
+          TEST_FUNC_USER: ${{ secrets.TEST_FUNC_USER }}
+          TEST_FUNC_PASSWORD: ${{ secrets.TEST_FUNC_PASSWORD }}
 
       - name: Configurar Python no Runner
         uses: actions/setup-python@v4
