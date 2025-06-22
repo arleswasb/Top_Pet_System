@@ -1,26 +1,22 @@
 
 # docker-compose.yml
 
-version: '3.8' # Pode remover esta linha se quiser
+version: '3.8'
 services:
   web:
     build: ./backend
-    # REMOVA A LINHA ABAIXO, pois o comando já está no Dockerfile
-    # command: /app/entrypoint.sh 
     volumes:
       - ./backend:/app
       - media_data:/app/media
     ports:
       - "8000:8000"
-    environment: # Esta seção é lida pelo settings.py
-      POSTGRES_NAME: top_pet_db
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_HOST: db
+    # --- ADICIONE ESTA LINHA ---
+    env_file:
+      - ./.env
+    # ---------------------------
     depends_on:
       db:
         condition: service_healthy
-
   db:
     image: postgres:13
     environment:
