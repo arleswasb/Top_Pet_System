@@ -50,30 +50,19 @@ jobs:
         run: docker compose up -d --build
 
       # --- AQUI ESTÁ A MUDANÇA PRINCIPAL ---
-      - name: Aguardar o serviço web estar saudável
+      - name: Aguardar o serviço web estar em execução
         run: |
-          # Loop para verificar se o serviço web está 'healthy' ou 'running'
-          # Você pode precisar ajustar 'web' para o nome do seu serviço no docker-compose.yml
-          # E 'healthy' para o status que seu healthcheck (se tiver) retorna.
-          # Se você não tiver um healthcheck no Dockerfile ou docker-compose,
-          # você pode tentar verificar apenas se ele está 'running'.
-          #
-          # O comando 'docker inspect' é mais robusto para verificar o estado real.
           for i in $(seq 1 10); do
-            STATUS=$(docker inspect --format='{{.State.Health.Status}}' $(docker compose ps -q web))
-            # Se não tiver healthcheck definido, pode usar:
-            # STATUS=$(docker inspect --format='{{.State.Status}}' $(docker compose ps -q web))
-            # if [ "$STATUS" == "running" ]; then
-            if [ "$STATUS" == "healthy" ]; then # Use 'healthy' se tiver healthcheck configurado
-              echo "Serviço web está saudável."
+            STATUS=$(docker inspect --format='{{.State.Status}}' $(docker compose ps -q web))
+            if [ "$STATUS" == "running" ]; then
+              echo "Serviço web está em execução."
               exit 0
             fi
             echo "Aguardando o serviço web... Tentativa $i. Status atual: $STATUS"
             sleep 10
           done
-          echo "Tempo esgotado: Serviço web não ficou saudável."
+          echo "Tempo esgotado: Serviço web não entrou em execução."
           exit 1
-      # ------------------------------------
       
       - name: Povoar o banco de dados com dados de teste
         run: docker compose exec web python manage.py seed_data
