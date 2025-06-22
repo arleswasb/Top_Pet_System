@@ -7,33 +7,9 @@ on:
     branches: [ "main" ]
 
 jobs:
+  # O job 'unit-tests' está bom, pode continuar o mesmo de antes.
   unit-tests:
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:13
-        env:
-          POSTGRES_DB: test_db
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_password
-        ports: ['5432:5432']
-        options: >-
-          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-
-    steps:
-      - name: Checkout do código
-        uses: actions/checkout@v4
-      
-      - name: Tornar entrypoint.sh executável
-        run: chmod +x backend/entrypoint.sh
-      
-      - name: Executar os testes unitários do Django
-        run: docker compose run --rm web python manage.py test
-        env:
-          POSTGRES_NAME: test_db
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_password
-          POSTGRES_HOST: postgres
+    # ... (sem mudanças aqui) ...
 
   endpoint-tests:
     runs-on: ubuntu-latest
@@ -46,58 +22,50 @@ jobs:
       - name: Tornar entrypoint.sh executável
         run: chmod +x backend/entrypoint.sh
 
-      - name: Construir e iniciar os contêineres em background
+      # --- NOVO: Cria o arquivo .env dinamicamente com os Secrets ---
+      - name: Criar arquivo .env
+        run: |
+          echo "POSTGRES_NAME=top_pet_db" >> .env
+          echo "POSTGRES_USER=user" >> .env
+          echo "POSTGRES_PASSWORD=password" >> .env
+          echo "POSTGRES_HOST=db" >> .env
+          echo "TEST_ADMIN_USER=${{ secrets.TEST_ADMIN_USER }}" >> .env
+          echo "TEST_ADMIN_PASSWORD=${{ secrets.TEST_ADMIN_PASSWORD }}" >> .env
+          echo "TEST_CLIENTE_USER=${{ secrets.TEST_CLIENTE_USER }}" >> .env
+          echo "TEST_CLIENTE_PASSWORD=${{ secrets.TEST_CLIENTE_PASSWORD }}" >> .env
+          echo "TEST_FUNC_USER=${{ secrets.TEST_FUNC_USER }}" >> .env
+          echo "TEST_FUNC_PASSWORD=${{ secrets.TEST_FUNC_PASSWORD }}" >> .env
+      
+      # Este comando agora vai ler o .env e iniciar os serviços corretamente
+      - name: Subir serviços com Docker Compose
         run: docker compose up -d --build
 
       - name: Aguardar os serviços estabilizarem
         run: sleep 20
-        
-      - name: Povoar o banco de dados com dados de teste
-        run: docker compose run --rm web python manage.py seed_data
-        env:
-          # Estas variáveis são passadas para o comando seed_data
-          TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
-          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
-          TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
-          TEST_CLIENTE_PASSWORD: ${{ secrets.TEST_CLIENTE_PASSWORD }}
-          TEST_FUNC_USER: ${{ secrets.TEST_FUNC_USER }}
-          TEST_FUNC_PASSWORD: ${{ secrets.TEST_FUNC_PASSWORD }}
-      # --------------------------
 
-      - name: Configurar Python no Runner
+      # Este comando agora funcionará, pois o contêiner 'web' terá as variáveis do .env
+      - name: Povoar o banco de dados
+        run: docker compose exec web python manage.py seed_data
+
+      - name: Verificar status dos contêineres (Debug)
+        run: docker ps -a
+        
+      # O script de teste agora encontrará o servidor rodando e os usuários no banco
+      - name: Configurar Python e rodar testes de API
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-
-      - name: Instalar dependências do script de teste
-        run: pip install requests
-
-      - name: Verificar status dos contêineres ANTES dos testes de API
-        run: docker ps -a
-      
-      - name: ✅ Teste de Endpoint - Criar Serviço
-        run: python teste_api.py criar_servico
+      - run: pip install requests
+      - run: python teste_api.py criar_servico # E os outros testes...
         env:
-          # As variáveis para o script de teste
           TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
-          # ... (copie todas as 6 variáveis de teste aqui)
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
+          # ... (etc. para todas as variáveis que o script precisa) ...
           TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
           TEST_CLIENTE_PASSWORD: ${{ secrets.TEST_CLIENTE_PASSWORD }}
           TEST_FUNC_USER: ${{ secrets.TEST_FUNC_USER }}
           TEST_FUNC_PASSWORD: ${{ secrets.TEST_FUNC_PASSWORD }}
 
-      - name: ✅ Teste de Endpoint - Criar Pet
-        run: python teste_api.py criar_pet
-        env:
-          # ... (copie todas as 6 variáveis de teste aqui também)
-          TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
-          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
-          TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
-          TEST_CLIENTE_PASSWORD: ${{ secrets.TEST_CLIENTE_PASSWORD }}
-          TEST_FUNC_USER: ${{ secrets.TEST_FUNC_USER }}
-          TEST_FUNC_PASSWORD: ${{ secrets.TEST_FUNC_PASSWORD }}
-
-      - name: Mostrar logs dos contêineres (para depuração)
+      - name: Mostrar logs para depuração
         if: always()
         run: docker compose logs
