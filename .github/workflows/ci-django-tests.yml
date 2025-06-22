@@ -24,10 +24,8 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      # --- PASSO ADICIONADO AQUI ---
       - name: Tornar entrypoint.sh executável
         run: chmod +x backend/entrypoint.sh
-      # ---------------------------
       
       - name: Executar os testes unitários do Django
         run: docker compose run --rm web python manage.py test
@@ -51,13 +49,35 @@ jobs:
       - name: Construir e iniciar os contêineres em background
         run: docker compose up -d --build
 
-      - name: Aguardar os serviços estabilizarem
-        run: sleep 20
+      # --- AQUI ESTÁ A MUDANÇA PRINCIPAL ---
+      - name: Aguardar o serviço web estar saudável
+        run: |
+          # Loop para verificar se o serviço web está 'healthy' ou 'running'
+          # Você pode precisar ajustar 'web' para o nome do seu serviço no docker-compose.yml
+          # E 'healthy' para o status que seu healthcheck (se tiver) retorna.
+          # Se você não tiver um healthcheck no Dockerfile ou docker-compose,
+          # você pode tentar verificar apenas se ele está 'running'.
+          #
+          # O comando 'docker inspect' é mais robusto para verificar o estado real.
+          for i in $(seq 1 10); do
+            STATUS=$(docker inspect --format='{{.State.Health.Status}}' $(docker compose ps -q web))
+            # Se não tiver healthcheck definido, pode usar:
+            # STATUS=$(docker inspect --format='{{.State.Status}}' $(docker compose ps -q web))
+            # if [ "$STATUS" == "running" ]; then
+            if [ "$STATUS" == "healthy" ]; then # Use 'healthy' se tiver healthcheck configurado
+              echo "Serviço web está saudável."
+              exit 0
+            fi
+            echo "Aguardando o serviço web... Tentativa $i. Status atual: $STATUS"
+            sleep 10
+          done
+          echo "Tempo esgotado: Serviço web não ficou saudável."
+          exit 1
+      # ------------------------------------
       
       - name: Povoar o banco de dados com dados de teste
         run: docker compose exec web python manage.py seed_data
         env:
-          # Passa as credenciais para o comando de seed
           TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
           TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
@@ -73,12 +93,9 @@ jobs:
       - name: Instalar dependências do script de teste
         run: pip install requests
       
-      # --- AQUI ESTÁ A MUDANÇA ---
-      # Em vez de um passo, agora temos vários, um para cada teste.
       - name: ✅ Teste de Endpoint - Criar Serviço
         run: python teste_api.py criar_servico
         env:
-          # ... (copie todas as variáveis de env com os secrets aqui)
           TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
           TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
@@ -89,19 +106,12 @@ jobs:
       - name: ✅ Teste de Endpoint - Criar Pet
         run: python teste_api.py criar_pet
         env:
-          # ... (copie todas as variáveis de env com os secrets aqui também)
           TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
           TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
           TEST_CLIENTE_PASSWORD: ${{ secrets.TEST_CLIENTE_PASSWORD }}
           TEST_FUNC_USER: ${{ secrets.TEST_FUNC_USER }}
           TEST_FUNC_PASSWORD: ${{ secrets.TEST_FUNC_PASSWORD }}
-
-      # Você pode adicionar mais testes aqui no futuro
-      # - name: ✅ Teste de Endpoint - Criar Agendamento
-      #   run: python teste_api.py criar_agendamento
-      #   env:
-      #     ...
 
       - name: Mostrar logs dos contêineres (para depuração)
         if: always()
