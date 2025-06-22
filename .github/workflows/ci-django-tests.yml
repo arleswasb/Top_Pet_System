@@ -45,12 +45,10 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      # --- PASSO ADICIONADO AQUI TAMBÉM ---
       - name: Tornar entrypoint.sh executável
         run: chmod +x backend/entrypoint.sh
-      # ----------------------------------
 
-      - name: Construir e iniciar os contêineres
+      - name: Construir e iniciar os contêineres em background
         run: docker compose up -d --build
 
       - name: Aguardar os serviços estabilizarem
@@ -63,16 +61,36 @@ jobs:
 
       - name: Instalar dependências do script de teste
         run: pip install requests
-
-      - name: Executar o script de teste de API
-        run: python teste_api.py
+      
+      # --- AQUI ESTÁ A MUDANÇA ---
+      # Em vez de um passo, agora temos vários, um para cada teste.
+      - name: ✅ Teste de Endpoint - Criar Serviço
+        run: python teste_api.py criar_servico
         env:
+          # ... (copie todas as variáveis de env com os secrets aqui)
           TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
           TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
           TEST_CLIENTE_PASSWORD: ${{ secrets.TEST_CLIENTE_PASSWORD }}
           TEST_FUNC_USER: ${{ secrets.TEST_FUNC_USER }}
           TEST_FUNC_PASSWORD: ${{ secrets.TEST_FUNC_PASSWORD }}
+
+      - name: ✅ Teste de Endpoint - Criar Pet
+        run: python teste_api.py criar_pet
+        env:
+          # ... (copie todas as variáveis de env com os secrets aqui também)
+          TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
+          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
+          TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
+          TEST_CLIENTE_PASSWORD: ${{ secrets.TEST_CLIENTE_PASSWORD }}
+          TEST_FUNC_USER: ${{ secrets.TEST_FUNC_USER }}
+          TEST_FUNC_PASSWORD: ${{ secrets.TEST_FUNC_PASSWORD }}
+
+      # Você pode adicionar mais testes aqui no futuro
+      # - name: ✅ Teste de Endpoint - Criar Agendamento
+      #   run: python teste_api.py criar_agendamento
+      #   env:
+      #     ...
 
       - name: Mostrar logs dos contêineres (para depuração)
         if: always()
