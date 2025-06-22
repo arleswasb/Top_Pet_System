@@ -7,9 +7,33 @@ on:
     branches: [ "main" ]
 
 jobs:
-  # O job 'unit-tests' está bom, pode continuar o mesmo de antes.
   unit-tests:
-    # ... (sem mudanças aqui) ...
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_DB: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+      
+      - name: Tornar entrypoint.sh executável
+        run: chmod +x backend/entrypoint.sh
+      
+      - name: Executar os testes unitários do Django
+        run: docker compose run --rm web python manage.py test
+        env:
+          POSTGRES_NAME: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_HOST: postgres
 
   endpoint-tests:
     runs-on: ubuntu-latest
@@ -22,7 +46,6 @@ jobs:
       - name: Tornar entrypoint.sh executável
         run: chmod +x backend/entrypoint.sh
 
-      # --- NOVO: Cria o arquivo .env dinamicamente com os Secrets ---
       - name: Criar arquivo .env
         run: |
           echo "POSTGRES_NAME=top_pet_db" >> .env
@@ -35,32 +58,36 @@ jobs:
           echo "TEST_CLIENTE_PASSWORD=${{ secrets.TEST_CLIENTE_PASSWORD }}" >> .env
           echo "TEST_FUNC_USER=${{ secrets.TEST_FUNC_USER }}" >> .env
           echo "TEST_FUNC_PASSWORD=${{ secrets.TEST_FUNC_PASSWORD }}" >> .env
-      
-      # Este comando agora vai ler o .env e iniciar os serviços corretamente
+
       - name: Subir serviços com Docker Compose
         run: docker compose up -d --build
 
       - name: Aguardar os serviços estabilizarem
         run: sleep 20
 
-      # Este comando agora funcionará, pois o contêiner 'web' terá as variáveis do .env
       - name: Povoar o banco de dados
         run: docker compose exec web python manage.py seed_data
 
       - name: Verificar status dos contêineres (Debug)
         run: docker ps -a
         
-      # O script de teste agora encontrará o servidor rodando e os usuários no banco
       - name: Configurar Python e rodar testes de API
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
       - run: pip install requests
-      - run: python teste_api.py criar_servico # E os outros testes...
+      - run: python teste_api.py criar_servico
         env:
           TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
-          # ... (etc. para todas as variáveis que o script precisa) ...
+          TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
+          TEST_CLIENTE_PASSWORD: ${{ secrets.TEST_CLIENTE_PASSWORD }}
+          TEST_FUNC_USER: ${{ secrets.TEST_FUNC_USER }}
+          TEST_FUNC_PASSWORD: ${{ secrets.TEST_FUNC_PASSWORD }}
+      - run: python teste_api.py criar_pet
+        env:
+          TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
+          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
           TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
           TEST_CLIENTE_PASSWORD: ${{ secrets.TEST_CLIENTE_PASSWORD }}
           TEST_FUNC_USER: ${{ secrets.TEST_FUNC_USER }}
