@@ -50,20 +50,29 @@ jobs:
         run: docker compose up -d --build
 
       # --- AQUI ESTÁ A MUDANÇA PRINCIPAL ---
-      - name: Aguardar o serviço web estar em execução
+      - name: Aguardar o serviço web estar acessível
         run: |
-          for i in $(seq 1 10); do
-            STATUS=$(docker inspect --format='{{.State.Status}}' $(docker compose ps -q web))
-            if [ "$STATUS" == "running" ]; then
-              echo "Serviço web está em execução."
+          for i in {1..10}; do
+            if curl -s http://localhost:8000/api/health-check/ >/dev/null; then
+              echo "Serviço web está respondendo"
               exit 0
             fi
-            echo "Aguardando o serviço web... Tentativa $i. Status atual: $STATUS"
-            sleep 10
+            echo "Aguardando serviço web... Tentativa $i"
+            sleep 5
           done
-          echo "Tempo esgotado: Serviço web não entrou em execução."
+          echo "Serviço web não respondeu após 10 tentativas"
+          docker compose logs web
           exit 1
       
+      - name: Verificar status do container web
+        run: docker compose ps
+
+      - name: Verificar portas expostas
+        run: docker port $(docker compose ps -q web)
+
+      - name: Verificar logs do Django
+        run: docker compose logs web
+
       - name: Povoar o banco de dados com dados de teste
         run: docker compose exec web python manage.py seed_data
         env:

@@ -6,5 +6,8 @@ set -e
 echo "Aplicando migrações do banco de dados..."
 python manage.py migrate --no-input
 
-# A linha mágica: executa o comando principal (CMD) que foi passado para o contêiner.
-exec "$@"
+echo "Coletando arquivos estáticos..."
+python manage.py collectstatic --no-input --clear
+
+echo "Iniciando servidor Django..."
+exec python manage.py runserver 0.0.0.0:8000

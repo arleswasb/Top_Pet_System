@@ -14,18 +14,17 @@ version: '3.8'
 services:
   web:
     build: ./backend
-    command: /app/entrypoint.sh
     volumes:
       - ./backend:/app
       - media_data:/app/media
     ports:
       - "8000:8000"
-    # --- ADICIONE ESTA SEÇÃO ---
+
     environment:
-      POSTGRES_NAME: top_pet_db
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_HOST: db
+    environment:
+      - DJANGO_SETTINGS_MODULE=yourproject.settings
+      - PYTHONUNBUFFERED=1
+    
     # ---------------------------
     depends_on:
       db:
