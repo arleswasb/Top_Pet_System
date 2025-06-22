@@ -1,32 +1,22 @@
-#usuario: arleswasb
-#senha: 123456
-#repositório: top-pet
-#dockerhub: arleswasb/top-pet
-#docker-compose:
-#chave acesso 850b5842543d3c56cbfaf3f0b44027a2fe4c625e
 
-#cliente1
-#chave acesso 0b92a820a05247d1815b5c06c1cb0c803f6cd8c7
+# docker-compose.yml
 
-
-
-version: '3.8'
+version: '3.8' # Pode remover esta linha se quiser
 services:
   web:
     build: ./backend
-    command: /app/entrypoint.sh
+    # REMOVA A LINHA ABAIXO, pois o comando já está no Dockerfile
+    # command: /app/entrypoint.sh 
     volumes:
       - ./backend:/app
       - media_data:/app/media
     ports:
       - "8000:8000"
-    # --- ADICIONE ESTA SEÇÃO ---
-    environment:
+    environment: # Esta seção é lida pelo settings.py
       POSTGRES_NAME: top_pet_db
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_HOST: db
-    # ---------------------------
     depends_on:
       db:
         condition: service_healthy
