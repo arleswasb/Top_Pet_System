@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, permissions
+from rest_framework import generics, status, permissions
 from django.conf import settings
 from .permissions import IsAdminRole # Importa nossa nova permissão
 import os
