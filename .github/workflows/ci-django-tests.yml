@@ -23,11 +23,9 @@ jobs:
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
-
-      # --- PASSO ADICIONADO AQUI ---
+      
       - name: Tornar entrypoint.sh executável
         run: chmod +x backend/entrypoint.sh
-      # ---------------------------
       
       - name: Executar os testes unitários do Django
         run: docker compose run --rm web python manage.py test
@@ -53,17 +51,21 @@ jobs:
 
       - name: Aguardar os serviços estabilizarem
         run: sleep 20
-      
+        
+      # --- CORREÇÃO PRINCIPAL AQUI ---
       - name: Povoar o banco de dados com dados de teste
-        run: docker compose exec web python manage.py seed_data
+        # Trocamos 'exec' por 'run'. O 'run' cria um contêiner temporário,
+        # passa as variáveis de ambiente, executa o comando e sai.
+        run: docker compose run --rm web python manage.py seed_data
         env:
-          # Passa as credenciais para o comando de seed
+          # Estas variáveis são passadas para o comando seed_data
           TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
           TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
           TEST_CLIENTE_PASSWORD: ${{ secrets.TEST_CLIENTE_PASSWORD }}
           TEST_FUNC_USER: ${{ secrets.TEST_FUNC_USER }}
           TEST_FUNC_PASSWORD: ${{ secrets.TEST_FUNC_PASSWORD }}
+      # --------------------------
 
       - name: Configurar Python no Runner
         uses: actions/setup-python@v4
@@ -73,13 +75,12 @@ jobs:
       - name: Instalar dependências do script de teste
         run: pip install requests
       
-      # --- AQUI ESTÁ A MUDANÇA ---
-      # Em vez de um passo, agora temos vários, um para cada teste.
       - name: ✅ Teste de Endpoint - Criar Serviço
         run: python teste_api.py criar_servico
         env:
-          # ... (copie todas as variáveis de env com os secrets aqui)
+          # As variáveis para o script de teste
           TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
+          # ... (copie todas as 6 variáveis de teste aqui)
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
           TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
           TEST_CLIENTE_PASSWORD: ${{ secrets.TEST_CLIENTE_PASSWORD }}
@@ -89,19 +90,13 @@ jobs:
       - name: ✅ Teste de Endpoint - Criar Pet
         run: python teste_api.py criar_pet
         env:
-          # ... (copie todas as variáveis de env com os secrets aqui também)
+          # ... (copie todas as 6 variáveis de teste aqui também)
           TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
           TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
           TEST_CLIENTE_PASSWORD: ${{ secrets.TEST_CLIENTE_PASSWORD }}
           TEST_FUNC_USER: ${{ secrets.TEST_FUNC_USER }}
           TEST_FUNC_PASSWORD: ${{ secrets.TEST_FUNC_PASSWORD }}
-
-      # Você pode adicionar mais testes aqui no futuro
-      # - name: ✅ Teste de Endpoint - Criar Agendamento
-      #   run: python teste_api.py criar_agendamento
-      #   env:
-      #     ...
 
       - name: Mostrar logs dos contêineres (para depuração)
         if: always()
