@@ -1,29 +1,53 @@
+# agendamentos/models.py
+
 from django.db import models
 from django.conf import settings
 from pets.models import Pet
+from datetime import timedelta
+
+class Servico(models.Model):
+    """
+    Modelo para cadastrar os serviços oferecidos pelo pet shop.
+    Ex: Banho e Tosa, Consulta, Vacinação.
+    """
+    nome = models.CharField(max_length=100, unique=True)
+    descricao = models.TextField(blank=True, null=True)
+    duracao = models.DurationField(
+        default=timedelta(minutes=30),
+        help_text="Duração do serviço. Formato: HH:MM:SS"
+    )
+    preco = models.DecimalField(max_digits=8, decimal_places=2)
+    disponivel = models.BooleanField(default=True, help_text="Marque se o serviço está sendo oferecido no momento.")
+
+    def __str__(self):
+        return self.nome
 
 class Agendamento(models.Model):
-    class ServicoChoices(models.TextChoices):
-        BANHO_E_TOSA = "BANHO_E_TOSA", "Banho e Tosa"
-        CONSULTA = "CONSULTA", "Consulta"
-        VACINACAO = "VACINACAO", "Vacinação"
-        EXAME = "EXAME", "Exame"
-
+    """
+    Modelo para registrar os agendamentos dos pets.
+    Agora se relaciona com o modelo Servico.
+    """
     class StatusChoices(models.TextChoices):
         AGENDADO = "AGENDADO", "Agendado"
         CONCLUIDO = "CONCLUIDO", "Concluído"
         CANCELADO = "CANCELADO", "Cancelado"
 
+    # Relacionamentos
     pet = models.ForeignKey(Pet, on_delete=models.CASCADE, related_name='agendamentos')
-    data_hora = models.DateTimeField()
-    servico = models.CharField(max_length=50, choices=ServicoChoices.choices)
-    status = models.CharField(max_length=50, choices=StatusChoices.choices, default=StatusChoices.AGENDADO)
-    observacoes = models.TextField(blank=True, null=True)
-    # No futuro, podemos adicionar o funcionário que realizou o atendimento
-    # funcionario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    # O campo 'servico' agora é uma chave estrangeira
+    servico = models.ForeignKey(Servico, on_delete=models.PROTECT, related_name='agendamentos')
 
+    # Detalhes do agendamento
+    data_hora = models.DateTimeField()
+    status = models.CharField(
+        max_length=50,
+        choices=StatusChoices.choices,
+        default=StatusChoices.AGENDADO
+    )
+    observacoes = models.TextField(blank=True, null=True)
+    
     class Meta:
-        ordering = ['data_hora'] # Ordena os agendamentos por data e hora
+        ordering = ['data_hora']
 
     def __str__(self):
-        return f"{self.servico} para {self.pet.nome} em {self.data_hora.strftime('%d/%m/%Y %H:%M')}"
+        return f"{self.servico.nome} para {self.pet.nome} em {self.data_hora.strftime('%d/%m/%Y %H:%M')}"

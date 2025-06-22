@@ -1,12 +1,17 @@
+# agendamentos/urls.py
+
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import AgendamentoViewSet
+from .views import AgendamentoViewSet, ServicoViewSet
 
-# Cria um roteador padrão
+# Cria o router
 router = DefaultRouter()
 
-# Registra nossa AgendamentoViewSet com o prefixo 'agendamentos'
+# Registra as rotas
+router.register(r'servicos', ServicoViewSet, basename='servico')
 router.register(r'agendamentos', AgendamentoViewSet, basename='agendamento')
 
-# As URLs são geradas automaticamente pelo roteador
-urlpatterns = router.urls
+urlpatterns = [
+    # Inclui as URLs geradas pelo router
+    path('', include(router.urls)),
+]

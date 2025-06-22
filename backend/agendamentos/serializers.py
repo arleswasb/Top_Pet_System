@@ -1,27 +1,48 @@
+# agendamentos/serializers.py
+
 from rest_framework import serializers
-from .models import Agendamento
-from pets.serializers import PetSerializer # Vamos reusar o serializer de Pet
+from .models import Agendamento, Servico
+from pets.models import Pet
+from pets.serializers import PetSerializer
+
+class ServicoSerializer(serializers.ModelSerializer):
+    """
+    Serializer para o modelo Servico.
+    """
+    class Meta:
+        model = Servico
+        fields = ['id', 'nome', 'descricao', 'duracao', 'preco']
+
 
 class AgendamentoSerializer(serializers.ModelSerializer):
-    # Usamos o PetSerializer para mostrar os detalhes do pet,
-    # em vez de apenas o ID. 'read_only=True' significa que não
-    # podemos criar um pet por aqui, apenas ler seus dados.
+    """
+    Serializer para o modelo Agendamento.
+    """
+    # Nested serializers para leitura (GET)
     pet = PetSerializer(read_only=True)
+    servico = ServicoSerializer(read_only=True)
 
-    # Campo extra para receber o ID do pet ao criar um novo agendamento.
-    # 'write_only=True' significa que este campo só é usado para escrever
-    # dados (no POST), e não aparecerá na resposta JSON.
-    pet_id = serializers.IntegerField(write_only=True)
+    # PrimaryKeyRelatedFields para escrita (POST/PUT)
+    pet_id = serializers.PrimaryKeyRelatedField(
+        queryset=Pet.objects.all(),
+        source='pet',
+        write_only=True
+    )
+    servico_id = serializers.PrimaryKeyRelatedField(
+        queryset=Servico.objects.filter(disponivel=True),
+        source='servico',
+        write_only=True
+    )
 
     class Meta:
         model = Agendamento
-        # Listamos todos os campos que queremos que apareçam na API
         fields = [
             'id',
-            'pet',
-            'pet_id',
             'data_hora',
-            'servico',
             'status',
             'observacoes',
+            'pet',
+            'servico',
+            'pet_id',
+            'servico_id',
         ]

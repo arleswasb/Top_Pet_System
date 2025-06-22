@@ -18,3 +18,11 @@ class LogFileView(APIView):
             return Response(log_content, status=status.HTTP_200_OK, content_type='text/plain')
         except FileNotFoundError:
             return Response("Arquivo de log não encontrado.", status=status.HTTP_404_NOT_FOUND)
+        
+class UserCreateView(generics.CreateAPIView):
+    """
+    Endpoint público para novos usuários se registrarem.
+    """
+    queryset = User.objects.all()
+    serializer_class = UserCreateSerializer
+    permission_classes = [permissions.AllowAny] # <-- Permite que qualquer um acesse

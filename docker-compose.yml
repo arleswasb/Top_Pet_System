@@ -10,12 +10,6 @@
 
 
 
-
-
-
-
-
-
 version: '3.8'
 services:
   web:
@@ -26,6 +20,13 @@ services:
       - media_data:/app/media
     ports:
       - "8000:8000"
+    # --- ADICIONE ESTA SEÇÃO ---
+    environment:
+      POSTGRES_NAME: top_pet_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_HOST: db
+    # ---------------------------
     depends_on:
       db:
         condition: service_healthy

@@ -1,6 +1,6 @@
-
-from pathlib import Path
+#settings.py
 import os
+from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,7 +31,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'users',
-    'agendamentos',  
+    'agendamentos',      
 ]
 
 # Configuração de autenticação do DRF 
@@ -86,14 +86,13 @@ WSGI_APPLICATION = 'top_pet.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'top_pet_db',
-        'USER': 'user',
-        'PASSWORD': 'password',
-        'HOST': 'db',  # Nome do serviço do banco de dados no docker-compose.yml
+        'NAME': os.environ.get('POSTGRES_NAME'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST': os.environ.get('POSTGRES_HOST'), # Lê o nome do host (db)
         'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

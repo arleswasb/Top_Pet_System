@@ -2,6 +2,12 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "../Projeto-de-Banco-de-dados/TRABALHO3"
+		},
+		{
+			"path": "../Projeto-de-Banco-de-dados"
 		}
 	]
 }
