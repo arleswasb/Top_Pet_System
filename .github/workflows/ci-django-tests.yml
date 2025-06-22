@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  unit-tests: # <-- Job 1: Testes Unitários
+  unit-tests:
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -23,6 +23,11 @@ jobs:
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
+
+      # --- PASSO ADICIONADO AQUI ---
+      - name: Tornar entrypoint.sh executável
+        run: chmod +x backend/entrypoint.sh
+      # ---------------------------
       
       - name: Executar os testes unitários do Django
         run: docker compose run --rm web python manage.py test
@@ -32,24 +37,29 @@ jobs:
           POSTGRES_PASSWORD: test_password
           POSTGRES_HOST: postgres
 
-  endpoint-tests: # <-- Job 2: Testes de Endpoint 
+  endpoint-tests:
     runs-on: ubuntu-latest
-    needs: unit-tests # <-- Só roda se o job 'unit-tests' passar
+    needs: unit-tests
 
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
 
+      # --- PASSO ADICIONADO AQUI TAMBÉM ---
+      - name: Tornar entrypoint.sh executável
+        run: chmod +x backend/entrypoint.sh
+      # ----------------------------------
+
       - name: Construir e iniciar os contêineres
         run: docker compose up -d --build
 
       - name: Aguardar os serviços estabilizarem
-        run: sleep 20 # Aumentei para garantir que o Django inicie
+        run: sleep 20
 
       - name: Configurar Python no Runner
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9' # Use a versão do Python que seu projeto usa
+          python-version: '3.9'
 
       - name: Instalar dependências do script de teste
         run: pip install requests
@@ -57,7 +67,6 @@ jobs:
       - name: Executar o script de teste de API
         run: python teste_api.py
         env:
-          # Passa os Secrets do GitHub como variáveis de ambiente para o script
           TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
           TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
@@ -66,5 +75,5 @@ jobs:
           TEST_FUNC_PASSWORD: ${{ secrets.TEST_FUNC_PASSWORD }}
 
       - name: Mostrar logs dos contêineres (para depuração)
-        if: always() # Roda mesmo se o passo anterior falhar
+        if: always()
         run: docker compose logs
