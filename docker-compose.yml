@@ -1,22 +1,36 @@
+#usuario: arleswasb
+#senha: 123456
+#repositório: top-pet
+#dockerhub: arleswasb/top-pet
+#docker-compose:
+#chave acesso 850b5842543d3c56cbfaf3f0b44027a2fe4c625e
 
-# docker-compose.yml
+#cliente1
+#chave acesso 0b92a820a05247d1815b5c06c1cb0c803f6cd8c7
+
+
 
 version: '3.8'
 services:
   web:
     build: ./backend
+    command: /app/entrypoint.sh
     volumes:
       - ./backend:/app
       - media_data:/app/media
     ports:
       - "8000:8000"
-    # --- ADICIONE ESTA LINHA ---
-    env_file:
-      - ./.env
+    # --- ADICIONE ESTA SEÇÃO ---
+    environment:
+      POSTGRES_NAME: top_pet_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_HOST: db
     # ---------------------------
     depends_on:
       db:
         condition: service_healthy
+
   db:
     image: postgres:13
     environment:
