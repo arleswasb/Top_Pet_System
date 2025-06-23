@@ -1,18 +1,15 @@
-# teste_api.py
-
 import requests
 import json
 import os
 import sys
 
-# --- CONFIGURAÇÕES E FUNÇÕES AUXILIARES (sem mudanças) ---
+# --- CONFIGURAÇÕES E FUNÇÕES AUXILIARES ---
 BASE_URL = 'http://localhost:8000/api'
 ADMIN_USER = (os.environ.get('TEST_ADMIN_USER'), os.environ.get('TEST_ADMIN_PASSWORD'))
 CLIENTE_USER = (os.environ.get('TEST_CLIENTE_USER'), os.environ.get('TEST_CLIENTE_PASSWORD'))
 FUNCIONARIO_USER = (os.environ.get('TEST_FUNC_USER'), os.environ.get('TEST_FUNC_PASSWORD'))
 
 def get_token(username, password):
-    # ... (a função get_token continua exatamente a mesma) ...
     print(f"--- Obtendo token para o usuário: {username} ---")
     if not username or not password:
         print(f"!!! ERRO: Usuário ou senha não definidos para '{username}'.")
@@ -35,7 +32,7 @@ def fail_test(message):
     print(f"\n!!! TESTE FALHOU: {message} !!!")
     sys.exit(1)
 
-# --- TESTES INDIVIDUAIS (NOVO!) ---
+# --- TESTES INDIVIDUAIS ---
 def teste_criar_servico(admin_token):
     print("\n--- ✅ [TESTE] Criando um novo Serviço (como Admin) ---")
     headers_admin = {'Authorization': f'Token {admin_token}'}
@@ -46,17 +43,22 @@ def teste_criar_servico(admin_token):
     print("--- SUCESSO! ---")
 
 def teste_criar_pet(funcionario_token):
-    user_id_cliente3 = 6
+    # ATENÇÃO: user_id_cliente3 deve ser um ID de cliente VÁLIDO existente no seu banco de dados de teste.
+    # Caso contrário, este teste falhará por ID de tutor inválido.
+    user_id_cliente3 = 6 
     print(f"\n--- ✅ [TESTE] Criando um novo Pet (como Funcionário) para o tutor ID {user_id_cliente3} ---")
     headers_funcionario = {'Authorization': f'Token {funcionario_token}'}
     pet_data = {"nome": "Pipoca", "especie": "Cachorro", "raca": "Shih Tzu", "tutor_id": user_id_cliente3}
-    response_pet = requests.post(f"{BASE_URL}/pets/pets/", data=pet_data, headers=headers_funcionario)
+    
+    # CORREÇÃO: Usando 'json=' ao invés de 'data=' para enviar o corpo da requisição como JSON
+    response_pet = requests.post(f"{BASE_URL}/pets/pets/", json=pet_data, headers=headers_funcionario)
+    
     if response_pet.status_code != 201:
         fail_test(f"Funcionário não conseguiu criar o pet. Status: {response_pet.status_code}, Resposta: {response_pet.text}")
     print("--- SUCESSO! ---")
 
 
-# --- EXECUTOR PRINCIPAL (NOVO!) ---
+# --- EXECUTOR PRINCIPAL ---
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         fail_test("Nenhum teste específico foi fornecido. Ex: 'python teste_api.py criar_servico'")
@@ -68,7 +70,7 @@ if __name__ == "__main__":
 
     # Obtém todos os tokens necessários
     admin_token = get_token(*ADMIN_USER)
-    cliente_token = get_token(*CLIENTE_USER)
+    cliente_token = get_token(*CLIENTE_USER) # Pode não ser usado, mas é bom ter para futuros testes.
     funcionario_token = get_token(*FUNCIONARIO_USER)
 
     # Executa o teste solicitado
