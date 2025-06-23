@@ -234,7 +234,7 @@ class PetSerializerTestCase(TestCase):
         pet = Pet.objects.create(
             nome='PetVelho',
             especie='Cachorro',
-            data_de_nascimento=date(2010, 1, 1), # <-- CORRIGIDO: Passando objeto date, não string
+            data_de_nascimento=date(2010, 1, 1), 
             tutor=self.user
         )
         
