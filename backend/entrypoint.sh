@@ -1,9 +1,13 @@
 #!/bin/sh
 
-# Aplicando migrações do banco de dados...
-echo "Aplicando migrações do banco de dados..."
-python manage.py migrate
+# Garante que o script irá parar se algum comando falhar
+set -e
 
-# Iniciando o servidor...
-echo "Iniciando o servidor..."
-exec python -u manage.py runserver 0.0.0.0:8000 --noreload
+echo "Aplicando migrações do banco de dados..."
+python manage.py migrate --no-input
+
+echo "Coletando arquivos estáticos..."
+python manage.py collectstatic --no-input --clear
+
+echo "Iniciando servidor Django..."
+exec python manage.py runserver 0.0.0.0:8000

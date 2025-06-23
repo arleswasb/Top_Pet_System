@@ -1,23 +1,27 @@
 # Use uma imagem base do Python
-FROM python:3.9-slim-buster
+FROM python:3.9-slim
 
-# Defina o diretório de trabalho dentro do contêiner
+# Define variáveis de ambiente
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# Define o diretório de trabalho
 WORKDIR /app
 
-# Copie os arquivos de dependência
+# Copia e instala as dependências
 COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Instale as dependências
-RUN pip install -r requirements.txt
-
-# Copie o código fonte do projeto (o conteúdo de 'backend' vai para '/app'
+# Copia o resto do código da aplicação
 COPY . /app/
 
-# Linha para dar permissão de execução ao script
+# Copia o entrypoint e dá permissão de execução
+COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
-# Expor a porta que o Django usa (padrão: 8000)
-EXPOSE 8000
+# Define o entrypoint a ser executado sempre que o contêiner iniciar
+ENTRYPOINT ["/app/entrypoint.sh"]
 
-# Comando para executar o Django (ajustado para o caminho correto do manage.py)
-CMD ["python", "/app/top_pet/manage.py", "runserver", "0.0.0.0:8000"]
+# Define o comando PADRÃO a ser executado pelo entrypoint
+# Este comando será usado pelo 'docker compose up'
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

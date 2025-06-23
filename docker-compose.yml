@@ -11,39 +11,43 @@
 
 
 version: '3.8'
+
 services:
   web:
     build: ./backend
-    command: /app/entrypoint.sh
     volumes:
       - ./backend:/app
       - media_data:/app/media
     ports:
       - "8000:8000"
-    # --- ADICIONE ESTA SEÇÃO ---
     environment:
-      POSTGRES_NAME: top_pet_db
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_HOST: db
-    # ---------------------------
+      - DJANGO_SETTINGS_MODULE=yourproject.settings
+      - PYTHONUNBUFFERED=1
+      - POSTGRES_NAME=top_pet_db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_HOST=db
     depends_on:
       db:
         condition: service_healthy
+    restart: unless-stopped
 
   db:
     image: postgres:13
     environment:
-      POSTGRES_DB: top_pet_db
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      - POSTGRES_DB=top_pet_db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U user -d top_pet_db"]
       interval: 5s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
 
 volumes:
   postgres_data:

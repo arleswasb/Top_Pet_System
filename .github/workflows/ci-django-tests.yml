@@ -1,4 +1,4 @@
-name: Testes de CI do Django
+name: CI Completa do Django (Unidade + Endpoints)
 
 on:
   push:
@@ -7,39 +7,109 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-and-test:
+  unit-tests:
     runs-on: ubuntu-latest
-    
-    # Define um serviço de banco de dados que rodará durante os testes
     services:
       postgres:
         image: postgres:13
-        # Define as credenciais para o banco de dados de teste
         env:
           POSTGRES_DB: test_db
           POSTGRES_USER: test_user
           POSTGRES_PASSWORD: test_password
-        ports:
-          - 5432:5432
-        # Verifica se o banco está pronto antes de continuar
         options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
-        
-      - name: Executar os testes do Django
-        # Este é o comando chave: 'run' em vez de 'exec'
-        # Ele inicia o 'web', executa o teste e para.
+
+      - name: Tornar entrypoint.sh executável
+        run: chmod +x backend/entrypoint.sh
+      
+      - name: Executar os testes unitários do Django
         run: docker compose run --rm web python manage.py test
         env:
-          # Passa as variáveis de ambiente para o contêiner 'web'
-          # para que o settings.py possa se conectar ao banco de dados 'postgres'
           POSTGRES_NAME: test_db
           POSTGRES_USER: test_user
           POSTGRES_PASSWORD: test_password
-          POSTGRES_HOST: postgres # O nome do host é o nome do serviço definido acima
+          POSTGRES_HOST: postgres
+
+  endpoint-tests:
+    runs-on: ubuntu-latest
+    needs: unit-tests
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Tornar entrypoint.sh executável
+        run: chmod +x backend/entrypoint.sh
+
+      - name: Construir e iniciar os contêineres em background
+        run: docker compose up -d --build
+
+      # --- AQUI ESTÁ A MUDANÇA PRINCIPAL ---
+      - name: Aguardar o serviço web estar acessível
+        run: |
+          for i in {1..10}; do
+            if curl -s http://localhost:8000/api/health-check/ >/dev/null; then
+              echo "Serviço web está respondendo"
+              exit 0
+            fi
+            echo "Aguardando serviço web... Tentativa $i"
+            sleep 5
+          done
+          echo "Serviço web não respondeu após 10 tentativas"
+          docker compose logs web
+          exit 1
+      
+      - name: Verificar status do container web
+        run: docker compose ps
+
+      - name: Verificar portas expostas
+        run: docker port $(docker compose ps -q web)
+
+      - name: Verificar logs do Django
+        run: docker compose logs web
+
+      - name: Povoar o banco de dados com dados de teste
+        run: docker compose exec web python manage.py seed_data
+        env:
+          TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
+          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
+          TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
+          TEST_CLIENTE_PASSWORD: ${{ secrets.TEST_CLIENTE_PASSWORD }}
+          TEST_FUNC_USER: ${{ secrets.TEST_FUNC_USER }}
+          TEST_FUNC_PASSWORD: ${{ secrets.TEST_FUNC_PASSWORD }}
+
+      - name: Configurar Python no Runner
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Instalar dependências do script de teste
+        run: pip install requests
+      
+      - name: ✅ Teste de Endpoint - Criar Serviço
+        run: python teste_api.py criar_servico
+        env:
+          TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
+          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
+          TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
+          TEST_CLIENTE_PASSWORD: ${{ secrets.TEST_CLIENTE_PASSWORD }}
+          TEST_FUNC_USER: ${{ secrets.TEST_FUNC_USER }}
+          TEST_FUNC_PASSWORD: ${{ secrets.TEST_FUNC_PASSWORD }}
+
+      - name: ✅ Teste de Endpoint - Criar Pet
+        run: python teste_api.py criar_pet
+        env:
+          TEST_ADMIN_USER: ${{ secrets.TEST_ADMIN_USER }}
+          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
+          TEST_CLIENTE_USER: ${{ secrets.TEST_CLIENTE_USER }}
+          TEST_CLIENTE_PASSWORD: ${{ secrets.TEST_CLIENTE_PASSWORD }}
+          TEST_FUNC_USER: ${{ secrets.TEST_FUNC_USER }}
+          TEST_FUNC_PASSWORD: ${{ secrets.TEST_FUNC_PASSWORD }}
+
+      - name: Mostrar logs dos contêineres (para depuração)
+        if: always()
+        run: docker compose logs
