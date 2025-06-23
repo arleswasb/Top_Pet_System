@@ -1,13 +1,3 @@
-#usuario: arleswasb
-#senha: 123456
-#repositório: top-pet
-#dockerhub: arleswasb/top-pet
-#docker-compose:
-#chave acesso 850b5842543d3c56cbfaf3f0b44027a2fe4c625e
-
-#cliente1
-#chave acesso 0b92a820a05247d1815b5c06c1cb0c803f6cd8c7
-
 
 
 version: '3.8'
