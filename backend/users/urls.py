@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import LogFileView
+from .views import LogFileView, UserCreateView
 
 urlpatterns = [
     path('logs/', LogFileView.as_view(), name='get-logs'),
