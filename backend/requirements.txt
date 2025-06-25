@@ -2,4 +2,7 @@ Django
 djangorestframework
 psycopg2-binary
 Pillow
-djangorestframework
+
+# Ferramentas de Teste
+pytest
+pytest-django
