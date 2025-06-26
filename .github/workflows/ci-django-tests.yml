@@ -45,10 +45,10 @@ jobs:
       - name: Construir as imagens Docker
         run: docker compose build
 
-      # --- CADA TESTE RODA EM UM PASSO SEPARADO ---
+      # --- CADA TESTE RODA EM UM PASSO SEPARADO ---\
       - name: ✅ Testes de Agendamentos
         if: always() # Garante que este passo rode mesmo que o anterior falhe
-        run: docker compose run --no-deps --rm backend pytest agendamentos/tests.py
+        run: docker compose run --no-deps --rm backend pytest --cov-append agendamentos/tests.py
         env:
           POSTGRES_NAME: test_db
           POSTGRES_USER: test_user
@@ -57,7 +57,7 @@ jobs:
 
       - name: ✅ Testes de Integração de Pets
         if: always()
-        run: docker compose run --no-deps --rm backend pytest pets/tests.py
+        run: docker compose run --no-deps --rm backend pytest --cov-append pets/tests.py
         env:
           POSTGRES_NAME: test_db
           POSTGRES_USER: test_user
@@ -66,7 +66,7 @@ jobs:
 
       - name: ✅ Testes de Unidade de Pets
         if: always()
-        run: docker compose run --no-deps --rm backend pytest pets/tests_unidade.py
+        run: docker compose run --no-deps --rm backend pytest --cov-append pets/tests_unidade.py
         env:
           POSTGRES_NAME: test_db
           POSTGRES_USER: test_user
@@ -75,7 +75,16 @@ jobs:
 
       - name: ✅ Testes de Usuários
         if: always()
-        run: docker compose run --no-deps --rm backend pytest users/tests.py
+        run: docker compose run --no-deps --rm backend pytest --cov-append users/tests.py
+        env:
+          POSTGRES_NAME: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_HOST: postgres
+
+      - name: 📊 Verificar Cobertura de Testes
+        if: always() # Roda sempre para garantir que a verificação seja feita
+        run: docker compose run --no-deps --rm backend pytest --cov-fail-under=80
         env:
           POSTGRES_NAME: test_db
           POSTGRES_USER: test_user
