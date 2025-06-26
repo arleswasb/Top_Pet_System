@@ -7,7 +7,7 @@
 
 
 services:
-  web:
+  backend:
     build: ./backend
     command: /app/entrypoint.sh
     volumes:
