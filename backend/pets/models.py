@@ -1,4 +1,5 @@
 # pets/models.py
+import logging
 from datetime import date
 
 from django.contrib.auth.models import User
@@ -77,6 +78,12 @@ class Pet(models.Model):
 
     def __str__(self):
         return f"{self.nome} ({self.especie})"
+
+    def save(self, *args, **kwargs):
+        """Sobrescreve o método save para adicionar um log."""
+        super().save(*args, **kwargs)  # Chama o método save original
+        logger = logging.getLogger(__name__)
+        logger.info(f"Pet '{self.nome}' foi salvo com sucesso.")
 
     @property
     def idade(self):

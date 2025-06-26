@@ -37,6 +37,18 @@ class PetModelTestCase(TestCase):
         self.assertEqual(pet.tutor.username, "tutor_model")
         self.assertIsNone(pet.raca)
 
+    def test_pet_creation_logs_a_message(self):
+        """Verifica se a criação de um pet registra uma mensagem de log."""
+        # Usa self.assertLogs para capturar logs enviados para 'pets.models'
+        # com nível INFO ou superior.
+        with self.assertLogs("pets.models", level="INFO") as cm:
+            Pet.objects.create(**self.pet_data)
+            # Verifica se exatamente uma mensagem de log foi capturada.
+            self.assertEqual(len(cm.output), 1)
+            # Verifica se a mensagem contém o texto esperado.
+            self.assertIn("foi salvo com sucesso", cm.output[0])
+            self.assertIn("Rex", cm.output[0])
+
 
 class PetPermissionsTestCase(TestCase):
     def setUp(self):
