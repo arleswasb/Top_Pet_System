@@ -4,3 +4,6 @@ psycopg2-binary
 Pillow
 pytest
 pytest-django
+pytest-cov
+pytest-xdist
+flake8

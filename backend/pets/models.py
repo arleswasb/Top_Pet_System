@@ -6,25 +6,11 @@ from datetime import date
 from django.utils import timezone # Importado timezone para o default
 
 class Pet(models.Model):
-    """
-    Representa um animal de estimação no sistema.
-
-    Este modelo armazena informações detalhadas sobre cada pet,
-    incluindo seu nome, espécie, raça, data de nascimento, sexo,
-    foto e o tutor responsável.
-
-    Atributos:
-        nome (str): O nome do pet.
-        especie (str): A espécie do pet (ex: "Cachorro", "Gato").
-        raca (str, opcional): A raça específica do pet.
-        data_de_nascimento (date, opcional): A data em que o pet nasceu.
-        sexo (str): O sexo do pet, escolhido de opções pré-definidas.
-        foto (ImageField, opcional): Uma foto do pet.
-        tutor (User): O usuário (tutor) associado a este pet.
-        observacoes (str, opcional): Quaisquer notas ou observações adicionais.
-        created_at (datetime): A data e hora de criação do registro.
-        updated_at (datetime): A data e hora da última atualização do registro.
-    """
+    # Opção: Você pode criar um modelo 'Species' se precisar de mais controle e validação
+    # class Species(models.Model):
+    #     name = models.CharField(max_length=50, unique=True)
+    #     def __str__(self):
+    #         return self.name
 
     class Gender(models.TextChoices):
         MALE = "MACHO", "Macho"
@@ -93,16 +79,6 @@ class Pet(models.Model):
 
     @property
     def idade(self):
-        """
-        Calcula e retorna a idade do pet em anos.
-
-        A idade é calculada com base na `data_de_nascimento`.
-        Se a data de nascimento não for fornecida, retorna None.
-
-        Returns:
-            int | None: A idade do pet em anos, ou None se a data de
-                        nascimento for desconhecida.
-        """
         if self.data_de_nascimento:
             today = date.today()
             # Calcula a idade considerando meses e dias

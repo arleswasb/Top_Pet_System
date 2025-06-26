@@ -1,4 +1,4 @@
-name: Testes de CI do Django
+name: CI Pipeline Django
 
 on:
   push:
@@ -7,39 +7,77 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-and-test:
+  lint:
+    name: Linter (flake8)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Construir a imagem para o linter
+        run: docker compose build backend
+
+      - name: Executar o flake8
+        run: docker compose run --rm backend flake8 .
+
+  test:
+    name: Executar Testes Automatizados
+    needs: lint # O job de teste só roda se o de lint passar
     runs-on: ubuntu-latest
     
-    # Define um serviço de banco de dados que rodará durante os testes
     services:
       postgres:
         image: postgres:13
-        # Define as credenciais para o banco de dados de teste
         env:
+          # Use secrets para as credenciais do banco de dados
           POSTGRES_DB: test_db
           POSTGRES_USER: test_user
           POSTGRES_PASSWORD: test_password
         ports:
           - 5432:5432
-        # Verifica se o banco está pronto antes de continuar
         options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
-        
-      - name: Executar os testes do Django
-        # Este é o comando chave: 'run' em vez de 'exec'
-        # Ele inicia o 'web', executa o teste e para.
-        run: docker compose run --rm web python manage.py test
+
+      - name: Construir as imagens Docker
+        run: docker compose build
+
+      # --- CADA TESTE RODA EM UM PASSO SEPARADO ---
+      - name: ✅ Testes de Agendamentos
+        if: always() # Garante que este passo rode mesmo que o anterior falhe
+        run: docker compose run --no-deps --rm backend pytest agendamentos/tests.py
         env:
-          # Passa as variáveis de ambiente para o contêiner 'web'
-          # para que o settings.py possa se conectar ao banco de dados 'postgres'
           POSTGRES_NAME: test_db
           POSTGRES_USER: test_user
           POSTGRES_PASSWORD: test_password
-          POSTGRES_HOST: postgres # O nome do host é o nome do serviço definido acima
+          POSTGRES_HOST: postgres
+
+      - name: ✅ Testes de Integração de Pets
+        if: always()
+        run: docker compose run --no-deps --rm backend pytest pets/tests.py
+        env:
+          POSTGRES_NAME: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_HOST: postgres
+
+      - name: ✅ Testes de Unidade de Pets
+        if: always()
+        run: docker compose run --no-deps --rm backend pytest pets/tests_unidade.py
+        env:
+          POSTGRES_NAME: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_HOST: postgres
+
+      - name: ✅ Testes de Usuários
+        if: always()
+        run: docker compose run --no-deps --rm backend pytest users/tests.py
+        env:
+          POSTGRES_NAME: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_HOST: postgres

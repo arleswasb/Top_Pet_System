@@ -141,7 +141,6 @@ MEDIA_URL = '/media/'
 
 #conficuração do logging
 import os
-from .settings import BASE_DIR
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
