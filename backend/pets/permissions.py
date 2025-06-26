@@ -1,9 +1,12 @@
 import logging
+
 from rest_framework import permissions
 from rest_framework.exceptions import PermissionDenied
+
 from users.models import Profile
 
 logger = logging.getLogger(__name__)
+
 
 class IsOwnerOrAdminOrFuncionario(permissions.BasePermission):
     """
@@ -19,18 +22,18 @@ class IsOwnerOrAdminOrFuncionario(permissions.BasePermission):
         if not request.user.is_authenticated:
             logger.warning(f"Acesso não-autenticado negado para {request.path}")
             return False
-            
+
         # Todos autenticados podem criar pets
-        if view.action == 'create':
+        if view.action == "create":
             return True
-            
+
         # Outras ações são validadas em has_object_permission
         return True
 
     def has_object_permission(self, request, view, obj):
         """Controle de acesso a nível de objeto"""
-        profile = getattr(request.user, 'profile', None)
-        
+        profile = getattr(request.user, "profile", None)
+
         # Bloqueia usuários sem perfil
         if not profile:
             logger.warning(
@@ -38,7 +41,7 @@ class IsOwnerOrAdminOrFuncionario(permissions.BasePermission):
             )
             raise PermissionDenied(
                 "Seu perfil de usuário não está configurado",
-                code="profile_missing"
+                code="profile_missing",
             )
 
         # 1. Admin tem acesso irrestrito
@@ -53,13 +56,13 @@ class IsOwnerOrAdminOrFuncionario(permissions.BasePermission):
 
         # 3. Funcionário tem acesso parcial (sem DELETE)
         if self._is_funcionario(profile):
-            if request.method == 'DELETE':
+            if request.method == "DELETE":
                 logger.warning(
                     f"Tentativa de DELETE por funcionário {request.user}"
                 )
                 raise PermissionDenied(
                     "Funcionários não podem excluir registros",
-                    code="funcionario_no_delete"
+                    code="funcionario_no_delete",
                 )
             return True
 

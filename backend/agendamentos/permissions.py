@@ -3,6 +3,7 @@
 from rest_framework import permissions
 from users.models import Profile
 
+
 # O nome da classe é o que você já usa, está ótimo.
 class IsTutorOrAdminOrFuncionario(permissions.BasePermission):
     """
@@ -18,7 +19,7 @@ class IsTutorOrAdminOrFuncionario(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         # A sua lógica aqui já está perfeita para agendamentos.
-        if not hasattr(request.user, 'profile'):
+        if not hasattr(request.user, "profile"):
             return False
 
         user_profile = request.user.profile

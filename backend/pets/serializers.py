@@ -1,38 +1,45 @@
 # pets/serializers.py
 
-from rest_framework import serializers
-from .models import Pet # Pet está em pets.models
+from datetime import date
+
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
-from datetime import date
-from users.models import Profile # <--- CORRIGIDO AQUI! Importe Profile de 'users.models'
+from rest_framework import serializers
+
+from users.models import Profile  # <--- CORRIGIDO AQUI! Importe Profile de 'users.models'
+
+from .models import Pet  # Pet está em pets.models
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username']
+        fields = ["id", "username"]
+
 
 class PetSerializer(serializers.ModelSerializer):
-    tutor_detail = UserSerializer(source='tutor', read_only=True)
+    tutor_detail = UserSerializer(source="tutor", read_only=True)
     tutor = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.filter(is_active=True),
-        write_only=True
+        queryset=User.objects.filter(is_active=True), write_only=True
     )
     idade = serializers.SerializerMethodField()
     foto = serializers.ImageField(
-        required=False,
-        validators=[FileExtensionValidator(['jpg', 'jpeg', 'png'])]
+        required=False, validators=[FileExtensionValidator(["jpg", "jpeg", "png"])]
     )
 
     class Meta:
         model = Pet
         fields = [
-            'id', 'nome', 'especie', 'raca',
-            'idade', 'data_de_nascimento',
-            'sexo',
-            'foto',
-            'tutor',
-            'tutor_detail'
+            "id",
+            "nome",
+            "especie",
+            "raca",
+            "idade",
+            "data_de_nascimento",
+            "sexo",
+            "foto",
+            "tutor",
+            "tutor_detail",
         ]
 
     def get_idade(self, obj):
@@ -43,14 +50,22 @@ class PetSerializer(serializers.ModelSerializer):
         # o SerializerMethodField é a forma correta de expô-lo via API.
         if obj.data_de_nascimento:
             today = date.today()
-            return today.year - obj.data_de_nascimento.year - \
-                   ((today.month, today.day) < (obj.data_de_nascimento.month, obj.data_de_nascimento.day))
+            return (
+                today.year
+                - obj.data_de_nascimento.year
+                - (
+                    (today.month, today.day)
+                    < (obj.data_de_nascimento.month, obj.data_de_nascimento.day)
+                )
+            )
         return None
 
     def validate_tutor(self, value):
         """Validação customizada: apenas clientes podem ser tutores"""
-        if not hasattr(value, 'profile'):
-            raise serializers.ValidationError("O usuário selecionado não possui um perfil associado.")
+        if not hasattr(value, "profile"):
+            raise serializers.ValidationError(
+                "O usuário selecionado não possui um perfil associado."
+            )
         # Agora Profile.Role.CLIENTE deve ser acessível corretamente
         if value.profile.role != Profile.Role.CLIENTE:
             raise serializers.ValidationError("O tutor deve ser um cliente.")
