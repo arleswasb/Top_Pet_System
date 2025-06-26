@@ -1,7 +1,0 @@
-[tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "top_pet.settings"
-python_files = [
-    "tests.py",
-    "test_*.py",
-    "*_tests.py",
-]

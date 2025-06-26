@@ -28,6 +28,7 @@ services:
 
   db:
     image: postgres:13
+    restart: always
     environment:
       POSTGRES_DB: top_pet_db
       POSTGRES_USER: user

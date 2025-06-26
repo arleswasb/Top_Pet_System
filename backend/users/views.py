@@ -5,7 +5,6 @@ from rest_framework import generics, status, permissions
 from .serializers import UserCreateSerializer
 from django.conf import settings
 from .permissions import IsAdminRole # Importa nossa nova permissão
-from collections import deque
 import os
 
 class LogFileView(APIView):
@@ -15,9 +14,9 @@ class LogFileView(APIView):
         log_file_path = os.path.join(settings.BASE_DIR, 'logs', 'debug.log')
         try:
             with open(log_file_path, 'r') as log_file:
-                # Usa um deque para ler as últimas 100 linhas de forma eficiente em memória
-                last_lines = deque(log_file, 100)
-                log_content = "".join(last_lines)
+                # Lê as últimas 100 linhas para não sobrecarregar
+                lines = log_file.readlines()[-100:]
+                log_content = "".join(lines)
             return Response(log_content, status=status.HTTP_200_OK, content_type='text/plain')
         except FileNotFoundError:
             return Response("Arquivo de log não encontrado.", status=status.HTTP_404_NOT_FOUND)
