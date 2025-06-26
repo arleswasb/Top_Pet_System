@@ -6,7 +6,7 @@ from rest_framework import permissions, serializers, viewsets
 from users.models import Profile
 
 from .models import Pet
-from .permissions import IsOwnerOrAdminOrFuncionario  # <-- Sua permissão personalizada
+from .permissions import IsOwnerOrAdminOrFuncionario
 from .serializers import PetSerializer
 
 logger = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ class PetViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated,
         IsOwnerOrAdminOrFuncionario,
-    ]  # <-- Permissões
+    ]
 
     def get_queryset(self):
         user = self.request.user
@@ -31,7 +31,7 @@ class PetViewSet(viewsets.ModelViewSet):
             return self.queryset.filter(tutor=user)
         return self.queryset.all()
 
-    def perform_create(self, serializer):  # <-- Lógica de criação
+    def perform_create(self, serializer):
         user = self.request.user
         profile = getattr(user, "profile", None)
 
@@ -40,8 +40,8 @@ class PetViewSet(viewsets.ModelViewSet):
         else:
             if "tutor" not in serializer.validated_data:
                 raise serializers.ValidationError(
-                    {"tutor": "O tutor é obrigatório para funcionários/admins"}
+                    {"tutor": "Tutor is required for employees/admins"}
                 )
             serializer.save()
 
-        logger.info(f"Pet criado por {user.email}")
+        logger.info(f"Pet created by {user.email}")

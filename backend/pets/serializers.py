@@ -6,9 +6,9 @@ from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 from rest_framework import serializers
 
-from users.models import Profile  # <--- CORRIGIDO AQUI! Importe Profile de 'users.models'
+from users.models import Profile
 
-from .models import Pet  # Pet está em pets.models
+from .models import Pet
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -24,7 +24,8 @@ class PetSerializer(serializers.ModelSerializer):
     )
     idade = serializers.SerializerMethodField()
     foto = serializers.ImageField(
-        required=False, validators=[FileExtensionValidator(["jpg", "jpeg", "png"])]
+        required=False,
+        validators=[FileExtensionValidator(["jpg", "jpeg", "png"])],
     )
 
     class Meta:
@@ -43,11 +44,6 @@ class PetSerializer(serializers.ModelSerializer):
         ]
 
     def get_idade(self, obj):
-        # A propriedade 'idade' já está definida no modelo Pet.
-        # Não é necessário reimplementar aqui, a menos que você queira um comportamento diferente.
-        # Se for o mesmo, pode remover este método e a asserção no teste.
-        # No entanto, se o campo 'idade' no modelo for uma propriedade,
-        # o SerializerMethodField é a forma correta de expô-lo via API.
         if obj.data_de_nascimento:
             today = date.today()
             return (
@@ -55,18 +51,20 @@ class PetSerializer(serializers.ModelSerializer):
                 - obj.data_de_nascimento.year
                 - (
                     (today.month, today.day)
-                    < (obj.data_de_nascimento.month, obj.data_de_nascimento.day)
+                    < (
+                        obj.data_de_nascimento.month,
+                        obj.data_de_nascimento.day,
+                    )
                 )
             )
         return None
 
     def validate_tutor(self, value):
-        """Validação customizada: apenas clientes podem ser tutores"""
+        """Custom validation: only clients can be tutors"""
         if not hasattr(value, "profile"):
             raise serializers.ValidationError(
-                "O usuário selecionado não possui um perfil associado."
+                "The selected user does not have an associated profile."
             )
-        # Agora Profile.Role.CLIENTE deve ser acessível corretamente
         if value.profile.role != Profile.Role.CLIENTE:
-            raise serializers.ValidationError("O tutor deve ser um cliente.")
+            raise serializers.ValidationError("The tutor must be a client.")
         return value

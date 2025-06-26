@@ -2,7 +2,6 @@
 
 from datetime import timedelta
 
-from django.conf import settings
 from django.db import models
 from pets.models import Pet
 
@@ -16,7 +15,8 @@ class Servico(models.Model):
     nome = models.CharField(max_length=100, unique=True)
     descricao = models.TextField(blank=True, null=True)
     duracao = models.DurationField(
-        default=timedelta(minutes=30), help_text="Duração do serviço. Formato: HH:MM:SS"
+        default=timedelta(minutes=30),
+        help_text="Duração do serviço. Formato: HH:MM:SS",
     )
     preco = models.DecimalField(max_digits=8, decimal_places=2)
     disponivel = models.BooleanField(
@@ -61,4 +61,7 @@ class Agendamento(models.Model):
         ordering = ["data_hora"]
 
     def __str__(self):
-        return f"{self.servico.nome} para {self.pet.nome} em {self.data_hora.strftime('%d/%m/%Y %H:%M')}"
+        return (
+            f"{self.servico.nome} para {self.pet.nome} em "
+            f"{self.data_hora.strftime('%d/%m/%Y %H:%M')}"
+        )

@@ -32,7 +32,10 @@ class ServicoViewSet(viewsets.ModelViewSet):
 class AgendamentoViewSet(viewsets.ModelViewSet):
     queryset = Agendamento.objects.all()
     serializer_class = AgendamentoSerializer
-    permission_classes = [permissions.IsAuthenticated, IsTutorOrAdminOrFuncionario]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        IsTutorOrAdminOrFuncionario,
+    ]
 
     def get_queryset(self):
         user = self.request.user

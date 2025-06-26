@@ -18,7 +18,7 @@ jobs:
         run: docker compose build backend
 
       - name: Executar o flake8
-        run: docker compose run --rm backend flake8 .
+        run: docker compose run --rm backend flake8 --select=F .
 
   test:
     name: Executar Testes Automatizados

@@ -1,7 +1,7 @@
 # pets/admin.py
 
 from django.contrib import admin
-from django.utils.translation import gettext_lazy as _  # Importar para traduções (opcional, mas bom)
+from django.utils.translation import gettext_lazy as _
 
 from .models import Pet
 
@@ -19,7 +19,7 @@ class PetAdmin(admin.ModelAdmin):
         "tutor_username",  # Método para exibir o username do tutor
         "especie",
         "raca",
-        "sexo",  # Adicionado campo sexo
+        "sexo",
         "get_idade_display",  # Método para exibir a idade
         "created_at",  # Adicionado campo created_at
         "updated_at",  # Adicionado campo updated_at

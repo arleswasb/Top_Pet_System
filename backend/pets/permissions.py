@@ -10,69 +10,63 @@ logger = logging.getLogger(__name__)
 
 class IsOwnerOrAdminOrFuncionario(permissions.BasePermission):
     """
-    Permissão hierárquica para recursos Pet:
-    - ADMIN: Acesso completo (CRUD)
-    - DONO: Acesso completo ao seu pet (CRUD)
-    - FUNCIONÁRIO: Acesso parcial (Create/Read/Update)
-    - OUTROS: Apenas criação (se autenticado)
+    Hierarchical permission for Pet resources:
+    - ADMIN: Full access (CRUD)
+    - OWNER: Full access to their own pet (CRUD)
+    - EMPLOYEE: Partial access (Create/Read/Update)
+    - OTHERS: Creation only (if authenticated)
     """
 
     def has_permission(self, request, view):
-        """Controle de acesso a nível de endpoint"""
+        """Endpoint-level access control"""
         if not request.user.is_authenticated:
-            logger.warning(f"Acesso não-autenticado negado para {request.path}")
+            logger.warning(
+                f"Unauthenticated access denied for {request.path}"
+            )
             return False
 
-        # Todos autenticados podem criar pets
         if view.action == "create":
             return True
 
-        # Outras ações são validadas em has_object_permission
         return True
 
     def has_object_permission(self, request, view, obj):
-        """Controle de acesso a nível de objeto"""
+        """Object-level access control"""
         profile = getattr(request.user, "profile", None)
 
-        # Bloqueia usuários sem perfil
         if not profile:
             logger.warning(
-                f"Acesso negado para {request.user} - Perfil não encontrado"
+                f"Access denied for {request.user} - Profile not found"
             )
             raise PermissionDenied(
-                "Seu perfil de usuário não está configurado",
+                "Your user profile is not configured",
                 code="profile_missing",
             )
 
-        # 1. Admin tem acesso irrestrito
         if self._is_admin(profile):
-            logger.debug(f"Acesso ADMIN concedido para {request.user}")
+            logger.debug(f"ADMIN access granted for {request.user}")
             return True
 
-        # 2. Dono tem acesso completo
         if obj.tutor == request.user:
-            logger.debug(f"Acesso DONO concedido para {request.user}")
+            logger.debug(f"OWNER access granted for {request.user}")
             return True
 
-        # 3. Funcionário tem acesso parcial (sem DELETE)
         if self._is_funcionario(profile):
             if request.method == "DELETE":
                 logger.warning(
-                    f"Tentativa de DELETE por funcionário {request.user}"
+                    f"DELETE attempt by employee {request.user}"
                 )
                 raise PermissionDenied(
-                    "Funcionários não podem excluir registros",
+                    "Employees cannot delete records",
                     code="funcionario_no_delete",
                 )
             return True
 
-        # 4. Negar outros casos
         logger.warning(
-            f"Acesso negado para {request.user} (Role: {profile.role})"
+            f"Access denied for {request.user} (Role: {profile.role})"
         )
         return False
 
-    # --- Métodos auxiliares ---
     def _is_admin(self, profile):
         return profile.role == Profile.Role.ADMIN
 
