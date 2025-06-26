@@ -1,9 +1,15 @@
-#!/bin/sh
+#!/bin/bash
+set -e
 
-# Aplicando migrações do banco de dados...
+echo "Waiting for database..."
+while ! nc -z db 5432; do
+  sleep 0.1
+done
+echo "Database is ready!"
+
 echo "Aplicando migrações do banco de dados..."
+python manage.py makemigrations
 python manage.py migrate
 
-# Iniciando o servidor...
 echo "Iniciando o servidor..."
-exec python -u manage.py runserver 0.0.0.0:8000 --noreload
+exec python manage.py runserver 0.0.0.0:8000
