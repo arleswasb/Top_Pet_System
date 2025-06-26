@@ -7,7 +7,7 @@
 
 
 services:
-  web:
+  backend:
     build: ./backend
     command: /app/entrypoint.sh
     volumes:
@@ -22,6 +22,21 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_HOST: db
     # ---------------------------
+    depends_on:
+      db:
+        condition: service_healthy
+
+  backend-test:
+    build: ./backend
+    command: tail -f /dev/null
+    volumes:
+      - ./backend:/app
+      - media_data:/app/media
+    environment:
+      POSTGRES_NAME: top_pet_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_HOST: db
     depends_on:
       db:
         condition: service_healthy

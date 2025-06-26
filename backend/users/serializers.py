@@ -22,6 +22,5 @@ class UserCreateSerializer(serializers.ModelSerializer):
             first_name=validated_data.get('first_name', ''),
             last_name=validated_data.get('last_name', '')
         )
-        # Cria o Profile associado com a role de CLIENTE
-        Profile.objects.create(user=user, role=Profile.Role.CLIENTE)
+        # A criação do Profile agora é tratada pelo signal em users/signals.py
         return user

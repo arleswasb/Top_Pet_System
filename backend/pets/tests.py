@@ -12,7 +12,19 @@ from io import BytesIO
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 class PetModelTestCase(TestCase):
+    """
+    Suíte de testes de integração para o modelo `Pet`.
+
+    Estes testes validam a interação do modelo `Pet` com o banco de dados,
+    incluindo a criação e recuperação de instâncias.
+    """
     def setUp(self):
+        """
+        Configura o ambiente para os testes do modelo.
+
+        Cria um usuário `tutor` que será usado para associar aos pets
+        criados durante os testes.
+        """
         self.user = User.objects.create_user(
             username='tutor_model', # Nome de usuário único para este teste
             password='testpass123'
@@ -29,14 +41,33 @@ class PetModelTestCase(TestCase):
         }
 
     def test_pet_creation(self):
-        """Testa a criação básica de um pet"""
+        """
+        Testa a criação de uma instância de `Pet` no banco de dados.
+
+        Verifica se um objeto `Pet` pode ser criado com sucesso com os
+        dados mínimos necessários e se os valores são salvos corretamente.
+        """
         pet = Pet.objects.create(**self.pet_data)
         self.assertEqual(pet.nome, 'Rex')
         self.assertEqual(pet.tutor.username, 'tutor_model')
         self.assertIsNone(pet.raca) # Campo opcional
 
 class PetPermissionsTestCase(TestCase):
+    """
+    Suíte de testes para as permissões de acesso aos endpoints de `Pet`.
+
+    Valida se as regras de permissão (definidas em `permissions.py`)
+    são aplicadas corretamente para diferentes tipos de usuários (admin,
+    funcionário, tutor e outros).
+    """
     def setUp(self):
+        """
+        Configura o ambiente para os testes de permissão.
+
+        Cria um conjunto de usuários com diferentes papéis (admin, funcionário,
+        cliente/tutor) e um pet associado a um dos tutores para
+        servir como recurso nos testes de acesso.
+        """
         # Cria usuários com diferentes perfis. Nomes de usuário únicos.
         self.admin = User.objects.create_user(
             username='admin_perm',
@@ -78,7 +109,12 @@ class PetPermissionsTestCase(TestCase):
         self.client = APIClient()
 
     def test_admin_full_access(self):
-        """Admin deve ter acesso completo"""
+        """
+        Testa se um usuário admin tem acesso total aos pets.
+
+        Verifica se o admin pode visualizar (GET) e deletar (DELETE)
+        qualquer pet no sistema.
+        """
         self.client.force_authenticate(user=self.admin)
         
         # Testa GET
@@ -93,7 +129,12 @@ class PetPermissionsTestCase(TestCase):
 
 
     def test_owner_full_access(self):
-        """Dono deve ter acesso completo"""
+        """
+        Testa se o tutor do pet tem acesso total ao seu próprio pet.
+
+        Verifica se o tutor pode visualizar (GET) e atualizar (PUT)
+        os dados do seu pet.
+        """
         self.client.force_authenticate(user=self.tutor)
         
         # Dados para atualização (incluindo campo obrigatório 'tutor')
@@ -113,7 +154,12 @@ class PetPermissionsTestCase(TestCase):
         self.assertEqual(self.pet.especie, 'Gato')
 
     def test_funcionario_no_delete(self):
-        """Funcionário não pode deletar"""
+        """
+        Testa se um funcionário não pode deletar um pet.
+
+        Verifica se a tentativa de deletar um pet por um funcionário
+        resulta em um erro de permissão (403 Forbidden).
+        """
         self.client.force_authenticate(user=self.funcionario)
         
         response = self.client.delete(f'/api/pets/{self.pet.id}/')
@@ -123,7 +169,13 @@ class PetPermissionsTestCase(TestCase):
 
 
     def test_other_user_access(self):
-        """Outro usuário não deve ter acesso (receber 404 se não puder ver o pet)"""
+        """
+        Testa se um usuário não autorizado não pode acessar o pet de outro.
+
+        Verifica se um usuário (que não é admin, nem funcionário, nem o tutor)
+        recebe um erro 404 Not Found ao tentar acessar os dados de um pet
+        que não lhe pertence.
+        """
         self.client.force_authenticate(user=self.outro_user)
         
         response = self.client.get(f'/api/pets/{self.pet.id}/')
@@ -133,7 +185,20 @@ class PetPermissionsTestCase(TestCase):
 
 
 class PetSerializerTestCase(TestCase):
+    """
+    Suíte de testes para o `PetSerializer`.
+
+    Valida a lógica de serialização e desserialização de dados do modelo `Pet`,
+    incluindo a validação de campos obrigatórios, tratamento de campos
+    somente leitura e upload de arquivos.
+    """
     def setUp(self):
+        """
+        Configura o ambiente para os testes do serializer.
+
+        Cria um usuário `tutor` e um dicionário com dados válidos para
+        ser usado na criação de pets via serializer.
+        """
         self.user = User.objects.create_user(
             username='serializertest_user', # Nome de usuário único
             password='testpass'
@@ -151,7 +216,12 @@ class PetSerializerTestCase(TestCase):
         }
 
     def test_valid_serializer(self):
-        """Testa serializer com dados válidos"""
+        """
+        Testa a validação do serializer com um payload completo e válido.
+
+        Verifica se o serializer considera os dados como válidos e se a
+        instância do pet é criada corretamente no banco de dados.
+        """
         from .serializers import PetSerializer # Importação aqui para evitar circular references se serializer precisar do models
         serializer = PetSerializer(data=self.valid_data)
         self.assertTrue(serializer.is_valid(), serializer.errors) # Passa erros para depuração
@@ -163,7 +233,12 @@ class PetSerializerTestCase(TestCase):
         self.assertEqual(pet.sexo, Pet.Gender.FEMALE)
 
     def test_missing_required_field(self):
-        """Testa serializer com campo obrigatório faltando"""
+        """
+        Testa a falha de validação quando um campo obrigatório está ausente.
+
+        Verifica se o serializer retorna um erro de validação quando um
+        campo obrigatório (como 'nome') não é fornecido no payload.
+        """
         from .serializers import PetSerializer
         invalid_data = self.valid_data.copy()
         del invalid_data['nome'] # Remove um campo obrigatório
@@ -173,7 +248,13 @@ class PetSerializerTestCase(TestCase):
         self.assertIn('nome', serializer.errors)
 
     def test_read_only_fields(self):
-        """Testa que campos read_only (como 'id', 'created_at') não são aceitos na criação"""
+        """
+        Testa se campos somente leitura são ignorados durante a criação.
+
+        Verifica se o serializer ignora valores passados para campos
+        somente leitura (como 'id' e 'created_at') e permite que o
+        banco de dados os gere automaticamente.
+        """
         from .serializers import PetSerializer
         data_with_readonly = self.valid_data.copy()
         data_with_readonly['id'] = 9999 # Tentando definir um ID (que é read-only)
@@ -188,7 +269,13 @@ class PetSerializerTestCase(TestCase):
         self.assertNotEqual(str(pet.created_at.date()), '2020-01-01') 
 
     def test_image_upload(self):
-        """Testa o upload de imagem através da API"""
+        """
+        Testa o upload de uma imagem para o campo `foto` via API.
+
+        Simula uma requisição POST com um arquivo de imagem para criar um
+        pet e verifica se a imagem é salva corretamente e se a URL
+        da imagem é retornada na resposta da API.
+        """
         # Cria uma imagem de teste em memória
         image_file = BytesIO()
         image = Image.new('RGB', (100, 100), color = 'red')
@@ -230,7 +317,13 @@ class PetSerializerTestCase(TestCase):
 
 
     def test_age_calculation(self):
-        """Testa o cálculo da idade do pet"""
+        """
+        Testa o cálculo da idade de um pet após ser criado no banco.
+
+        Cria um pet com uma data de nascimento específica e verifica se a
+        propriedade `idade` (que não é do serializer, mas do modelo)
+        calcula o valor correto. Este é um teste de integração.
+        """
         pet = Pet.objects.create(
             nome='PetVelho',
             especie='Cachorro',
