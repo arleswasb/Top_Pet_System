@@ -49,21 +49,37 @@ Para rodar todos os conjuntos de testes e verificar a cobertura, execute:
 docker compose run --rm backend pytest
 ```
 
-### Executando conjuntos de testes específicos
+### Executando Testes Específicos
 
-Você também pode executar cada conjunto de testes individualmente:
+Você pode executar testes de forma mais granular, seja por aplicação (diretório) ou por arquivo.
 
-- **Testes de Agendamentos:**
+#### Por Aplicação
+
+- **Testes da aplicação `pets` (inclui unidade e integração):**
   ```bash
-  docker compose run --rm backend pytest agendamentos/tests.py
+  docker compose run --rm backend pytest pets/
   ```
 
-- **Testes de Integração de Pets:**
+- **Testes da aplicação `agendamentos`:**
+  ```bash
+  docker compose run --rm backend pytest agendamentos/
+  ```
+
+- **Testes da aplicação `users`:**
+  ```bash
+  docker compose run --rm backend pytest users/
+  ```
+
+#### Por Arquivo
+
+Se precisar de ainda mais especificidade, pode rodar um único arquivo de teste:
+
+- **Apenas Testes de Integração de Pets:**
   ```bash
   docker compose run --rm backend pytest pets/tests.py
   ```
 
-- **Testes de Unidade de Pets:**
+- **Apenas Testes de Unidade de Pets:**
   ```bash
   docker compose run --rm backend pytest pets/tests_unidade.py
   ```

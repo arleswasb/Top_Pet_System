@@ -3,7 +3,7 @@ from datetime import date
 
 from django.test import TestCase
 
-from ..models import Pet
+from .models import Pet
 
 # Os testes de unidade são focados em testar a menor parte funcional de um código,
 # como uma função ou um método de uma classe, de forma isolada.
