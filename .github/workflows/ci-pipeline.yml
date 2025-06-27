@@ -107,7 +107,7 @@ jobs:
       - name: Executar testes específicos (pets)
         run: |
           cd backend
-          python manage.py test pets.tests_unidade pets.tests --verbosity=2
+          python manage.py test pets.tests_unidade pets.tests_validacao pets.tests_integracao --verbosity=2
         continue-on-error: false
         
       - name: Executar testes específicos (agendamentos)

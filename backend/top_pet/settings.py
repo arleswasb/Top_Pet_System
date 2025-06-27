@@ -85,8 +85,13 @@ WSGI_APPLICATION = 'top_pet.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 # Database configuration
-# Use PostgreSQL if environment variables are set, otherwise use SQLite
-if os.environ.get('POSTGRES_NAME'):
+# Use PostgreSQL if DATABASE_URL is set (for CI/production), otherwise use SQLite
+if os.environ.get('DATABASE_URL'):
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+    }
+elif os.environ.get('POSTGRES_NAME'):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -102,7 +107,7 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': ':memory:',  # Use in-memory database for tests
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
 
