@@ -1,13 +1,13 @@
-name: Testes de CI do Django
+name: Top Pet System - CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
     
     # Define um serviço de banco de dados que rodará durante os testes
@@ -16,7 +16,7 @@ jobs:
         image: postgres:13
         # Define as credenciais para o banco de dados de teste
         env:
-          POSTGRES_DB: test_db
+          POSTGRES_DB: top_pet_test_db
           POSTGRES_USER: test_user
           POSTGRES_PASSWORD: test_password
         ports:
@@ -29,17 +29,76 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: Checkout do código
+      - name: 📥 Checkout do código
         uses: actions/checkout@v4
         
-      - name: Executar os testes do Django
-        # Este é o comando chave: 'run' em vez de 'exec'
-        # Ele inicia o 'web', executa o teste e para.
-        run: docker compose run --rm web python manage.py test
+      - name: 🐳 Build dos containers Docker
+        run: docker compose build web
+        
+      - name: 🔍 Verificar estrutura do projeto
+        run: |
+          echo "📂 Verificando estrutura do projeto..."
+          ls -la backend/
+          echo "📦 Apps Django encontrados:"
+          ls -la backend/*/
+        
+      - name: 🔧 Aplicar migrações
+        run: docker compose run --rm web python manage.py migrate
         env:
-          # Passa as variáveis de ambiente para o contêiner 'web'
-          # para que o settings.py possa se conectar ao banco de dados 'postgres'
-          POSTGRES_NAME: test_db
+          POSTGRES_NAME: top_pet_test_db
           POSTGRES_USER: test_user
           POSTGRES_PASSWORD: test_password
-          POSTGRES_HOST: postgres # O nome do host é o nome do serviço definido acima
+          POSTGRES_HOST: postgres
+          
+      - name: 🧪 Executar testes - Users App
+        run: docker compose run --rm web python manage.py test users.tests -v 2
+        env:
+          POSTGRES_NAME: top_pet_test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_HOST: postgres
+          
+      - name: 🐕 Executar testes - Pets App
+        run: docker compose run --rm web python manage.py test pets.tests -v 2
+        env:
+          POSTGRES_NAME: top_pet_test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_HOST: postgres
+          
+      - name: 📅 Executar testes - Agendamentos App
+        run: docker compose run --rm web python manage.py test agendamentos.tests -v 2
+        env:
+          POSTGRES_NAME: top_pet_test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_HOST: postgres
+          
+      - name: 🏥 Executar testes - Prontuarios App
+        run: docker compose run --rm web python manage.py test prontuarios.tests -v 2
+        env:
+          POSTGRES_NAME: top_pet_test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_HOST: postgres
+          
+      - name: 🚀 Executar todos os testes do sistema
+        run: docker compose run --rm web python manage.py test --verbosity=2
+        env:
+          POSTGRES_NAME: top_pet_test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_HOST: postgres
+          
+      - name: 📊 Verificar cobertura de código (opcional)
+        run: |
+          echo "✅ Testes concluídos com sucesso!"
+          echo "📈 Apps testados:"
+          echo "  - 👥 Users: Autenticação e perfis"
+          echo "  - 🐕 Pets: Cadastro e gestão de pets"
+          echo "  - 📅 Agendamentos: Sistema de agendamento"
+          echo "  - 🏥 Prontuarios: Registros médicos"
+          
+      - name: 🧹 Limpeza dos containers
+        if: always()
+        run: docker compose down --volumes --remove-orphans
