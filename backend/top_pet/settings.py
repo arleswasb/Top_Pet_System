@@ -31,8 +31,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'users',
-    'agendamentos',
-    'prontuarios',      
+    'agendamentos',      
 ]
 
 # Configuração de autenticação do DRF 

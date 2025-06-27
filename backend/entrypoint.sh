@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Aplicando migrações do banco de dados...
 echo "Aplicando migrações do banco de dados..."

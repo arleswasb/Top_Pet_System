@@ -1,0 +1,192 @@
+# pets/tests_unidade.py
+
+import unittest
+from django.test import TestCase
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError
+from datetime import date, timedelta
+from decimal import Decimal
+
+from .models import Pet
+from users.models import Profile
+
+
+class PetModelUnitTest(TestCase):
+    """Testes de unidade específicos para o modelo Pet"""
+    
+    def setUp(self):
+        """Configuração inicial para os testes"""
+        self.user = User.objects.create_user(
+            username='tutor_unit_test',
+            email='tutor@unittest.com',
+            password='testpass123'
+        )
+        # Configurar perfil como cliente
+        profile = Profile.objects.get(user=self.user)
+        profile.role = Profile.Role.CLIENTE
+        profile.save()
+    
+    def test_pet_creation_minimal_data(self):
+        """Teste criação de pet com dados mínimos obrigatórios"""
+        pet = Pet.objects.create(
+            nome='Buddy',
+            especie='Cachorro',
+            tutor=self.user
+        )
+        
+        self.assertEqual(pet.nome, 'Buddy')
+        self.assertEqual(pet.especie, 'Cachorro')
+        self.assertEqual(pet.tutor, self.user)
+        self.assertEqual(pet.sexo, Pet.Gender.UNKNOWN)  # Valor padrão
+        self.assertIsNone(pet.raca)
+        self.assertIsNone(pet.data_de_nascimento)
+        self.assertIsNotNone(pet.created_at)
+        self.assertIsNotNone(pet.updated_at)
+    
+    def test_pet_creation_complete_data(self):
+        """Teste criação de pet com todos os dados"""
+        birth_date = date(2020, 5, 15)
+        pet = Pet.objects.create(
+            nome='Luna',
+            especie='Gato',
+            raca='Siamês',
+            data_de_nascimento=birth_date,
+            sexo=Pet.Gender.FEMALE,
+            tutor=self.user,
+            observacoes='Pet muito dócil e carinhoso'
+        )
+        
+        self.assertEqual(pet.nome, 'Luna')
+        self.assertEqual(pet.especie, 'Gato')
+        self.assertEqual(pet.raca, 'Siamês')
+        self.assertEqual(pet.data_de_nascimento, birth_date)
+        self.assertEqual(pet.sexo, Pet.Gender.FEMALE)
+        self.assertEqual(pet.observacoes, 'Pet muito dócil e carinhoso')
+    
+    def test_pet_str_method(self):
+        """Teste do método __str__ do Pet"""
+        pet = Pet.objects.create(
+            nome='Max',
+            especie='Cachorro',
+            tutor=self.user
+        )
+        
+        expected_str = "Max (Cachorro)"
+        self.assertEqual(str(pet), expected_str)
+    
+    def test_pet_idade_property_with_birth_date(self):
+        """Teste da propriedade idade quando há data de nascimento"""
+        # Pet nascido há exatos 3 anos - garantindo data exata
+        today = date.today()
+        birth_date = today.replace(year=today.year - 3)
+        pet = Pet.objects.create(
+            nome='Rocky',
+            especie='Cachorro',
+            data_de_nascimento=birth_date,
+            tutor=self.user
+        )
+        
+        self.assertEqual(pet.idade, 3)
+    
+    def test_pet_idade_property_without_birth_date(self):
+        """Teste da propriedade idade quando não há data de nascimento"""
+        pet = Pet.objects.create(
+            nome='Shadow',
+            especie='Gato',
+            tutor=self.user
+        )
+        
+        self.assertIsNone(pet.idade)
+    
+    def test_pet_gender_choices(self):
+        """Teste das opções de sexo do Pet"""
+        # Teste sexo masculino
+        pet_male = Pet.objects.create(
+            nome='Thor',
+            especie='Cachorro',
+            sexo=Pet.Gender.MALE,
+            tutor=self.user
+        )
+        self.assertEqual(pet_male.sexo, Pet.Gender.MALE)
+        self.assertEqual(pet_male.get_sexo_display(), 'Macho')
+        
+        # Teste sexo feminino
+        pet_female = Pet.objects.create(
+            nome='Lola',
+            especie='Gato',
+            sexo=Pet.Gender.FEMALE,
+            tutor=self.user
+        )
+        self.assertEqual(pet_female.sexo, Pet.Gender.FEMALE)
+        self.assertEqual(pet_female.get_sexo_display(), 'Fêmea')
+        
+        # Teste sexo desconhecido (padrão)
+        pet_unknown = Pet.objects.create(
+            nome='Mystery',
+            especie='Pássaro',
+            tutor=self.user
+        )
+        self.assertEqual(pet_unknown.sexo, Pet.Gender.UNKNOWN)
+        self.assertEqual(pet_unknown.get_sexo_display(), 'Desconhecido')
+
+
+class PetValidationUnitTest(TestCase):
+    """Testes específicos de validação do modelo Pet"""
+    
+    def setUp(self):
+        """Configuração inicial para os testes"""
+        self.user = User.objects.create_user(
+            username='validator_test',
+            email='validator@unittest.com',
+            password='testpass123'
+        )
+    
+    def test_birth_date_validation_future_date(self):
+        """Teste validação de data de nascimento futura"""
+        future_date = date.today() + timedelta(days=1)
+        
+        pet = Pet(
+            nome='FutureTest',
+            especie='Cachorro',
+            data_de_nascimento=future_date,
+            tutor=self.user
+        )
+        
+        # Deve falhar na validação
+        with self.assertRaises(ValidationError):
+            pet.full_clean()
+    
+    def test_birth_date_validation_valid_past_date(self):
+        """Teste validação de data de nascimento válida (passado)"""
+        past_date = date.today() - timedelta(days=365)
+        
+        pet = Pet(
+            nome='PastTest',
+            especie='Cachorro',
+            data_de_nascimento=past_date,
+            tutor=self.user
+        )
+        
+        # Não deve levantar exceção
+        try:
+            pet.full_clean()
+        except ValidationError:
+            self.fail("Validação falhou para data válida no passado")
+    
+    def test_birth_date_validation_today(self):
+        """Teste validação de data de nascimento hoje"""
+        today = date.today()
+        
+        pet = Pet(
+            nome='TodayTest',
+            especie='Cachorro',
+            data_de_nascimento=today,
+            tutor=self.user
+        )
+        
+        # Não deve levantar exceção
+        try:
+            pet.full_clean()
+        except ValidationError:
+            self.fail("Validação falhou para data de hoje")
