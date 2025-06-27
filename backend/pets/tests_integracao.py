@@ -5,7 +5,7 @@ Testes de integração para o módulo pets.
 Testa endpoints da API, permissões, autenticação e integração entre components.
 """
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.contrib.auth.models import User
 from rest_framework.test import APIClient
 from rest_framework import status
@@ -15,6 +15,8 @@ from datetime import date
 from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import SimpleUploadedFile
+import tempfile
+import os
 
 
 class PetAPIPermissionsTestCase(TestCase):
@@ -251,36 +253,41 @@ class PetSerializerIntegrationTestCase(TestCase):
 
     def test_image_upload_via_api(self):
         """Testa upload de imagem através da API"""
-        # Cria uma imagem de teste
-        image_file = BytesIO()
-        image = Image.new('RGB', (100, 100), color='red')
-        image.save(image_file, 'JPEG')
-        image_file.seek(0)
+        # Criar um diretório temporário para o teste
+        with tempfile.TemporaryDirectory() as temp_dir:
+            media_root = os.path.join(temp_dir, 'test_media')
+            
+            with override_settings(MEDIA_ROOT=media_root):
+                # Cria uma imagem de teste
+                image_file = BytesIO()
+                image = Image.new('RGB', (100, 100), color='red')
+                image.save(image_file, 'JPEG')
+                image_file.seek(0)
 
-        uploaded_image = SimpleUploadedFile(
-            "test_image.jpg",
-            image_file.getvalue(),
-            content_type="image/jpeg"
-        )
-        
-        pet_data = {
-            'nome': 'Pet com Foto',
-            'especie': 'Gato',
-            'sexo': Pet.Gender.FEMALE,
-            'foto': uploaded_image
-        }
+                uploaded_image = SimpleUploadedFile(
+                    "test_image.jpg",
+                    image_file.getvalue(),
+                    content_type="image/jpeg"
+                )
+                
+                pet_data = {
+                    'nome': 'Pet com Foto',
+                    'especie': 'Gato',
+                    'sexo': Pet.Gender.FEMALE,
+                    'foto': uploaded_image
+                }
 
-        response = self.client.post(
-            '/api/pets/',
-            data=pet_data,
-            format='multipart'
-        )
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        
-        # Verifica se a imagem foi salva
-        pet = Pet.objects.get(id=response.data['id'])
-        self.assertTrue(pet.foto.name.endswith('.jpg'))
-        self.assertIsNotNone(pet.foto.url)
+                response = self.client.post(
+                    '/api/pets/',
+                    data=pet_data,
+                    format='multipart'
+                )
+                self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+                
+                # Verifica se a imagem foi salva
+                pet = Pet.objects.get(id=response.data['id'])
+                self.assertTrue(pet.foto.name.endswith('.jpg'))
+                self.assertIsNotNone(pet.foto.url)
 
     def test_read_only_fields_ignored(self):
         """Testa que campos read-only são ignorados na criação"""

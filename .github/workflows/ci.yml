@@ -40,10 +40,12 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     
-    - name: Run pylint
+    - name: Run pylint (Errors Only)
       run: |
         cd backend
-        pylint --load-plugins=pylint_django --django-settings-module=top_pet.settings **/*.py --exit-zero
+        echo "🔍 Running Pylint - Checking for ERRORS only (no style/formatting)"
+        # Run pylint focusing only on errors and critical issues
+        pylint --rcfile=.pylintrc **/*.py --errors-only --disable=import-error
 
   unit-tests:
     name: Unit & Validation Tests

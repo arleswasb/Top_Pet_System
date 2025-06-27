@@ -152,9 +152,25 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Media files (uploads)
+import os
+import tempfile
 
-MEDIA_ROOT = '/app/media' 
+# Configuração do MEDIA_ROOT baseada no ambiente
+if 'DOCKER_ENV' in os.environ:
+    # Em ambiente Docker/produção
+    MEDIA_ROOT = '/app/media'
+elif 'CI' in os.environ or 'GITHUB_ACTIONS' in os.environ:
+    # Em ambiente de CI/Testes
+    MEDIA_ROOT = os.path.join(tempfile.gettempdir(), 'test_media')
+else:
+    # Em desenvolvimento local
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 MEDIA_URL = '/media/'
+
+# Garante que o diretório de mídia existe
+os.makedirs(MEDIA_ROOT, exist_ok=True)
 
 #conficuração do logging
 import os
@@ -194,4 +210,22 @@ LOGGING = {
         },
     },
 }
+
+# Configurações específicas para testes
+import sys
+if 'test' in sys.argv or 'pytest' in sys.modules or 'unittest' in sys.modules:
+    # Durante os testes, usar um diretório temporário para mídia
+    import tempfile
+    MEDIA_ROOT = os.path.join(tempfile.gettempdir(), 'test_media_pets')
+    
+    # Criar o diretório se não existir
+    os.makedirs(MEDIA_ROOT, exist_ok=True)
+    
+    # Configuração de banco de dados mais rápida para testes
+    DATABASES['default']['OPTIONS'] = {
+        'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+    } if DATABASES['default']['ENGINE'].endswith('mysql') else {}
+    
+    # Desabilitar logs durante testes para performance
+    LOGGING['loggers']['django']['level'] = 'ERROR'
 
