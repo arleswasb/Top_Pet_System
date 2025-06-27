@@ -1,6 +1,9 @@
 # Use uma imagem base do Python
 FROM python:3.9-slim-buster
 
+# Instalar bash
+RUN apt-get update && apt-get install -y bash && rm -rf /var/lib/apt/lists/*
+
 # Defina o diretório de trabalho dentro do contêiner
 WORKDIR /app
 
@@ -16,8 +19,11 @@ COPY . /app/
 # Linha para dar permissão de execução ao script
 RUN chmod +x /app/entrypoint.sh
 
+# Verificar se o entrypoint.sh existe
+RUN ls -la /app/entrypoint.sh
+
 # Expor a porta que o Django usa (padrão: 8000)
 EXPOSE 8000
 
 # Comando para executar o Django (ajustado para o caminho correto do manage.py)
-CMD ["python", "/app/top_pet/manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
