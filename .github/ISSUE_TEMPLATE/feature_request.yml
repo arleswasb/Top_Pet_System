@@ -1,0 +1,95 @@
+name: ✨ Feature Request
+description: Sugerir uma nova funcionalidade
+title: "[FEATURE] "
+labels: ["enhancement", "needs-review"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por sugerir uma nova funcionalidade! Por favor, descreva sua ideia detalhadamente.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema a ser Resolvido
+      description: Que problema esta funcionalidade resolveria?
+      placeholder: Descreva o problema ou necessidade...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solução Proposta
+      description: Como você gostaria que esta funcionalidade funcionasse?
+      placeholder: Descreva a solução ideal...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas Consideradas
+      description: Você considerou outras soluções?
+      placeholder: Descreva outras abordagens que você pensou...
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Componente
+      description: Qual componente seria afetado?
+      options:
+        - Agendamentos
+        - Pets
+        - Prontuários
+        - Usuários
+        - API
+        - Frontend
+        - Autenticação
+        - Relatórios
+        - Novo Módulo
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Prioridade
+      description: Qual a prioridade desta funcionalidade?
+      options:
+        - Baixa
+        - Média
+        - Alta
+        - Crítica
+    validations:
+      required: true
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups/Exemplos
+      description: Se aplicável, adicione mockups, wireframes ou exemplos
+
+  - type: checkboxes
+    id: impact
+    attributes:
+      label: Impacto Estimado
+      description: Que áreas seriam afetadas? (múltipla escolha)
+      options:
+        - label: Interface do usuário
+        - label: API/Backend
+        - label: Banco de dados
+        - label: Autenticação/Autorização
+        - label: Performance
+        - label: Segurança
+        - label: Documentação
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Verificações
+      options:
+        - label: Verifiquei se não há uma funcionalidade similar já solicitada
+          required: true
+        - label: Esta funcionalidade se alinha com os objetivos do projeto
+          required: true

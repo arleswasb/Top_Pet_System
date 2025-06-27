@@ -43,6 +43,21 @@ jobs:
     runs-on: ubuntu-latest
     needs: lint  # Executa após o lint passar
     
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: top_pet_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
@@ -52,41 +67,123 @@ jobs:
         with:
           python-version: '3.11'
           
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+          
       - name: Instalar dependências
         run: |
           python -m pip install --upgrade pip
           pip install -r backend/requirements.txt
+          pip install coverage pytest-cov pytest-django
+          
+      - name: Configurar variáveis de ambiente
+        run: |
+          echo "DATABASE_URL=postgres://postgres:postgres@localhost:5432/top_pet_test" >> $GITHUB_ENV
+          echo "DEBUG=True" >> $GITHUB_ENV
+          echo "SECRET_KEY=test-secret-key-for-ci" >> $GITHUB_ENV
           
       - name: Configurar banco de dados de teste
         run: |
           cd backend
           python manage.py migrate --settings=top_pet.settings
           
-      - name: Executar testes do Django
+      - name: Executar verificação do sistema
         run: |
           cd backend
-          python manage.py test --verbosity=2 --keepdb
+          python manage.py check --verbosity=2
+          
+      - name: Executar testes do Django com cobertura
+        run: |
+          cd backend
+          coverage run --source='.' manage.py test --verbosity=2 --keepdb
         env:
           DJANGO_SETTINGS_MODULE: top_pet.settings
           
-      - name: Executar testes de unidade (pets)
+      - name: Executar testes específicos (pets)
         run: |
           cd backend
-          python manage.py test pets.tests_unidade --verbosity=2
+          python manage.py test pets.tests_unidade pets.tests --verbosity=2
         continue-on-error: false
         
-      - name: Executar testes de integração (agendamentos)
+      - name: Executar testes específicos (agendamentos)
         run: |
           cd backend
           python manage.py test agendamentos.tests_integracao --verbosity=2
         continue-on-error: false
         
-      - name: Relatório de cobertura de testes
+      - name: Executar testes específicos (prontuários)
         run: |
           cd backend
-          echo "✅ Testes executados com sucesso!"
-          echo "📊 Apps testados:"
-          echo "  - pets: testes de unidade"
-          echo "  - agendamentos: testes de integração"
-          echo "  - users: testes básicos"
-          echo "  - prontuarios: testes básicos"
+          python manage.py test prontuarios.tests --verbosity=2
+        continue-on-error: false
+        
+      - name: Executar testes específicos (users)
+        run: |
+          cd backend
+          python manage.py test users.tests --verbosity=2
+        continue-on-error: false
+        
+      - name: Gerar relatório de cobertura
+        run: |
+          cd backend
+          coverage report --show-missing
+          coverage html
+          coverage xml
+        
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./backend/coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+          
+      - name: Relatório final de testes
+        run: |
+          cd backend
+          echo "✅ Todos os testes executados com sucesso!"
+          echo ""
+          echo "📊 Resumo dos testes:"
+          echo "  - ✅ pets: testes de unidade e básicos"
+          echo "  - ✅ agendamentos: testes de integração"
+          echo "  - ✅ users: testes básicos"
+          echo "  - ✅ prontuarios: testes de modelo"
+          echo ""
+          echo "📈 Relatório de cobertura gerado em htmlcov/index.html"
+          
+  security:
+    name: "Verificação de Segurança"
+    runs-on: ubuntu-latest
+    needs: lint
+    
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+        
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Instalar ferramentas de segurança
+        run: |
+          python -m pip install --upgrade pip
+          pip install safety bandit
+          
+      - name: Verificar vulnerabilidades com safety
+        run: |
+          cd backend
+          safety check -r requirements.txt
+        continue-on-error: true
+        
+      - name: Análise de segurança com bandit
+        run: |
+          cd backend
+          bandit -r . -f json -o bandit-report.json || true
+          bandit -r . --severity-level medium --confidence-level medium
+        continue-on-error: true

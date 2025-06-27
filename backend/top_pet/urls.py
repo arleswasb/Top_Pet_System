@@ -5,14 +5,17 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+# Agrupando as URLs da API
+api_urlpatterns = [
+    path('', include('pets.urls')),
+    path('', include('users.urls')),
+    path('', include('agendamentos.urls')),
+    path('', include('prontuarios.urls')),
+]
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # Inclui as URLs dos apps, APENAS com o prefixo 'api/',
-    # deixando o router de cada app adicionar o nome do recurso.
-    path('api/', include('pets.urls')),       # Correto
-    path('api/', include('users.urls')),      # <-- CORRIGIDO AQUI!
-    path('api/', include('agendamentos.urls')), # <-- CORRIGIDO AQUI!
-    path('api/', include('prontuarios.urls')), # <-- ADICIONADO AQUI!
+    path('api/', include(api_urlpatterns)),
     # path('api/auth/', include('rest_framework.urls')),
 ]
 

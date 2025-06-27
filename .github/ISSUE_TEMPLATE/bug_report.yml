@@ -1,0 +1,89 @@
+name: 🐛 Bug Report
+description: Relatar um problema ou bug no sistema
+title: "[BUG] "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por reportar um bug! Por favor, preencha as informações abaixo para nos ajudar a resolver o problema.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Descrição do Bug
+      description: Descreva o bug de forma clara e concisa
+      placeholder: Descreva o que aconteceu e o que era esperado...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Passos para Reproduzir
+      description: Como reproduzir o problema?
+      placeholder: |
+        1. Vá para '...'
+        2. Clique em '...'
+        3. Veja o erro
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportamento Esperado
+      description: O que deveria acontecer?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Comportamento Atual
+      description: O que realmente acontece?
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots/Logs
+      description: Se aplicável, adicione screenshots ou logs de erro
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Componente Afetado
+      options:
+        - Agendamentos
+        - Pets
+        - Prontuários
+        - Usuários
+        - API
+        - Frontend
+        - Docker
+        - Banco de Dados
+        - Outro
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Ambiente
+      description: Em qual ambiente o bug ocorre?
+      placeholder: ex. desenvolvimento, produção, local
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Verificações
+      description: Por favor, confirme que você verificou o seguinte
+      options:
+        - label: Verifiquei se não há uma issue similar já aberta
+          required: true
+        - label: O bug é reproduzível de forma consistente
+          required: true
+        - label: Incluí todas as informações necessárias
+          required: true

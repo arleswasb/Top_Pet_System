@@ -16,7 +16,8 @@ class PetSerializer(serializers.ModelSerializer):
     tutor_detail = UserSerializer(source='tutor', read_only=True)
     tutor = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.filter(is_active=True),
-        write_only=True
+        write_only=True,
+        required=False
     )
     idade = serializers.SerializerMethodField()
     foto = serializers.ImageField(
@@ -31,8 +32,11 @@ class PetSerializer(serializers.ModelSerializer):
             'idade', 'data_de_nascimento',
             'sexo',
             'foto',
+            'observacoes',
             'tutor',
-            'tutor_detail'
+            'tutor_detail',
+            'created_at',
+            'updated_at'
         ]
 
     def get_idade(self, obj):

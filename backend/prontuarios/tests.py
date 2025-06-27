@@ -10,63 +10,97 @@ from decimal import Decimal
 
 from pets.models import Pet
 from users.models import Profile
+from .models import Prontuario
 
 User = get_user_model()
 
 
-class ProntuarioBasicTest(TestCase):
-    """Testes básicos para o módulo Prontuarios"""
+class ProntuarioModelTest(TestCase):
+    """Testes para o modelo Prontuario"""
     
     def setUp(self):
         """Configuração inicial para os testes"""
-        # Criar usuário tutor
         self.tutor = User.objects.create_user(
             username='tutor_test',
-            email='tutor@test.com',
             password='testpass123'
         )
-        
-        # Criar usuário veterinário
         self.veterinario = User.objects.create_user(
             username='vet_test',
-            email='vet@test.com',
-            password='testpass123'
+            password='testpass123',
+            is_staff=True # Veterinários são staff
         )
-        
-        # Configurar perfis
-        Profile.objects.filter(user=self.tutor).update(role=Profile.Role.CLIENTE)
         Profile.objects.filter(user=self.veterinario).update(role=Profile.Role.FUNCIONARIO)
-        
-        # Criar pet
+
         self.pet = Pet.objects.create(
             nome='Rex',
             especie='Cachorro',
-            raca='Labrador',
-            data_de_nascimento=date(2021, 1, 1),
-            sexo=Pet.Gender.MALE,
-            tutor=self.tutor
+            tutor=self.tutor,
+            data_de_nascimento=date(2020, 1, 1)
         )
-    
-    def test_basic_setup(self):
-        """Teste básico para verificar se o setup está funcionando"""
-        self.assertEqual(self.pet.nome, 'Rex')
-        self.assertEqual(self.tutor.username, 'tutor_test')
-        self.assertEqual(self.veterinario.username, 'vet_test')
-        
-    def test_pet_creation(self):
-        """Teste básico de criação de pet"""
-        pet = Pet.objects.create(
-            nome='Mimi',
-            especie='Gato',
-            tutor=self.tutor
+
+    def test_criar_prontuario_valido(self):
+        """Teste: Criar um prontuário com dados válidos"""
+        prontuario = Prontuario.objects.create(
+            pet=self.pet,
+            veterinario=self.veterinario,
+            motivo_consulta="Check-up de rotina",
+            diagnostico="Tudo ok",
+            tratamento="Nenhum"
         )
-        self.assertEqual(pet.nome, 'Mimi')
-        self.assertEqual(pet.especie, 'Gato')
-        
-    def test_user_profiles(self):
-        """Teste verificação de perfis de usuário"""
-        tutor_profile = Profile.objects.get(user=self.tutor)
-        vet_profile = Profile.objects.get(user=self.veterinario)
-        
-        self.assertEqual(tutor_profile.role, Profile.Role.CLIENTE)
-        self.assertEqual(vet_profile.role, Profile.Role.FUNCIONARIO)
+        self.assertIsNotNone(prontuario.pk)
+        self.assertEqual(prontuario.pet, self.pet)
+        self.assertEqual(prontuario.veterinario, self.veterinario)
+
+    def test_prontuario_sem_pet_invalido(self):
+        """Teste: Prontuário sem pet deve ser inválido"""
+        with self.assertRaises(IntegrityError):
+            Prontuario.objects.create(
+                veterinario=self.veterinario,
+                motivo_consulta="Consulta sem pet"
+            )
+
+    def test_prontuario_sem_veterinario_invalido(self):
+        """Teste: Prontuário sem veterinário deve ser inválido"""
+        with self.assertRaises(IntegrityError):
+            Prontuario.objects.create(
+                pet=self.pet,
+                motivo_consulta="Consulta sem vet"
+            )
+
+    def test_tipo_consulta_padrao(self):
+        """Teste: Tipo de consulta padrão deve ser 'Consulta de Rotina'"""
+        prontuario = Prontuario.objects.create(
+            pet=self.pet,
+            veterinario=self.veterinario,
+            motivo_consulta="Consulta padrão"
+        )
+        self.assertEqual(prontuario.tipo_consulta, Prontuario.TipoConsulta.CONSULTA_ROTINA)
+
+    def test_str_representation(self):
+        """Teste: Representação string do prontuário"""
+        prontuario = Prontuario.objects.create(
+            pet=self.pet,
+            veterinario=self.veterinario,
+            motivo_consulta="Teste str"
+        )
+        data_formatada = prontuario.data_consulta.strftime('%d/%m/%Y')
+        expected_str = f"Prontuário {prontuario.id} - {self.pet.nome} - {data_formatada}"
+        self.assertEqual(str(prontuario), expected_str)
+
+    def test_ordenacao_prontuarios(self):
+        """Teste: Prontuários devem ser ordenados por data de consulta decrescente"""
+        prontuario1 = Prontuario.objects.create(
+            pet=self.pet, veterinario=self.veterinario, motivo_consulta="Primeiro",
+            data_consulta=timezone.now() - timedelta(days=10)
+        )
+        prontuario2 = Prontuario.objects.create(
+            pet=self.pet, veterinario=self.veterinario, motivo_consulta="Segundo",
+            data_consulta=timezone.now() - timedelta(days=5)
+        )
+        prontuario3 = Prontuario.objects.create(
+            pet=self.pet, veterinario=self.veterinario, motivo_consulta="Terceiro"
+        )
+
+        prontuarios_do_pet = Prontuario.objects.filter(pet=self.pet)
+        self.assertEqual(prontuarios_do_pet.first(), prontuario3)
+        self.assertEqual(prontuarios_do_pet.last(), prontuario1)
