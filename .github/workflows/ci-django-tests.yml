@@ -35,7 +35,10 @@ jobs:
       - name: 🐳 Build dos containers Docker
         run: docker compose build web
         
-      - name: 🔍 Verificar estrutura do projeto
+      - name: � Instalar dependências
+        run: docker compose run --rm web pip install -r requirements.txt
+        
+      - name: �🔍 Verificar estrutura do projeto
         run: |
           echo "📂 Verificando estrutura do projeto..."
           ls -la backend/
@@ -51,7 +54,7 @@ jobs:
           POSTGRES_HOST: postgres
           
       - name: 🧪 Executar testes - Users App
-        run: docker compose run --rm web python manage.py test users.tests -v 2
+        run: docker compose run --rm web python manage.py test users.tests.UsersTestCase -v 2
         env:
           POSTGRES_NAME: top_pet_test_db
           POSTGRES_USER: test_user
