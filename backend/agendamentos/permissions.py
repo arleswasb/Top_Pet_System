@@ -19,18 +19,23 @@ class IsTutorOrAdminOrFuncionario(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         # A sua lógica aqui já está perfeita para agendamentos.
         if not hasattr(request.user, 'profile'):
+            # Se não tem profile, verificar se é staff (funcionário) ou se é o tutor do pet
+            if request.user.is_staff or request.user.is_superuser:
+                return True
+            if hasattr(obj, 'pet') and obj.pet.tutor == request.user:
+                return True
             return False
 
         user_profile = request.user.profile
 
-        if user_profile.role == Profile.Role.ADMIN:
+        if user_profile.role == Profile.Role.ADMIN or request.user.is_superuser:
             return True
 
         # A verificação obj.pet.tutor está correta para um agendamento.
-        if obj.pet.tutor == request.user:
+        if hasattr(obj, 'pet') and obj.pet.tutor == request.user:
             return True
 
-        if user_profile.role == Profile.Role.FUNCIONARIO:
+        if user_profile.role == Profile.Role.FUNCIONARIO or request.user.is_staff:
             return True
 
         return False

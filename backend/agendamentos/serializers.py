@@ -11,7 +11,7 @@ class ServicoSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Servico
-        fields = ['id', 'nome', 'descricao', 'duracao', 'preco']
+        fields = ['id', 'nome', 'descricao', 'duracao', 'preco', 'disponivel']
 
 
 class AgendamentoSerializer(serializers.ModelSerializer):

@@ -1,0 +1,60 @@
+[MASTER]
+# Load Django plugin
+load-plugins=pylint_django
+
+# Django settings module
+django-settings-module=top_pet.settings
+
+[MESSAGES CONTROL]
+# Disable specific warnings and checks
+disable=
+    missing-docstring,
+    too-few-public-methods,
+    import-error,
+    no-member,
+    line-too-long,
+    trailing-whitespace,
+    unused-wildcard-import,
+    wildcard-import,
+    unused-import,
+    invalid-name,
+    too-many-locals,
+    too-many-arguments,
+    too-many-instance-attributes,
+    too-many-branches,
+    too-many-statements,
+    consider-using-f-string,
+    consider-using-enumerate,
+    redefined-outer-name,
+    fixme,
+    wrong-import-position,
+    unused-variable,
+    broad-except,
+    bare-except,
+    too-many-return-statements,
+    inconsistent-return-statements,
+    unnecessary-pass,
+    logging-fstring-interpolation,
+    imported-auth-user
+
+[REPORTS]
+# Simplify output format
+output-format=text
+
+# Don't display the score
+score=no
+
+[FORMAT]
+# Maximum number of characters on a single line (disabled)
+max-line-length=120
+
+[TYPECHECK]
+# List of members which are set dynamically and missed by pylint inference
+generated-members=objects,DoesNotExist,MultipleObjectsReturned,id,pk,_meta
+
+[DESIGN]
+# Maximum number of arguments for function / method (disabled)
+max-args=10
+
+# Maximum number of locals for function / method body (disabled)
+max-locals=20

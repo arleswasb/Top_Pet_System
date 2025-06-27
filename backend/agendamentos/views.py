@@ -33,13 +33,26 @@ class AgendamentoViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if hasattr(user, 'profile') and user.profile.role == Profile.Role.CLIENTE:
+        
+        # Verificar se o usuário tem profile
+        if not hasattr(user, 'profile'):
+            # Se não tem profile, assumir que é cliente e só ver seus agendamentos
             return Agendamento.objects.filter(pet__tutor=user)
-        return Agendamento.objects.all()
+        
+        # Admins e funcionários veem todos os agendamentos
+        if user.profile.role in [Profile.Role.ADMIN, Profile.Role.FUNCIONARIO] or user.is_staff:
+            return Agendamento.objects.all()
+        
+        # Clientes/tutores veem apenas agendamentos de seus pets
+        return Agendamento.objects.filter(pet__tutor=user)
 
     def perform_create(self, serializer):
         pet = serializer.validated_data.get('pet')
         user = self.request.user
-        if hasattr(user, 'profile') and user.profile.role == Profile.Role.CLIENTE and pet.tutor != user:
-            raise serializers.ValidationError({"detail": "Você não tem permissão para agendar para este pet."})
+        
+        # Verificar se o usuário tem permissão para agendar para este pet
+        if hasattr(user, 'profile') and user.profile.role == Profile.Role.CLIENTE:
+            if pet.tutor != user:
+                raise serializers.ValidationError({"detail": "Você não tem permissão para agendar para este pet."})
+        
         serializer.save()

@@ -12,6 +12,7 @@ urlpatterns = [
     path('api/', include('pets.urls')),       # Correto
     path('api/', include('users.urls')),      # <-- CORRIGIDO AQUI!
     path('api/', include('agendamentos.urls')), # <-- CORRIGIDO AQUI!
+    path('api/', include('prontuarios.urls')), # <-- ADICIONADO AQUI!
     # path('api/auth/', include('rest_framework.urls')),
 ]
 
