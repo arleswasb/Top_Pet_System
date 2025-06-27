@@ -51,16 +51,22 @@ class IsOwnerOrAdminOrFuncionario(permissions.BasePermission):
             logger.debug(f"Acesso DONO concedido para {request.user}")
             return True
 
-        # 3. Funcionário tem acesso parcial (sem DELETE)
+        # 3. Funcionário tem acesso completo (incluindo DELETE) aos pets de clientes
         if self._is_funcionario(profile):
+            # Funcionários podem deletar pets apenas de clientes
             if request.method == 'DELETE':
-                logger.warning(
-                    f"Tentativa de DELETE por funcionário {request.user}"
-                )
-                raise PermissionDenied(
-                    "Funcionários não podem excluir registros",
-                    code="funcionario_no_delete"
-                )
+                # Verificar se o dono do pet é um cliente
+                if hasattr(obj.tutor, 'profile') and obj.tutor.profile.role == Profile.Role.CLIENTE:
+                    logger.debug(f"DELETE de pet de cliente permitido para funcionário {request.user}")
+                    return True
+                else:
+                    logger.warning(
+                        f"Tentativa de DELETE de pet não-cliente por funcionário {request.user}"
+                    )
+                    raise PermissionDenied(
+                        "Funcionários podem excluir apenas pets de clientes",
+                        code="funcionario_delete_cliente_only"
+                    )
             return True
 
         # 4. Negar outros casos

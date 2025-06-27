@@ -30,29 +30,29 @@ class PetAPIPermissionsTestCase(TestCase):
             is_staff=True,
             is_superuser=True
         )
-        self.admin.profile.role = Profile.Role.ADMIN
-        self.admin.profile.save()
+        # Criar perfil manualmente
+        admin_profile = Profile.objects.create(user=self.admin, role=Profile.Role.ADMIN)
 
         self.funcionario = User.objects.create_user(
             username='func_api',
             password='funcpass'
         )
-        self.funcionario.profile.role = Profile.Role.FUNCIONARIO
-        self.funcionario.profile.save()
+        # Criar perfil manualmente
+        func_profile = Profile.objects.create(user=self.funcionario, role=Profile.Role.FUNCIONARIO)
 
         self.tutor = User.objects.create_user(
             username='tutor_api',
             password='tutorpass'
         )
-        self.tutor.profile.role = Profile.Role.CLIENTE
-        self.tutor.profile.save()
+        # Criar perfil manualmente
+        tutor_profile = Profile.objects.create(user=self.tutor, role=Profile.Role.CLIENTE)
 
         self.outro_user = User.objects.create_user(
             username='outro_api',
             password='outropass'
         )
-        self.outro_user.profile.role = Profile.Role.CLIENTE
-        self.outro_user.profile.save()
+        # Criar perfil manualmente
+        outro_profile = Profile.objects.create(user=self.outro_user, role=Profile.Role.CLIENTE)
 
         # Cria pet para teste, associado ao self.tutor
         self.pet = Pet.objects.create(
@@ -109,18 +109,40 @@ class PetAPIPermissionsTestCase(TestCase):
         self.pet.refresh_from_db()
         self.assertEqual(self.pet.nome, 'Buddy Atualizado')
 
-    def test_funcionario_read_only_access(self):
-        """Funcionário deve ter acesso de leitura, mas não pode deletar"""
+    def test_funcionario_can_delete_client_pets(self):
+        """Funcionário pode deletar pets de clientes"""
         self.client.force_authenticate(user=self.funcionario)
         
         # Testa GET
         response = self.client.get(f'/api/pets/{self.pet.id}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
-        # Testa DELETE (deve ser negado)
+        # Testa DELETE (deve ser permitido para pets de clientes)
         response = self.client.delete(f'/api/pets/{self.pet.id}/')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Pet.objects.filter(id=self.pet.id).exists())
+
+    def test_funcionario_cannot_delete_non_client_pets(self):
+        """Funcionário não pode deletar pets de usuários que não são clientes"""
+        # Criar um pet para um funcionário (não cliente)
+        funcionario2 = User.objects.create_user(
+            username='funcionario2',
+            password='testpass'
+        )
+        funcionario2_profile = Profile.objects.create(user=funcionario2, role=Profile.Role.FUNCIONARIO)
+        
+        pet_funcionario = Pet.objects.create(
+            nome='Pet do Funcionário',
+            especie='Gato',
+            tutor=funcionario2
+        )
+        
+        self.client.force_authenticate(user=self.funcionario)
+        
+        # Testa DELETE (deve ser negado para pets de não-clientes)
+        response = self.client.delete(f'/api/pets/{pet_funcionario.id}/')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertTrue(Pet.objects.filter(id=self.pet.id).exists())
+        self.assertTrue(Pet.objects.filter(id=pet_funcionario.id).exists())
 
     def test_other_user_no_access(self):
         """Outro usuário não deve ter acesso ao pet de outra pessoa"""
@@ -156,15 +178,15 @@ class PetAPICreateTestCase(TestCase):
             username='cliente_create',
             password='testpass'
         )
-        self.cliente.profile.role = Profile.Role.CLIENTE
-        self.cliente.profile.save()
+        # Criar perfil manualmente
+        cliente_profile = Profile.objects.create(user=self.cliente, role=Profile.Role.CLIENTE)
         
         self.funcionario = User.objects.create_user(
             username='func_create',
             password='testpass'
         )
-        self.funcionario.profile.role = Profile.Role.FUNCIONARIO
-        self.funcionario.profile.save()
+        # Criar perfil manualmente
+        func_profile = Profile.objects.create(user=self.funcionario, role=Profile.Role.FUNCIONARIO)
         
         self.client = APIClient()
 
@@ -224,8 +246,8 @@ class PetSerializerIntegrationTestCase(TestCase):
             username='serializer_user',
             password='testpass'
         )
-        self.user.profile.role = Profile.Role.CLIENTE
-        self.user.profile.save()
+        # Criar perfil manualmente
+        user_profile = Profile.objects.create(user=self.user, role=Profile.Role.CLIENTE)
         
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
@@ -327,8 +349,8 @@ class PetAPIUpdateTestCase(TestCase):
             username='update_user',
             password='testpass'
         )
-        self.user.profile.role = Profile.Role.CLIENTE
-        self.user.profile.save()
+        # Criar perfil manualmente
+        user_profile = Profile.objects.create(user=self.user, role=Profile.Role.CLIENTE)
         
         self.pet = Pet.objects.create(
             nome='Pet Original',
@@ -382,8 +404,8 @@ class PetAPIFilteringTestCase(TestCase):
             username='filter_user',
             password='testpass'
         )
-        self.user.profile.role = Profile.Role.CLIENTE
-        self.user.profile.save()
+        # Criar perfil manualmente
+        user_profile = Profile.objects.create(user=self.user, role=Profile.Role.CLIENTE)
         
         # Cria pets de teste
         Pet.objects.create(nome='Rex', especie='Cachorro', tutor=self.user)

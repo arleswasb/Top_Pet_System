@@ -9,7 +9,8 @@ from .serializers import (
     UserFuncionarioCreateSerializer, UserAdminCreateSerializer, UserDetailSerializer
 )
 from django.conf import settings
-from .permissions import IsAdminRole, IsFuncionarioOrAdmin # Importa nossas permissões
+from .permissions import IsAdminRole, IsFuncionarioOrAdmin, CanManageClients # Importa nossas permissões
+from .models import Profile  # Importa o modelo Profile
 import os
 
 class LogResponseSerializer(serializers.Serializer):
@@ -45,6 +46,12 @@ class LogFileView(APIView):
     request=UserSelfRegisterSerializer,
     responses={201: UserDetailSerializer}
 )        
+@extend_schema(
+    summary="Auto-cadastro de cliente",
+    description="Endpoint público para auto-cadastro de novos usuários como CLIENTE. "
+               "Não requer autenticação e o role é automaticamente definido como CLIENTE.",
+    tags=["Autenticação"]
+)
 class UserCreateView(generics.CreateAPIView):
     """
     Endpoint público para auto-cadastro de novos usuários.
@@ -157,3 +164,73 @@ class UserAdminCreateView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserAdminCreateSerializer
     permission_classes = [permissions.IsAuthenticated, IsAdminRole]
+
+@extend_schema_view(
+    list=extend_schema(
+        summary="Listar clientes (Funcionário)",
+        description="Funcionários podem listar apenas usuários do tipo CLIENTE.",
+        tags=["Usuários"]
+    ),
+    retrieve=extend_schema(
+        summary="Detalhes do cliente (Funcionário)",
+        description="Funcionários podem ver detalhes apenas de clientes.",
+        tags=["Usuários"]
+    ),
+    update=extend_schema(
+        summary="Atualizar cliente (Funcionário)",
+        description="Funcionários podem atualizar dados de clientes.",
+        tags=["Usuários"]
+    ),
+    partial_update=extend_schema(
+        summary="Atualizar cliente parcialmente (Funcionário)",
+        description="Funcionários podem atualizar parcialmente dados de clientes.",
+        tags=["Usuários"]
+    ),
+    destroy=extend_schema(
+        summary="Excluir cliente (Funcionário)",
+        description="Funcionários podem excluir usuários clientes.",
+        tags=["Usuários"]
+    ),
+)
+class UserFuncionarioViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet para funcionários gerenciarem usuários clientes.
+    
+    Funcionalidades:
+    - Listar apenas clientes
+    - Ver detalhes de clientes
+    - Editar dados de clientes
+    - Excluir clientes
+    - Apenas para funcionários e admins
+    """
+    serializer_class = UserDetailSerializer
+    permission_classes = [permissions.IsAuthenticated, CanManageClients]
+    
+    def get_queryset(self):
+        """
+        Funcionários veem apenas usuários clientes.
+        Admins veem todos os usuários.
+        """
+        user = self.request.user
+        
+        if not hasattr(user, 'profile'):
+            return User.objects.none()
+        
+        # Admin vê todos os usuários
+        if user.profile.role == Profile.Role.ADMIN:
+            return User.objects.all()
+        
+        # Funcionário vê apenas clientes
+        if user.profile.role == Profile.Role.FUNCIONARIO:
+            return User.objects.filter(profile__role=Profile.Role.CLIENTE)
+        
+        return User.objects.none()
+    
+    def perform_destroy(self, instance):
+        """
+        Permite que funcionários excluam apenas clientes.
+        """
+        if hasattr(instance, 'profile') and instance.profile.role == Profile.Role.CLIENTE:
+            instance.delete()
+        else:
+            raise serializers.ValidationError({"detail": "Funcionários podem excluir apenas usuários clientes."})

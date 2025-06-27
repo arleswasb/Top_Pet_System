@@ -42,11 +42,10 @@ class AgendamentoIntegrationTest(APITestCase):
             is_staff=True
         )
         
-        # Profiles são criados automaticamente via signal
-        # Configurar perfil do funcionário
-        funcionario_profile = Profile.objects.get(user=self.funcionario_user)
-        funcionario_profile.role = Profile.Role.FUNCIONARIO
-        funcionario_profile.save()
+        # Criar perfis manualmente (signals desabilitados)
+        admin_profile = Profile.objects.create(user=self.admin_user, role=Profile.Role.ADMIN)
+        tutor_profile = Profile.objects.create(user=self.tutor_user, role=Profile.Role.CLIENTE)
+        funcionario_profile = Profile.objects.create(user=self.funcionario_user, role=Profile.Role.FUNCIONARIO)
         
         # Criar tokens para autenticação
         self.admin_token = Token.objects.create(user=self.admin_user)
@@ -380,10 +379,9 @@ class AgendamentoWorkflowTest(APITestCase):
             is_staff=True
         )
         
-        # Configurar perfil do funcionário
-        funcionario_profile = Profile.objects.get(user=self.funcionario_user)
-        funcionario_profile.role = Profile.Role.FUNCIONARIO
-        funcionario_profile.save()
+        # Criar perfis manualmente (signals desabilitados)
+        tutor_profile = Profile.objects.create(user=self.tutor_user, role=Profile.Role.CLIENTE)
+        funcionario_profile = Profile.objects.create(user=self.funcionario_user, role=Profile.Role.FUNCIONARIO)
         
         self.tutor_token = Token.objects.create(user=self.tutor_user)
         self.funcionario_token = Token.objects.create(user=self.funcionario_user)
