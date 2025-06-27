@@ -53,6 +53,19 @@ def cliente_user(db):
 
 
 @pytest.fixture
+def veterinario_user(db):
+    """Usuário veterinário para testes"""
+    user = User.objects.create_user(
+        username='veterinario_test',
+        email='veterinario@test.com',
+        password='vet123'
+    )
+    user.profile.role = Profile.Role.VETERINARIO
+    user.profile.save()
+    return user
+
+
+@pytest.fixture
 def pet_data():
     """Dados básicos para criar um pet"""
     return {

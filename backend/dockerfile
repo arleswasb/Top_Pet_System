@@ -10,18 +10,14 @@ COPY requirements.txt /app/
 # Instale as dependências
 RUN pip install -r requirements.txt
 
-# Instalar netcat para teste de conexão com o banco
-RUN apt-get update && apt-get install -y netcat && rm -rf /var/lib/apt/lists/*
-
 # Copie o código fonte do projeto (o conteúdo de 'backend' vai para '/app'
 COPY . /app/
 
-# Garantir permissões corretas e quebras de linha do entrypoint.sh
-RUN chmod +x /app/entrypoint.sh && \
-    sed -i 's/\r$//' /app/entrypoint.sh
+# Linha para dar permissão de execução ao script
+RUN chmod +x /app/entrypoint.sh
 
 # Expor a porta que o Django usa (padrão: 8000)
 EXPOSE 8000
 
-# Comando para executar o entrypoint script
-CMD ["/app/entrypoint.sh"]
+# Comando para executar o Django (ajustado para o caminho correto do manage.py)
+CMD ["python", "/app/top_pet/manage.py", "runserver", "0.0.0.0:8000"]
