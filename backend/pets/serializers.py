@@ -4,6 +4,7 @@ from rest_framework import serializers
 from .models import Pet # Pet está em pets.models
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
+from drf_spectacular.utils import extend_schema_field
 from datetime import date
 from users.models import Profile # <--- CORRIGIDO AQUI! Importe Profile de 'users.models'
 
@@ -39,7 +40,8 @@ class PetSerializer(serializers.ModelSerializer):
             'updated_at'
         ]
 
-    def get_idade(self, obj):
+    @extend_schema_field(serializers.IntegerField)
+    def get_idade(self, obj) -> int:
         # A propriedade 'idade' já está definida no modelo Pet.
         # Não é necessário reimplementar aqui, a menos que você queira um comportamento diferente.
         # Se for o mesmo, pode remover este método e a asserção no teste.

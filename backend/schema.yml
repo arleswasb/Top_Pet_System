@@ -1,0 +1,1607 @@
+openapi: 3.0.3
+info:
+  title: Top Pet System API
+  version: 1.0.0
+  description: Sistema de gestão para pet shops - API completa para gerenciamento
+    de pets, usuários, agendamentos e prontuários médicos.
+  contact:
+    name: Top Pet System
+    email: contato@toppetsystem.com
+  license:
+    name: MIT License
+paths:
+  /api/pets/:
+    get:
+      operationId: api_pets_list
+      description: Retorna lista de pets. Clientes veem apenas seus pets, funcionários/admins
+        veem todos.
+      summary: Listar pets
+      tags:
+      - Pets
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'
+          description: ''
+    post:
+      operationId: api_pets_create
+      description: Cria um novo pet. Para clientes, o tutor é definido automaticamente.
+      summary: Criar pet
+      tags:
+      - Pets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PetRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PetRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+          description: ''
+  /api/pets/{id}/:
+    delete:
+      operationId: api_pets_destroy
+      description: Remove um pet do sistema. Apenas o dono ou admin pode deletar.
+      summary: Deletar pet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Pet.
+        required: true
+      tags:
+      - Pets
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+    get:
+      operationId: api_pets_retrieve
+      description: Retorna detalhes de um pet específico.
+      summary: Detalhes do pet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Pet.
+        required: true
+      tags:
+      - Pets
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+          description: ''
+    patch:
+      operationId: api_pets_partial_update
+      description: Atualiza parcialmente um pet.
+      summary: Atualizar pet parcialmente
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Pet.
+        required: true
+      tags:
+      - Pets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPetRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPetRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPetRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+          description: ''
+    put:
+      operationId: api_pets_update
+      description: Atualiza completamente um pet.
+      summary: Atualizar pet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Pet.
+        required: true
+      tags:
+      - Pets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PetRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PetRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+          description: ''
+  /api/logs/:
+    get:
+      operationId: api_logs_retrieve
+      description: Retorna as últimas 100 linhas do log de debug. Apenas administradores.
+      summary: Visualizar logs do sistema
+      tags:
+      - Usuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/register/:
+    post:
+      operationId: api_register_create
+      description: Endpoint público para registro de novos usuários no sistema.
+      summary: Registrar novo usuário
+      tags:
+      - Autenticação
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreate'
+          description: ''
+  /api/admin/users/:
+    get:
+      operationId: api_admin_users_list
+      description: Lista todos os usuários do sistema. Apenas administradores.
+      summary: Listar usuários
+      tags:
+      - Usuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserAdmin'
+          description: ''
+    post:
+      operationId: api_admin_users_create
+      description: Cria um novo usuário via administrador.
+      summary: Criar usuário
+      tags:
+      - Usuários
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserAdminRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserAdminRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserAdminRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAdmin'
+          description: ''
+  /api/admin/users/{id}/:
+    delete:
+      operationId: api_admin_users_destroy
+      description: Remove um usuário do sistema.
+      summary: Deletar usuário
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - Usuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+    get:
+      operationId: api_admin_users_retrieve
+      description: Retorna detalhes de um usuário específico.
+      summary: Detalhes do usuário
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - Usuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAdmin'
+          description: ''
+    patch:
+      operationId: api_admin_users_partial_update
+      description: Atualiza parcialmente um usuário.
+      summary: Atualizar usuário parcialmente
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - Usuários
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserAdminRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserAdminRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserAdminRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAdmin'
+          description: ''
+    put:
+      operationId: api_admin_users_update
+      description: Atualiza completamente um usuário.
+      summary: Atualizar usuário
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - Usuários
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserAdminRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserAdminRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserAdminRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAdmin'
+          description: ''
+  /api/admin/users/{id}/toggle_active/:
+    post:
+      operationId: api_admin_users_toggle_active_create
+      description: Toggle user active status
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserAdminRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserAdminRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserAdminRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAdmin'
+          description: ''
+  /api/servicos/:
+    get:
+      operationId: api_servicos_list
+      description: Endpoint que permite gerenciar os Serviços.
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Servico'
+          description: ''
+    post:
+      operationId: api_servicos_create
+      description: Endpoint que permite gerenciar os Serviços.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServicoRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ServicoRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ServicoRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Servico'
+          description: ''
+  /api/servicos/{id}/:
+    delete:
+      operationId: api_servicos_destroy
+      description: Endpoint que permite gerenciar os Serviços.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this servico.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+    get:
+      operationId: api_servicos_retrieve
+      description: Endpoint que permite gerenciar os Serviços.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this servico.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Servico'
+          description: ''
+    patch:
+      operationId: api_servicos_partial_update
+      description: Endpoint que permite gerenciar os Serviços.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this servico.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedServicoRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedServicoRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedServicoRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Servico'
+          description: ''
+    put:
+      operationId: api_servicos_update
+      description: Endpoint que permite gerenciar os Serviços.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this servico.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServicoRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ServicoRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ServicoRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Servico'
+          description: ''
+  /api/agendamentos/:
+    get:
+      operationId: api_agendamentos_list
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Agendamento'
+          description: ''
+    post:
+      operationId: api_agendamentos_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgendamentoRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AgendamentoRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AgendamentoRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agendamento'
+          description: ''
+  /api/agendamentos/{id}/:
+    delete:
+      operationId: api_agendamentos_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this agendamento.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+    get:
+      operationId: api_agendamentos_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this agendamento.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agendamento'
+          description: ''
+    patch:
+      operationId: api_agendamentos_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this agendamento.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAgendamentoRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAgendamentoRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAgendamentoRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agendamento'
+          description: ''
+    put:
+      operationId: api_agendamentos_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this agendamento.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgendamentoRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AgendamentoRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AgendamentoRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agendamento'
+          description: ''
+  /api/prontuarios/:
+    get:
+      operationId: api_prontuarios_list
+      description: ViewSet para gerenciar prontuários médicos dos pets.
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Prontuario'
+          description: ''
+    post:
+      operationId: api_prontuarios_create
+      description: ViewSet para gerenciar prontuários médicos dos pets.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProntuarioRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProntuarioRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProntuarioRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prontuario'
+          description: ''
+  /api/prontuarios/{id}/:
+    delete:
+      operationId: api_prontuarios_destroy
+      description: ViewSet para gerenciar prontuários médicos dos pets.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Prontuário.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+    get:
+      operationId: api_prontuarios_retrieve
+      description: ViewSet para gerenciar prontuários médicos dos pets.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Prontuário.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prontuario'
+          description: ''
+    patch:
+      operationId: api_prontuarios_partial_update
+      description: ViewSet para gerenciar prontuários médicos dos pets.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Prontuário.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProntuarioRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProntuarioRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProntuarioRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prontuario'
+          description: ''
+    put:
+      operationId: api_prontuarios_update
+      description: ViewSet para gerenciar prontuários médicos dos pets.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Prontuário.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProntuarioRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProntuarioRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProntuarioRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prontuario'
+          description: ''
+  /api-token-auth/:
+    post:
+      operationId: api_token_auth_create
+      tags:
+      - api-token-auth
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AuthTokenRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AuthTokenRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthTokenRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+          description: ''
+components:
+  schemas:
+    Agendamento:
+      type: object
+      description: Serializer para o modelo Agendamento.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        data_hora:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        observacoes:
+          type: string
+          nullable: true
+        pet:
+          allOf:
+          - $ref: '#/components/schemas/Pet'
+          readOnly: true
+        servico:
+          allOf:
+          - $ref: '#/components/schemas/Servico'
+          readOnly: true
+      required:
+      - data_hora
+      - id
+      - pet
+      - servico
+    AgendamentoRequest:
+      type: object
+      description: Serializer para o modelo Agendamento.
+      properties:
+        data_hora:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        observacoes:
+          type: string
+          nullable: true
+        pet_id:
+          type: integer
+          writeOnly: true
+        servico_id:
+          type: integer
+          writeOnly: true
+      required:
+      - data_hora
+      - pet_id
+      - servico_id
+    AuthToken:
+      type: object
+      properties:
+        token:
+          type: string
+          readOnly: true
+      required:
+      - token
+    AuthTokenRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+          minLength: 1
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - password
+      - username
+    PatchedAgendamentoRequest:
+      type: object
+      description: Serializer para o modelo Agendamento.
+      properties:
+        data_hora:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        observacoes:
+          type: string
+          nullable: true
+        pet_id:
+          type: integer
+          writeOnly: true
+        servico_id:
+          type: integer
+          writeOnly: true
+    PatchedPetRequest:
+      type: object
+      properties:
+        nome:
+          type: string
+          minLength: 1
+          maxLength: 100
+        especie:
+          type: string
+          minLength: 1
+          title: Espécie
+          maxLength: 50
+        raca:
+          type: string
+          nullable: true
+          title: Raça
+          maxLength: 50
+        data_de_nascimento:
+          type: string
+          format: date
+          nullable: true
+        sexo:
+          $ref: '#/components/schemas/SexoEnum'
+        foto:
+          type: string
+          format: binary
+          pattern: (?:jpg|jpeg|png)$
+        observacoes:
+          type: string
+          nullable: true
+          title: Observações Adicionais
+        tutor:
+          type: integer
+          writeOnly: true
+    PatchedProntuarioRequest:
+      type: object
+      description: Serializer para o modelo Prontuario
+      properties:
+        pet:
+          type: integer
+        veterinario:
+          type: integer
+          title: Veterinário
+        data_consulta:
+          type: string
+          format: date-time
+          title: Data da Consulta
+        tipo_consulta:
+          allOf:
+          - $ref: '#/components/schemas/TipoConsultaEnum'
+          title: Tipo de Consulta
+        peso:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          nullable: true
+          title: Peso (kg)
+        temperatura:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,1})?$
+          nullable: true
+          title: Temperatura (°C)
+        motivo_consulta:
+          type: string
+          minLength: 1
+          title: Motivo da Consulta
+          description: Descreva o motivo da consulta
+        exame_fisico:
+          type: string
+          title: Exame Físico
+          description: Descrição do exame físico realizado
+        diagnostico:
+          type: string
+          title: Diagnóstico
+          description: Diagnóstico médico
+        tratamento:
+          type: string
+          description: Descrição do tratamento prescrito
+        medicamentos:
+          type: string
+          description: Lista de medicamentos prescritos
+        observacoes:
+          type: string
+          title: Observações
+          description: Observações adicionais
+        proxima_consulta:
+          type: string
+          format: date-time
+          nullable: true
+          title: Próxima Consulta
+          description: Data da próxima consulta (se aplicável)
+    PatchedServicoRequest:
+      type: object
+      description: Serializer para o modelo Servico.
+      properties:
+        nome:
+          type: string
+          minLength: 1
+          maxLength: 100
+        descricao:
+          type: string
+          nullable: true
+        duracao:
+          type: string
+          description: 'Duração do serviço. Formato: HH:MM:SS'
+        preco:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        disponivel:
+          type: boolean
+          description: Marque se o serviço está sendo oferecido no momento.
+    PatchedUserAdminRequest:
+      type: object
+      description: Serializer for admin user operations
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        is_active:
+          type: boolean
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
+    Pet:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nome:
+          type: string
+          maxLength: 100
+        especie:
+          type: string
+          title: Espécie
+          maxLength: 50
+        raca:
+          type: string
+          nullable: true
+          title: Raça
+          maxLength: 50
+        idade:
+          type: string
+          readOnly: true
+        data_de_nascimento:
+          type: string
+          format: date
+          nullable: true
+        sexo:
+          $ref: '#/components/schemas/SexoEnum'
+        foto:
+          type: string
+          format: uri
+          pattern: (?:jpg|jpeg|png)$
+        observacoes:
+          type: string
+          nullable: true
+          title: Observações Adicionais
+        tutor_detail:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Criado Em
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Última Atualização
+      required:
+      - created_at
+      - especie
+      - id
+      - idade
+      - nome
+      - tutor_detail
+      - updated_at
+    PetRequest:
+      type: object
+      properties:
+        nome:
+          type: string
+          minLength: 1
+          maxLength: 100
+        especie:
+          type: string
+          minLength: 1
+          title: Espécie
+          maxLength: 50
+        raca:
+          type: string
+          nullable: true
+          title: Raça
+          maxLength: 50
+        data_de_nascimento:
+          type: string
+          format: date
+          nullable: true
+        sexo:
+          $ref: '#/components/schemas/SexoEnum'
+        foto:
+          type: string
+          format: binary
+          pattern: (?:jpg|jpeg|png)$
+        observacoes:
+          type: string
+          nullable: true
+          title: Observações Adicionais
+        tutor:
+          type: integer
+          writeOnly: true
+      required:
+      - especie
+      - nome
+    Prontuario:
+      type: object
+      description: Serializer para o modelo Prontuario
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        pet:
+          type: integer
+        pet_nome:
+          type: string
+          readOnly: true
+        veterinario:
+          type: integer
+          title: Veterinário
+        veterinario_nome:
+          type: string
+          readOnly: true
+        data_consulta:
+          type: string
+          format: date-time
+          title: Data da Consulta
+        tipo_consulta:
+          allOf:
+          - $ref: '#/components/schemas/TipoConsultaEnum'
+          title: Tipo de Consulta
+        tipo_consulta_display:
+          type: string
+          readOnly: true
+        peso:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          nullable: true
+          title: Peso (kg)
+        temperatura:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,1})?$
+          nullable: true
+          title: Temperatura (°C)
+        motivo_consulta:
+          type: string
+          title: Motivo da Consulta
+          description: Descreva o motivo da consulta
+        exame_fisico:
+          type: string
+          title: Exame Físico
+          description: Descrição do exame físico realizado
+        diagnostico:
+          type: string
+          title: Diagnóstico
+          description: Diagnóstico médico
+        tratamento:
+          type: string
+          description: Descrição do tratamento prescrito
+        medicamentos:
+          type: string
+          description: Lista de medicamentos prescritos
+        observacoes:
+          type: string
+          title: Observações
+          description: Observações adicionais
+        proxima_consulta:
+          type: string
+          format: date-time
+          nullable: true
+          title: Próxima Consulta
+          description: Data da próxima consulta (se aplicável)
+        idade_pet:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Criado em
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Atualizado em
+      required:
+      - created_at
+      - id
+      - idade_pet
+      - motivo_consulta
+      - pet
+      - pet_nome
+      - tipo_consulta_display
+      - updated_at
+      - veterinario
+      - veterinario_nome
+    ProntuarioRequest:
+      type: object
+      description: Serializer para o modelo Prontuario
+      properties:
+        pet:
+          type: integer
+        veterinario:
+          type: integer
+          title: Veterinário
+        data_consulta:
+          type: string
+          format: date-time
+          title: Data da Consulta
+        tipo_consulta:
+          allOf:
+          - $ref: '#/components/schemas/TipoConsultaEnum'
+          title: Tipo de Consulta
+        peso:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          nullable: true
+          title: Peso (kg)
+        temperatura:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,1})?$
+          nullable: true
+          title: Temperatura (°C)
+        motivo_consulta:
+          type: string
+          minLength: 1
+          title: Motivo da Consulta
+          description: Descreva o motivo da consulta
+        exame_fisico:
+          type: string
+          title: Exame Físico
+          description: Descrição do exame físico realizado
+        diagnostico:
+          type: string
+          title: Diagnóstico
+          description: Diagnóstico médico
+        tratamento:
+          type: string
+          description: Descrição do tratamento prescrito
+        medicamentos:
+          type: string
+          description: Lista de medicamentos prescritos
+        observacoes:
+          type: string
+          title: Observações
+          description: Observações adicionais
+        proxima_consulta:
+          type: string
+          format: date-time
+          nullable: true
+          title: Próxima Consulta
+          description: Data da próxima consulta (se aplicável)
+      required:
+      - motivo_consulta
+      - pet
+      - veterinario
+    Servico:
+      type: object
+      description: Serializer para o modelo Servico.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nome:
+          type: string
+          maxLength: 100
+        descricao:
+          type: string
+          nullable: true
+        duracao:
+          type: string
+          description: 'Duração do serviço. Formato: HH:MM:SS'
+        preco:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        disponivel:
+          type: boolean
+          description: Marque se o serviço está sendo oferecido no momento.
+      required:
+      - id
+      - nome
+      - preco
+    ServicoRequest:
+      type: object
+      description: Serializer para o modelo Servico.
+      properties:
+        nome:
+          type: string
+          minLength: 1
+          maxLength: 100
+        descricao:
+          type: string
+          nullable: true
+        duracao:
+          type: string
+          description: 'Duração do serviço. Formato: HH:MM:SS'
+        preco:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        disponivel:
+          type: boolean
+          description: Marque se o serviço está sendo oferecido no momento.
+      required:
+      - nome
+      - preco
+    SexoEnum:
+      enum:
+      - MACHO
+      - FEMEA
+      - DESCONHECIDO
+      type: string
+      description: |-
+        * `MACHO` - Macho
+        * `FEMEA` - Fêmea
+        * `DESCONHECIDO` - Desconhecido
+    StatusEnum:
+      enum:
+      - AGENDADO
+      - CONCLUIDO
+      - CANCELADO
+      type: string
+      description: |-
+        * `AGENDADO` - Agendado
+        * `CONCLUIDO` - Concluído
+        * `CANCELADO` - Cancelado
+    TipoConsultaEnum:
+      enum:
+      - ROTINA
+      - EMERGENCIA
+      - RETORNO
+      - EXAME
+      - CIRURGIA
+      - VACINA
+      type: string
+      description: |-
+        * `ROTINA` - Consulta de Rotina
+        * `EMERGENCIA` - Emergência
+        * `RETORNO` - Retorno
+        * `EXAME` - Exame
+        * `CIRURGIA` - Cirurgia
+        * `VACINA` - Vacinação
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+      required:
+      - id
+      - username
+    UserAdmin:
+      type: object
+      description: Serializer for admin user operations
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        is_active:
+          type: boolean
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+        profile_role:
+          type: string
+          readOnly: true
+      required:
+      - date_joined
+      - id
+      - profile_role
+      - username
+    UserAdminRequest:
+      type: object
+      description: Serializer for admin user operations
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        is_active:
+          type: boolean
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
+    UserCreate:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+      required:
+      - username
+    UserCreateRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+      required:
+      - password
+      - username
+    UserRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+      required:
+      - username
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"
+tags:
+- name: Pets
+  description: Operações relacionadas aos pets
+- name: Usuários
+  description: Gestão de usuários e autenticação
+- name: Agendamentos
+  description: Sistema de agendamentos
+- name: Serviços
+  description: Catálogo de serviços
+- name: Prontuários
+  description: Prontuários médicos
+- name: Autenticação
+  description: Endpoints de login e registro

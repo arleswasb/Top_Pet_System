@@ -1,15 +1,31 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from rest_framework import generics, status, permissions, viewsets
+from rest_framework import generics, status, permissions, viewsets, serializers
 from rest_framework.decorators import action
-from .serializers import UserCreateSerializer, UserAdminSerializer
+from drf_spectacular.utils import extend_schema, extend_schema_view
+from .serializers import (
+    UserCreateSerializer, UserAdminSerializer, UserSelfRegisterSerializer,
+    UserFuncionarioCreateSerializer, UserAdminCreateSerializer, UserDetailSerializer
+)
 from django.conf import settings
-from .permissions import IsAdminRole # Importa nossa nova permissão
+from .permissions import IsAdminRole, IsFuncionarioOrAdmin # Importa nossas permissões
 import os
 
+class LogResponseSerializer(serializers.Serializer):
+    """Serializer para resposta dos logs"""
+    content = serializers.CharField(help_text="Conteúdo do arquivo de log")
+
+@extend_schema(
+    summary="Visualizar logs do sistema",
+    description="Retorna as últimas 100 linhas do log de debug. Apenas administradores.",
+    responses={200: LogResponseSerializer},
+    tags=["Usuários"]
+)
 class LogFileView(APIView):
+    """Endpoint para visualização dos logs do sistema por administradores."""
     permission_classes = [permissions.IsAuthenticated, IsAdminRole]
+    serializer_class = LogResponseSerializer
 
     def get(self, request, *args, **kwargs):
         log_file_path = os.path.join(settings.BASE_DIR, 'logs', 'debug.log')
@@ -18,22 +34,66 @@ class LogFileView(APIView):
                 # Lê as últimas 100 linhas para não sobrecarregar
                 lines = log_file.readlines()[-100:]
                 log_content = "".join(lines)
-            return Response(log_content, status=status.HTTP_200_OK, content_type='text/plain')
+            return Response({"content": log_content}, status=status.HTTP_200_OK)
         except FileNotFoundError:
-            return Response("Arquivo de log não encontrado.", status=status.HTTP_404_NOT_FOUND)
-        
+            return Response({"content": "Arquivo de log não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+@extend_schema(
+    summary="Registrar novo usuário",
+    description="Endpoint público para auto-cadastro de novos usuários como CLIENTE. Para outros tipos de usuário, use endpoints administrativos.",
+    tags=["Autenticação"],
+    request=UserSelfRegisterSerializer,
+    responses={201: UserDetailSerializer}
+)        
 class UserCreateView(generics.CreateAPIView):
     """
-    Endpoint público para novos usuários se registrarem.
+    Endpoint público para auto-cadastro de novos usuários.
+    Usuários cadastrados por este endpoint são sempre do tipo CLIENTE.
     """
     queryset = User.objects.all()
-    serializer_class = UserCreateSerializer
-    permission_classes = [permissions.AllowAny] # <-- Permite que qualquer um acesse
+    serializer_class = UserSelfRegisterSerializer
+    permission_classes = [permissions.AllowAny]
 
-
+@extend_schema_view(
+    list=extend_schema(
+        summary="Listar usuários",
+        description="Lista todos os usuários do sistema. Apenas administradores.",
+        tags=["Usuários"]
+    ),
+    create=extend_schema(
+        summary="Criar usuário",
+        description="Cria um novo usuário via administrador.",
+        tags=["Usuários"]
+    ),
+    retrieve=extend_schema(
+        summary="Detalhes do usuário",
+        description="Retorna detalhes de um usuário específico.",
+        tags=["Usuários"]
+    ),
+    update=extend_schema(
+        summary="Atualizar usuário",
+        description="Atualiza completamente um usuário.",
+        tags=["Usuários"]
+    ),
+    partial_update=extend_schema(
+        summary="Atualizar usuário parcialmente",
+        description="Atualiza parcialmente um usuário.",
+        tags=["Usuários"]
+    ),
+    destroy=extend_schema(
+        summary="Deletar usuário",
+        description="Remove um usuário do sistema.",
+        tags=["Usuários"]
+    ),
+)
 class UserAdminViewSet(viewsets.ModelViewSet):
     """
-    ViewSet for admin user management operations
+    ViewSet para gestão administrativa de usuários.
+    
+    Funcionalidades:
+    - CRUD completo de usuários
+    - Ativar/desativar usuários
+    - Apenas para administradores
     """
     queryset = User.objects.all()
     serializer_class = UserAdminSerializer
@@ -49,3 +109,51 @@ class UserAdminViewSet(viewsets.ModelViewSet):
         user.save()
         serializer = self.get_serializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+@extend_schema(
+    summary="Meu perfil",
+    description="Retorna informações do perfil do usuário logado.",
+    tags=["Usuários"],
+    responses={200: UserDetailSerializer}
+)
+class UserProfileView(generics.RetrieveAPIView):
+    """
+    View para o usuário visualizar seu próprio perfil.
+    """
+    serializer_class = UserDetailSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_object(self):
+        return self.request.user
+
+@extend_schema(
+    summary="Criar usuário (Funcionário)",
+    description="Endpoint para funcionários criarem usuários dos tipos: Cliente, Funcionário ou Veterinário.",
+    tags=["Usuários"],
+    request=UserFuncionarioCreateSerializer,
+    responses={201: UserDetailSerializer}
+)
+class UserFuncionarioCreateView(generics.CreateAPIView):
+    """
+    Endpoint para funcionários criarem usuários.
+    Funcionários podem criar: CLIENTE, FUNCIONARIO ou VETERINARIO.
+    """
+    queryset = User.objects.all()
+    serializer_class = UserFuncionarioCreateSerializer
+    permission_classes = [permissions.IsAuthenticated, IsFuncionarioOrAdmin]
+
+@extend_schema(
+    summary="Criar usuário (Admin)", 
+    description="Endpoint para administradores criarem usuários de qualquer tipo.",
+    tags=["Usuários"],
+    request=UserAdminCreateSerializer,
+    responses={201: UserDetailSerializer}
+)
+class UserAdminCreateView(generics.CreateAPIView):
+    """
+    Endpoint para administradores criarem usuários.
+    Administradores podem criar qualquer tipo de usuário.
+    """
+    queryset = User.objects.all()
+    serializer_class = UserAdminCreateSerializer
+    permission_classes = [permissions.IsAuthenticated, IsAdminRole]

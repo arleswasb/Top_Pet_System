@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'pets',
     'rest_framework',
     'rest_framework.authtoken',
+    'drf_spectacular',
     'users',
     'agendamentos',
     'prontuarios',
@@ -44,6 +45,32 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+# Configuração do drf-spectacular (Swagger/OpenAPI)
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Top Pet System API',
+    'DESCRIPTION': 'Sistema de gestão para pet shops - API completa para gerenciamento de pets, usuários, agendamentos e prontuários médicos.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'CONTACT': {
+        'name': 'Top Pet System',
+        'email': 'contato@toppetsystem.com',
+    },
+    'LICENSE': {
+        'name': 'MIT License',
+    },
+    'TAGS': [
+        {'name': 'Pets', 'description': 'Operações relacionadas aos pets'},
+        {'name': 'Usuários', 'description': 'Gestão de usuários e autenticação'},
+        {'name': 'Agendamentos', 'description': 'Sistema de agendamentos'},
+        {'name': 'Serviços', 'description': 'Catálogo de serviços'},
+        {'name': 'Prontuários', 'description': 'Prontuários médicos'},
+        {'name': 'Autenticação', 'description': 'Endpoints de login e registro'},
+    ],
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SORT_OPERATIONS': False,
 }
 
 
