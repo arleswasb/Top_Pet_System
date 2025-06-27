@@ -137,6 +137,11 @@ python manage.py runserver
 #### 👥 **USUÁRIOS** - Gestão de Usuários
 - `GET /api/me/` - Ver próprio perfil
 - `GET /api/admin/users/` - Listar usuários (admin)
+- `GET /api/funcionario/users/` - Listar clientes (funcionário)
+- `GET /api/funcionario/users/{id}/` - Detalhes do cliente (funcionário)
+- `PUT /api/funcionario/users/{id}/` - Atualizar cliente (funcionário)
+- `PATCH /api/funcionario/users/{id}/` - Atualização parcial cliente (funcionário)
+- `DELETE /api/funcionario/users/{id}/` - Excluir cliente (funcionário)
 - `POST /api/funcionario/create-user/` - Funcionário criar usuário
 - `POST /api/admin/create-user/` - Admin criar usuário
 - `GET /api/logs/` - Visualizar logs (admin)
@@ -208,12 +213,31 @@ python manage.py runserver
 - **Perfis de outros**: Apenas funcionários e admins podem ver perfis de outros usuários
 
 #### 2. **Gestão de Usuários** 
-- **Listar usuários**: Apenas admins
-- **Editar usuários**: Apenas admins
+- **Listar usuários**: 
+  - **Admins**: Podem listar todos os usuários
+  - **Funcionários**: Podem listar apenas usuários **CLIENTES**
+- **Editar usuários**: 
+  - **Admins**: Podem editar qualquer usuário
+  - **Funcionários**: Podem editar apenas usuários **CLIENTES**
+- **Deletar usuários**: 
+  - **Admins**: Podem deletar qualquer usuário
+  - **Funcionários**: Podem deletar apenas usuários **CLIENTES**
 - **Ativar/Desativar usuários**: Apenas admins (endpoint `toggle_active`)
-- **Deletar usuários**: Apenas admins
 
-#### 3. **Logs do Sistema**
+#### 3. **Gestão de Pets**
+- **Listar pets**: 
+  - **Clientes**: Veem apenas seus próprios pets
+  - **Funcionários/Admins**: Veem todos os pets
+- **Criar/Editar pets**: 
+  - **Clientes**: Apenas seus próprios pets
+  - **Funcionários**: Podem criar/editar pets de qualquer cliente
+  - **Admins**: Podem criar/editar qualquer pet
+- **Deletar pets**: 
+  - **Clientes**: Apenas seus próprios pets
+  - **Funcionários**: Podem deletar apenas pets de **CLIENTES**
+  - **Admins**: Podem deletar qualquer pet
+
+#### 4. **Logs do Sistema**
 - **Visualizar logs**: Apenas administradores
 - **Endpoint**: `/api/logs/`
 

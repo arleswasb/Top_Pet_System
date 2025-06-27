@@ -11,6 +11,25 @@ info:
     name: MIT License
 paths:
   /api/pets/:
+    get:
+      operationId: api_pets_list
+      description: Retorna lista de pets. Clientes veem apenas seus pets, funcionários/admins
+        veem todos.
+      summary: Listar pets
+      tags:
+      - Pets
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'
+          description: ''
     post:
       operationId: api_pets_create
       description: Cria um novo pet. Para clientes, o tutor é definido automaticamente.
@@ -39,11 +58,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/Pet'
           description: ''
+  /api/pets/{id}/:
+    delete:
+      operationId: api_pets_destroy
+      description: Remove um pet do sistema. Apenas o dono ou admin pode deletar.
+      summary: Deletar pet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Pet.
+        required: true
+      tags:
+      - Pets
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
     get:
-      operationId: api_pets_list
-      description: Retorna lista de pets. Clientes veem apenas seus pets, funcionários/admins
-        veem todos.
-      summary: Listar pets
+      operationId: api_pets_retrieve
+      description: Retorna detalhes de um pet específico.
+      summary: Detalhes do pet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Pet.
+        required: true
       tags:
       - Pets
       security:
@@ -54,11 +99,8 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'
+                $ref: '#/components/schemas/Pet'
           description: ''
-  /api/pets/{id}/:
     put:
       operationId: api_pets_update
       description: Atualiza completamente um pet.
@@ -84,29 +126,6 @@ paths:
             schema:
               $ref: '#/components/schemas/PetRequest'
         required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'
-          description: ''
-    get:
-      operationId: api_pets_retrieve
-      description: Retorna detalhes de um pet específico.
-      summary: Detalhes do pet
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Pet.
-        required: true
-      tags:
-      - Pets
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -151,25 +170,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Pet'
           description: ''
-    delete:
-      operationId: api_pets_destroy
-      description: Remove um pet do sistema. Apenas o dono ou admin pode deletar.
-      summary: Deletar pet
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Pet.
-        required: true
-      tags:
-      - Pets
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
   /api/logs/:
     get:
       operationId: api_logs_retrieve
@@ -295,6 +295,24 @@ paths:
                 $ref: '#/components/schemas/UserDetail'
           description: ''
   /api/admin/users/:
+    get:
+      operationId: api_admin_users_list
+      description: Lista todos os usuários do sistema. Apenas administradores.
+      summary: Listar usuários
+      tags:
+      - Usuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserAdmin'
+          description: ''
     post:
       operationId: api_admin_users_create
       description: Cria um novo usuário via administrador.
@@ -323,10 +341,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserAdmin'
           description: ''
+  /api/admin/users/{id}/:
+    delete:
+      operationId: api_admin_users_destroy
+      description: Remove um usuário do sistema.
+      summary: Deletar usuário
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - Usuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
     get:
-      operationId: api_admin_users_list
-      description: Lista todos os usuários do sistema. Apenas administradores.
-      summary: Listar usuários
+      operationId: api_admin_users_retrieve
+      description: Retorna detalhes de um usuário específico.
+      summary: Detalhes do usuário
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
       tags:
       - Usuários
       security:
@@ -337,11 +382,8 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserAdmin'
+                $ref: '#/components/schemas/UserAdmin'
           description: ''
-  /api/admin/users/{id}/:
     put:
       operationId: api_admin_users_update
       description: Atualiza completamente um usuário.
@@ -367,29 +409,6 @@ paths:
             schema:
               $ref: '#/components/schemas/UserAdminRequest'
         required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserAdmin'
-          description: ''
-    get:
-      operationId: api_admin_users_retrieve
-      description: Retorna detalhes de um usuário específico.
-      summary: Detalhes do usuário
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this user.
-        required: true
-      tags:
-      - Usuários
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -434,25 +453,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserAdmin'
           description: ''
-    delete:
-      operationId: api_admin_users_destroy
-      description: Remove um usuário do sistema.
-      summary: Deletar usuário
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this user.
-        required: true
-      tags:
-      - Usuários
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
   /api/admin/users/{id}/toggle_active/:
     post:
       operationId: api_admin_users_toggle_active_create
@@ -488,7 +488,189 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserAdmin'
           description: ''
+  /api/funcionario/users/:
+    get:
+      operationId: api_funcionario_users_list
+      description: Funcionários podem listar apenas usuários do tipo CLIENTE.
+      summary: Listar clientes (Funcionário)
+      tags:
+      - Usuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDetail'
+          description: ''
+    post:
+      operationId: api_funcionario_users_create
+      description: |-
+        ViewSet para funcionários gerenciarem usuários clientes.
+
+        Funcionalidades:
+        - Listar apenas clientes
+        - Ver detalhes de clientes
+        - Editar dados de clientes
+        - Excluir clientes
+        - Apenas para funcionários e admins
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDetailRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserDetailRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserDetailRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+          description: ''
+  /api/funcionario/users/{id}/:
+    delete:
+      operationId: api_funcionario_users_destroy
+      description: Funcionários podem excluir usuários clientes.
+      summary: Excluir cliente (Funcionário)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - Usuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+    get:
+      operationId: api_funcionario_users_retrieve
+      description: Funcionários podem ver detalhes apenas de clientes.
+      summary: Detalhes do cliente (Funcionário)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - Usuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+          description: ''
+    put:
+      operationId: api_funcionario_users_update
+      description: Funcionários podem atualizar dados de clientes.
+      summary: Atualizar cliente (Funcionário)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - Usuários
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDetailRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserDetailRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserDetailRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+          description: ''
+    patch:
+      operationId: api_funcionario_users_partial_update
+      description: Funcionários podem atualizar parcialmente dados de clientes.
+      summary: Atualizar cliente parcialmente (Funcionário)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - Usuários
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserDetailRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserDetailRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserDetailRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+          description: ''
   /api/servicos/:
+    get:
+      operationId: api_servicos_list
+      description: Lista todos os serviços disponíveis na clínica veterinária.
+      summary: Listar serviços
+      tags:
+      - Serviços
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Servico'
+          description: ''
     post:
       operationId: api_servicos_create
       description: Cria um novo serviço (apenas admin).
@@ -517,10 +699,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/Servico'
           description: ''
+  /api/servicos/{id}/:
+    delete:
+      operationId: api_servicos_destroy
+      description: Exclui um serviço (apenas admin).
+      summary: Excluir serviço
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this servico.
+        required: true
+      tags:
+      - Serviços
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
     get:
-      operationId: api_servicos_list
-      description: Lista todos os serviços disponíveis na clínica veterinária.
-      summary: Listar serviços
+      operationId: api_servicos_retrieve
+      description: Obtém os detalhes de um serviço específico.
+      summary: Detalhes do serviço
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this servico.
+        required: true
       tags:
       - Serviços
       security:
@@ -531,11 +740,8 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Servico'
+                $ref: '#/components/schemas/Servico'
           description: ''
-  /api/servicos/{id}/:
     put:
       operationId: api_servicos_update
       description: Atualiza completamente um serviço (apenas admin).
@@ -561,29 +767,6 @@ paths:
             schema:
               $ref: '#/components/schemas/ServicoRequest'
         required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Servico'
-          description: ''
-    get:
-      operationId: api_servicos_retrieve
-      description: Obtém os detalhes de um serviço específico.
-      summary: Detalhes do serviço
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this servico.
-        required: true
-      tags:
-      - Serviços
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -628,26 +811,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/Servico'
           description: ''
-    delete:
-      operationId: api_servicos_destroy
-      description: Exclui um serviço (apenas admin).
-      summary: Excluir serviço
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this servico.
-        required: true
+  /api/agendamentos/:
+    get:
+      operationId: api_agendamentos_list
+      description: |-
+        Lista agendamentos conforme permissão do usuário:
+        - **Clientes**: Apenas seus próprios agendamentos
+        - **Funcionários/Veterinários/Admins**: Todos os agendamentos
+      summary: Listar agendamentos
       tags:
-      - Serviços
+      - Agendamentos
       security:
       - tokenAuth: []
       - cookieAuth: []
       responses:
-        '204':
-          description: No response body
-  /api/agendamentos/:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Agendamento'
+          description: ''
     post:
       operationId: api_agendamentos_create
       description: Cria um novo agendamento para um pet.
@@ -676,13 +861,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/Agendamento'
           description: ''
+  /api/agendamentos/{id}/:
+    delete:
+      operationId: api_agendamentos_destroy
+      description: Cancela/exclui um agendamento.
+      summary: Cancelar agendamento
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this agendamento.
+        required: true
+      tags:
+      - Agendamentos
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
     get:
-      operationId: api_agendamentos_list
-      description: |-
-        Lista agendamentos conforme permissão do usuário:
-        - **Clientes**: Apenas seus próprios agendamentos
-        - **Funcionários/Veterinários/Admins**: Todos os agendamentos
-      summary: Listar agendamentos
+      operationId: api_agendamentos_retrieve
+      description: Obtém os detalhes de um agendamento específico.
+      summary: Detalhes do agendamento
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this agendamento.
+        required: true
       tags:
       - Agendamentos
       security:
@@ -693,11 +902,8 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Agendamento'
+                $ref: '#/components/schemas/Agendamento'
           description: ''
-  /api/agendamentos/{id}/:
     put:
       operationId: api_agendamentos_update
       description: Atualiza completamente um agendamento.
@@ -723,29 +929,6 @@ paths:
             schema:
               $ref: '#/components/schemas/AgendamentoRequest'
         required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Agendamento'
-          description: ''
-    get:
-      operationId: api_agendamentos_retrieve
-      description: Obtém os detalhes de um agendamento específico.
-      summary: Detalhes do agendamento
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this agendamento.
-        required: true
-      tags:
-      - Agendamentos
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -790,26 +973,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/Agendamento'
           description: ''
-    delete:
-      operationId: api_agendamentos_destroy
-      description: Cancela/exclui um agendamento.
-      summary: Cancelar agendamento
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this agendamento.
-        required: true
+  /api/prontuarios/:
+    get:
+      operationId: api_prontuarios_list
+      description: |-
+        Lista prontuários médicos conforme permissão do usuário:
+        - **Clientes**: Apenas prontuários dos seus pets
+        - **Funcionários/Admins**: Todos os prontuários
+        - **Veterinários**: Podem criar e ver todos os prontuários
+      summary: Listar prontuários
       tags:
-      - Agendamentos
+      - Prontuários
       security:
       - tokenAuth: []
       - cookieAuth: []
       responses:
-        '204':
-          description: No response body
-  /api/prontuarios/:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Prontuario'
+          description: ''
     post:
       operationId: api_prontuarios_create
       description: Cria um novo prontuário médico (apenas veterinários e admins).
@@ -838,14 +1024,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/Prontuario'
           description: ''
+  /api/prontuarios/{id}/:
+    delete:
+      operationId: api_prontuarios_destroy
+      description: Exclui um prontuário médico (apenas admins).
+      summary: Excluir prontuário
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Prontuário.
+        required: true
+      tags:
+      - Prontuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
     get:
-      operationId: api_prontuarios_list
-      description: |-
-        Lista prontuários médicos conforme permissão do usuário:
-        - **Clientes**: Apenas prontuários dos seus pets
-        - **Funcionários/Admins**: Todos os prontuários
-        - **Veterinários**: Podem criar e ver todos os prontuários
-      summary: Listar prontuários
+      operationId: api_prontuarios_retrieve
+      description: Obtém os detalhes completos de um prontuário médico.
+      summary: Detalhes do prontuário
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Prontuário.
+        required: true
       tags:
       - Prontuários
       security:
@@ -856,11 +1065,8 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Prontuario'
+                $ref: '#/components/schemas/Prontuario'
           description: ''
-  /api/prontuarios/{id}/:
     put:
       operationId: api_prontuarios_update
       description: Atualiza completamente um prontuário médico.
@@ -886,29 +1092,6 @@ paths:
             schema:
               $ref: '#/components/schemas/ProntuarioRequest'
         required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Prontuario'
-          description: ''
-    get:
-      operationId: api_prontuarios_retrieve
-      description: Obtém os detalhes completos de um prontuário médico.
-      summary: Detalhes do prontuário
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Prontuário.
-        required: true
-      tags:
-      - Prontuários
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -953,25 +1136,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Prontuario'
           description: ''
-    delete:
-      operationId: api_prontuarios_destroy
-      description: Exclui um prontuário médico (apenas admins).
-      summary: Excluir prontuário
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Prontuário.
-        required: true
-      tags:
-      - Prontuários
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
   /api-token-auth/:
     post:
       operationId: api_token_auth_create
@@ -1235,6 +1399,26 @@ components:
             this instead of deleting accounts.
         profile:
           $ref: '#/components/schemas/ProfileRequest'
+    PatchedUserDetailRequest:
+      type: object
+      description: Serializer para visualização completa do usuário
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        is_active:
+          type: boolean
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
     Pet:
       type: object
       properties:
@@ -1800,6 +1984,26 @@ components:
       - id
       - profile
       - username
+    UserDetailRequest:
+      type: object
+      description: Serializer para visualização completa do usuário
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        is_active:
+          type: boolean
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
     UserFuncionarioCreateRequest:
       type: object
       description: Serializer para funcionários criarem usuários - CLIENTE, FUNCIONARIO
@@ -1869,40 +2073,40 @@ components:
         username:
           type: string
           minLength: 1
-          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
-            only.
+          description: Nome de usuário único (obrigatório)
           pattern: ^[\w.@+-]+$
           maxLength: 150
         password:
           type: string
           writeOnly: true
           minLength: 8
+          description: Senha com no mínimo 8 caracteres (obrigatório)
         confirm_password:
           type: string
           writeOnly: true
           minLength: 1
+          description: Confirme a senha digitada (obrigatório)
         email:
           type: string
           format: email
           title: Email address
+          description: Email válido para contato (obrigatório)
           maxLength: 254
         first_name:
           type: string
+          description: Primeiro nome (obrigatório)
           maxLength: 150
         last_name:
           type: string
+          description: Sobrenome (obrigatório)
           maxLength: 150
         telefone:
           type: string
+          description: Telefone de contato (opcional)
           maxLength: 20
         endereco:
           type: string
-        crmv:
-          type: string
-          maxLength: 20
-        especialidade:
-          type: string
-          maxLength: 100
+          description: Endereço residencial (opcional)
       required:
       - confirm_password
       - password

@@ -134,10 +134,33 @@ class UserAdminSerializer(serializers.ModelSerializer):
 class UserSelfRegisterSerializer(UserCreateSerializer):
     """Serializer para auto-cadastro de usuários (público) - apenas CLIENTE"""
     
+    # Redefinindo campos para adicionar help_text específico para auto-cadastro
+    telefone = serializers.CharField(
+        max_length=20, 
+        required=False, 
+        allow_blank=True,
+        help_text="Telefone de contato (opcional)"
+    )
+    endereco = serializers.CharField(
+        required=False, 
+        allow_blank=True,
+        help_text="Endereço residencial (opcional)"
+    )
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Remove o campo role para auto-cadastro (sempre será CLIENTE)
+        # Remove campos específicos de outros tipos de usuário
         self.fields.pop('role', None)
+        self.fields.pop('crmv', None)  # CRMV só para veterinários
+        self.fields.pop('especialidade', None)  # Especialidade só para veterinários
+        
+        # Atualizar help_text dos campos obrigatórios
+        self.fields['username'].help_text = "Nome de usuário único (obrigatório)"
+        self.fields['password'].help_text = "Senha com no mínimo 8 caracteres (obrigatório)"
+        self.fields['confirm_password'].help_text = "Confirme a senha digitada (obrigatório)"
+        self.fields['email'].help_text = "Email válido para contato (obrigatório)"
+        self.fields['first_name'].help_text = "Primeiro nome (obrigatório)"
+        self.fields['last_name'].help_text = "Sobrenome (obrigatório)"
         
     def validate(self, data):
         """Validação específica para auto-cadastro"""
