@@ -5,7 +5,7 @@
 2. [🚀 Passo 1: Acessando Swagger](#-passo-1-acessando-o-swagger-ui) - Como iniciar
 3. [🔐 Passo 2: Autenticação](#-passo-2-autenticação) - Login e tokens
 4. [📋 Passo 3: Navegando Endpoints](#-passo-3-navegando-pelos-endpoints) - Estrutura da API
-5. [🔐 Passo 3.5: Regras de Negócio](#-passo-35-regras-de-negócio-e-permissões) - Permissões e validações
+5. [🎯 Passo 3.5: Regras de Negócio](#-passo-35-regras-de-negócio-e-permissões) - Permissões e validações completas
 6. [🧪 Passo 4: Testando Endpoints](#-passo-4-testando-endpoints) - Exemplos práticos
 7. [🎨 Passo 5: Interface](#-passo-5-entendendo-a-interface) - Como usar a interface
 8. [🚨 Passo 6: Troubleshooting](#-passo-6-resolução-de-problemas) - Resolver problemas
@@ -163,170 +163,140 @@ python manage.py runserver
 
 ## 🔐 PASSO 3.5: REGRAS DE NEGÓCIO E PERMISSÕES
 
-### 🎭 Regras de Cadastro de Usuários:
+### 🎭 TIPOS DE USUÁRIO E HIERARQUIA
 
-#### 🔓 **Auto-cadastro Público** (POST /api/register/):
-- **Acesso**: Qualquer pessoa (endpoint público)
-- **Role automático**: CLIENTE (fixo, não pode escolher)
-- **Não requer autenticação**
-- **Campos obrigatórios**:
-  - `username` (string)
-  - `email` (string, formato email)
-  - `password` (string, min 8 chars)
-  - `confirm_password` (string, deve ser igual ao password)
-  - `first_name` (string)
-  - `last_name` (string)
-  - `telefone` (string)
-  - `endereco` (string)
-- **Campos NÃO permitidos**: `role`, `crmv` (são ignorados se enviados)
+#### 📋 Tipos Disponíveis:
+1. **CLIENTE** 👤 - Dono de pet
+2. **FUNCIONARIO** 👨‍💼 - Funcionário da clínica  
+3. **VETERINARIO** 👨‍⚕️ - Profissional veterinário
+4. **ADMIN** 👑 - Administrador do sistema
 
-#### 👨‍💼 **Cadastro por Funcionário** (POST /api/funcionario/create-user/):
-- **Permissão**: FUNCIONARIO ou ADMIN (requer autenticação)
-- **Pode criar roles**: CLIENTE, FUNCIONARIO, VETERINARIO
-- **NÃO pode criar**: ADMIN
-- **Campos obrigatórios** (todos os tipos):
-  - `username`, `email`, `password`, `first_name`, `last_name`, `telefone`, `endereco`, `role`
-- **Campo condicional**:
-  - `crmv` (string): **OBRIGATÓRIO** apenas quando `role` = "VETERINARIO"
-  - `crmv`: **NÃO deve ser enviado** para CLIENTE ou FUNCIONARIO
+---
 
-#### 👑 **Cadastro por Admin** (POST /api/admin/create-user/):
-- **Permissão**: Apenas ADMIN (requer autenticação)
-- **Pode criar qualquer role**: CLIENTE, FUNCIONARIO, VETERINARIO, ADMIN
-- **Campos obrigatórios** (todos os tipos):
-  - `username`, `email`, `password`, `first_name`, `last_name`, `telefone`, `endereco`, `role`
-- **Campo condicional**:
-  - `crmv` (string): **OBRIGATÓRIO** apenas quando `role` = "VETERINARIO"
-  - `crmv`: **NÃO deve ser enviado** para outros roles
+### 🔐 REGRAS DE CADASTRO E CRIAÇÃO DE USUÁRIOS
 
-### 🛡️ Matriz de Permissões:
+#### 1. **Auto-cadastro Público** (Endpoint: `/api/register/`)
+- ✅ **Permitido**: Apenas criação de usuários do tipo **CLIENTE**
+- ❌ **Bloqueado**: Criação de FUNCIONARIO, VETERINARIO ou ADMIN
+- 🔓 **Acesso**: Endpoint público (sem autenticação)
+- 📝 **Campos obrigatórios**: username, email, password, first_name, last_name
 
-| Ação | CLIENTE | FUNCIONARIO | VETERINARIO | ADMIN |
-|------|---------|-------------|-------------|--------|
-| Ver próprios pets | ✅ | ✅ | ✅ | ✅ |
-| Ver todos os pets | ❌ | ✅ | ✅ | ✅ |
-| Criar agendamento próprio | ✅ | ✅ | ✅ | ✅ |
-| Ver todos agendamentos | ❌ | ✅ | ✅ | ✅ |
-| Criar prontuário | ❌ | ❌ | ✅ | ✅ |
-| Ver todos prontuários | ❌ | ✅ | ✅ | ✅ |
-| Criar usuário cliente | ❌ | ✅ | ✅ | ✅ |
-| Criar usuário funcionário | ❌ | ✅ | ✅ | ✅ |
-| Criar usuário veterinário | ❌ | ✅ | ✅ | ✅ |
-| Criar usuário admin | ❌ | ❌ | ❌ | ✅ |
-| Acessar logs sistema | ❌ | ❌ | ❌ | ✅ |
+#### 2. **Criação por Funcionários** (Endpoint: `/api/funcionario/users/create/`)
+- ✅ **Permitido**: Funcionários podem criar usuários dos tipos:
+  - CLIENTE
+  - FUNCIONARIO 
+  - VETERINARIO
+- ❌ **Bloqueado**: Funcionários não podem criar ADMIN
+- 🔐 **Acesso**: Funcionários autenticados + Admins
+- 📝 **Campos extras**: Para veterinários, pode incluir CRMV e especialidade
 
-### 📊 **TABELA DE REFERÊNCIA: CAMPOS POR TIPO DE USUÁRIO**
+#### 3. **Criação por Administradores** (Endpoint: `/api/admin/users/create/`)
+- ✅ **Permitido**: Admins podem criar usuários de **qualquer tipo**
+  - CLIENTE
+  - FUNCIONARIO
+  - VETERINARIO  
+  - ADMIN
+- 🔐 **Acesso**: Apenas administradores
+- 📝 **Controle total**: Pode definir qualquer campo e permissão
 
-| Campo | CLIENTE (auto) | CLIENTE (func/admin) | FUNCIONARIO | VETERINARIO | ADMIN |
-|-------|----------------|----------------------|-------------|-------------|--------|
-| `username` | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório |
-| `email` | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório |
-| `password` | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório |
-| `confirm_password` | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório |
-| `first_name` | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório |
-| `last_name` | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório |
-| `telefone` | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório |
-| `endereco` | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório |
-| `role` | ❌ Ignorado | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório | ✅ Obrigatório |
-| `crmv` | ❌ Ignorado | ❌ NÃO enviar | ❌ NÃO enviar | ✅ Obrigatório | ❌ NÃO enviar |
+---
 
-**⚠️ IMPORTANTE**: Todos os endpoints de criação de usuário exigem `confirm_password`!
+### 👥 REGRAS DE PERMISSÕES E ACESSO
 
-#### 📋 **Endpoints vs Tipos de Usuário Permitidos:**
+#### 1. **Visualização de Perfis**
+- **Próprio perfil**: Todos os usuários podem ver seu próprio perfil
+- **Perfis de outros**: Apenas funcionários e admins podem ver perfis de outros usuários
 
-| Endpoint | Roles que podem ser criados |
-|----------|----------------------------|
-| `POST /api/register/` | CLIENTE (automático) |
-| `POST /api/funcionario/create-user/` | CLIENTE, FUNCIONARIO, VETERINARIO |
-| `POST /api/admin/create-user/` | CLIENTE, FUNCIONARIO, VETERINARIO, ADMIN |
+#### 2. **Gestão de Usuários** 
+- **Listar usuários**: Apenas admins
+- **Editar usuários**: Apenas admins
+- **Ativar/Desativar usuários**: Apenas admins (endpoint `toggle_active`)
+- **Deletar usuários**: Apenas admins
 
-### 🚨 Validações Importantes:
-- **VETERINARIO**: Campo `crmv` é obrigatório
-- **Profile**: Criado automaticamente com o usuário
-- **Tokens**: Expiram e podem ser renovados
-- **Senhas**: Devem ter pelo menos 8 caracteres (recomendado)
+#### 3. **Logs do Sistema**
+- **Visualizar logs**: Apenas administradores
+- **Endpoint**: `/api/logs/`
 
-### 📝 **EXEMPLOS DETALHADOS DE CADASTRO POR TIPO DE USUÁRIO:**
+---
 
-#### 🔓 **Exemplo: Auto-cadastro CLIENTE** (POST /api/register/):
-```json
-{
-  "username": "cliente_novo",
-  "email": "cliente@email.com",
-  "password": "minhasenha123",
-  "confirm_password": "minhasenha123",
-  "first_name": "João",
-  "last_name": "Silva",
-  "telefone": "(11) 99999-9999",
-  "endereco": "Rua das Flores, 123"
-}
+### 🛡️ REGRAS DE VALIDAÇÃO E SEGURANÇA
+
+#### 1. **Validação de Dados**
+- **Email único**: Não pode haver emails duplicados
+- **Username único**: Não pode haver usernames duplicados
+- **CRMV obrigatório**: Para veterinários, o CRMV deve ser informado
+- **Senha forte**: Deve atender aos critérios do Django
+
+#### 2. **Prevenção de Duplicação**
+- **Profile único**: Cada usuário pode ter apenas um Profile
+- **Sinal desabilitado**: Criação automática de Profile foi desabilitada
+- **Criação manual**: Profiles são criados explicitamente nos serializers
+
+#### 3. **Tokens de Autenticação**
+- **Token único**: Cada usuário tem um token único para API
+- **Autenticação obrigatória**: Maioria dos endpoints requer autenticação
+- **Formato**: `Authorization: Token <seu_token_aqui>`
+
+---
+
+### 📋 REGRAS DE NEGÓCIO ESPECÍFICAS
+
+#### 1. **Campo `role` no Profile**
+- **Obrigatório**: Todo usuário deve ter um role definido
+- **Imutável por auto-cadastro**: Clientes que se auto-cadastram sempre ficam como CLIENTE
+- **Controlado**: Apenas funcionários/admins podem definir roles específicos
+
+#### 2. **Status do Usuário (`is_active`)**
+- **Padrão**: Usuários criados ficam ativos por padrão
+- **Toggle**: Admins podem ativar/desativar usuários sem deletá-los
+- **Efeito**: Usuários inativos não conseguem fazer login
+
+#### 3. **Campos Específicos por Tipo**
+- **VETERINARIO**: 
+  - CRMV (obrigatório)
+  - Especialidade (opcional)
+- **FUNCIONARIO**: 
+  - Endereço (opcional)
+  - Telefone (opcional)
+- **CLIENTE**: 
+  - Campos básicos apenas
+
+---
+
+### 🚫 RESTRIÇÕES IMPLEMENTADAS
+
+#### 1. **Não é possível**:
+- Auto-promover-se a funcionário/admin
+- Usuário comum criar outros usuários
+- Funcionário criar administradores
+- Acessar dados de outros usuários (exceto staff)
+- Ter múltiplos profiles por usuário
+
+#### 2. **Controles de Segurança**:
+- Validação de permissões em cada endpoint
+- Serializers diferentes para cada tipo de criação
+- Permissões customizadas (`IsAdminRole`, `IsFuncionarioOrAdmin`)
+
+---
+
+### 🔄 FLUXOS DE TRABALHO
+
+#### 1. **Fluxo de Cliente**:
 ```
-**⚠️ Importante**: NÃO incluir `role` ou `crmv` - serão ignorados!
-
-#### 👨‍💼 **Exemplo: Funcionário criando CLIENTE** (POST /api/funcionario/create-user/):
-```json
-{
-  "username": "cliente_func",
-  "email": "cliente.func@email.com",
-  "password": "senha123",
-  "confirm_password": "senha123",
-  "first_name": "Maria",
-  "last_name": "Santos",
-  "telefone": "(11) 88888-8888",
-  "endereco": "Av. Principal, 456",
-  "role": "CLIENTE"
-}
+Cliente se auto-cadastra → Perfil CLIENTE criado → Pode gerenciar próprios pets → Pode fazer agendamentos
 ```
-**⚠️ Importante**: `confirm_password` é obrigatório e NÃO incluir `crmv` para CLIENTE!
 
-#### 👨‍💼 **Exemplo: Funcionário criando FUNCIONARIO** (POST /api/funcionario/create-user/):
-```json
-{
-  "username": "func_novo",
-  "email": "funcionario@toppet.com",
-  "password": "func123",
-  "confirm_password": "func123",
-  "first_name": "Carlos",
-  "last_name": "Oliveira",
-  "telefone": "(11) 77777-7777",
-  "endereco": "Rua do Trabalho, 789",
-  "role": "FUNCIONARIO"
-}
+#### 2. **Fluxo de Funcionário**:
 ```
-**⚠️ Importante**: `confirm_password` é obrigatório e NÃO incluir `crmv` para FUNCIONARIO!
+Admin cria funcionário → Funcionário pode criar clientes/veterinários → Pode gerenciar sistema
+```
 
-#### 👨‍💼 **Exemplo: Funcionário criando VETERINARIO** (POST /api/funcionario/create-user/):
-```json
-{
-  "username": "dr_silva",
-  "email": "dr.silva@toppet.com",
-  "password": "veterinario123",
-  "confirm_password": "veterinario123",
-  "first_name": "Dr. Carlos",
-  "last_name": "Silva",
-  "telefone": "(11) 66666-6666",
-  "endereco": "Av. Veterinária, 200",
-  "role": "VETERINARIO",
-  "crmv": "12345-SP"
-}
+#### 3. **Fluxo de Administrador**:
 ```
-**✅ Obrigatório**: Campos `confirm_password` e `crmv` DEVEM ser incluídos para VETERINARIO!
+Admin tem controle total → Pode criar qualquer tipo → Pode ativar/desativar → Pode ver logs
+```
 
-#### 👑 **Exemplo: Admin criando ADMIN** (POST /api/admin/create-user/):
-```json
-{
-  "username": "admin_novo",
-  "email": "admin.novo@toppet.com",
-  "password": "admin456",
-  "confirm_password": "admin456",
-  "first_name": "Super",
-  "last_name": "Admin",
-  "telefone": "(11) 55555-5555",
-  "endereco": "Sede Principal",
-  "role": "ADMIN"
-}
-```
-**⚠️ Importante**: `confirm_password` é obrigatório e NÃO incluir `crmv` para ADMIN!
+**💡 Estas regras garantem uma hierarquia clara, segurança adequada e controle granular sobre as permissões no sistema!**
 
 ## 🧪 PASSO 4: TESTANDO ENDPOINTS
 
@@ -843,3 +813,34 @@ Invoke-RestMethod -Uri "http://127.0.0.1:8000/api/me/" -Headers $headers
 - **Versionamento**: Implementar versionamento da API
 
 ---
+
+## ✅ ATUALIZAÇÃO - AGRUPAMENTO DE ENDPOINTS CORRIGIDO! (27/06/2025)
+
+### 🎯 O QUE FOI MELHORADO:
+✅ **Agrupamento por Tags**: Os endpoints agora aparecem corretamente organizados no Swagger UI
+✅ **Ordem Lógica**: Tags reorganizadas para melhor experiência (Autenticação → Usuários → Pets → Serviços → Agendamentos → Prontuários)
+✅ **Descrições Detalhadas**: Cada grupo tem uma descrição clara de sua função
+✅ **Schema Atualizado**: Arquivo `schema.yml` regenerado com as novas configurações
+
+### 📂 GRUPOS NO SWAGGER UI:
+1. **🔐 Autenticação** - Login, registro de clientes
+2. **👥 Usuários** - Gestão de perfis e permissões 
+3. **🐕 Pets** - Cadastro e gestão de animais
+4. **🩺 Serviços** - Catálogo de serviços veterinários
+5. **📅 Agendamentos** - Sistema de consultas e serviços
+6. **📋 Prontuários** - Histórico médico dos pets
+
+### 🔧 ALTERAÇÕES TÉCNICAS:
+- `settings.py`: Tags reorganizadas em ordem lógica
+- `schema.yml`: Regenerado para refletir as mudanças
+- Todos os endpoints validados com as tags corretas
+
+### 🚀 COMO VERIFICAR:
+1. Acesse: http://127.0.0.1:8000/api/docs/
+2. Recarregue a página (F5)
+3. Observe os endpoints agora agrupados por seções
+4. Cada seção é expansível e mostra todos os endpoints relacionados
+
+---
+
+**🎉 SUCESSO! O agrupamento dos endpoints no Swagger UI está funcionando perfeitamente!**
