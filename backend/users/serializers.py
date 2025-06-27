@@ -3,6 +3,8 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import Profile
+from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.types import OpenApiTypes
 
 class ProfileSerializer(serializers.ModelSerializer):
     """Serializer para o perfil do usuário"""
@@ -132,42 +134,120 @@ class UserAdminSerializer(serializers.ModelSerializer):
         return instance
 
 class UserSelfRegisterSerializer(UserCreateSerializer):
-    """Serializer para auto-cadastro de usuários (público) - apenas CLIENTE"""
+    """
+    Serializer para auto-cadastro de usuários (público) - apenas CLIENTE
+    
+    CAMPOS OBRIGATÓRIOS: username, password, confirm_password, email, first_name, last_name
+    CAMPOS OPCIONAIS: telefone, endereco
+    """
     
     # Redefinindo campos para adicionar help_text específico para auto-cadastro
+    username = serializers.CharField(
+        max_length=150,
+        required=True,
+        help_text="🔴 OBRIGATÓRIO: Nome de usuário único no sistema",
+        style={'placeholder': 'Digite seu nome de usuário'}
+    )
+    password = serializers.CharField(
+        write_only=True, 
+        min_length=8,
+        required=True,
+        help_text="🔴 OBRIGATÓRIO: Senha com no mínimo 8 caracteres",
+        style={'input_type': 'password', 'placeholder': 'Digite sua senha'}
+    )
+    confirm_password = serializers.CharField(
+        write_only=True,
+        required=True,
+        help_text="🔴 OBRIGATÓRIO: Confirme a senha digitada",
+        style={'input_type': 'password', 'placeholder': 'Confirme sua senha'}
+    )
+    email = serializers.EmailField(
+        required=True,
+        help_text="🔴 OBRIGATÓRIO: Email válido para contato",
+        style={'placeholder': 'exemplo@email.com'}
+    )
+    first_name = serializers.CharField(
+        max_length=150,
+        required=True,
+        help_text="🔴 OBRIGATÓRIO: Primeiro nome",
+        style={'placeholder': 'João'}
+    )
+    last_name = serializers.CharField(
+        max_length=150,
+        required=True,
+        help_text="🔴 OBRIGATÓRIO: Sobrenome",
+        style={'placeholder': 'Silva'}
+    )
     telefone = serializers.CharField(
         max_length=20, 
         required=False, 
         allow_blank=True,
-        help_text="Telefone de contato (opcional)"
+        allow_null=True,
+        help_text="⚪ OPCIONAL: Telefone de contato (pode ficar em branco)",
+        style={'placeholder': '(11) 99999-9999'}
     )
     endereco = serializers.CharField(
         required=False, 
         allow_blank=True,
-        help_text="Endereço residencial (opcional)"
+        allow_null=True,
+        help_text="⚪ OPCIONAL: Endereço residencial (pode ficar em branco)",
+        style={'placeholder': 'Rua das Flores, 123, São Paulo'}
     )
     
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Remove campos específicos de outros tipos de usuário
-        self.fields.pop('role', None)
-        self.fields.pop('crmv', None)  # CRMV só para veterinários
-        self.fields.pop('especialidade', None)  # Especialidade só para veterinários
-        
-        # Atualizar help_text dos campos obrigatórios
-        self.fields['username'].help_text = "Nome de usuário único (obrigatório)"
-        self.fields['password'].help_text = "Senha com no mínimo 8 caracteres (obrigatório)"
-        self.fields['confirm_password'].help_text = "Confirme a senha digitada (obrigatório)"
-        self.fields['email'].help_text = "Email válido para contato (obrigatório)"
-        self.fields['first_name'].help_text = "Primeiro nome (obrigatório)"
-        self.fields['last_name'].help_text = "Sobrenome (obrigatório)"
+    class Meta:
+        model = User
+        fields = [
+            'username', 'password', 'confirm_password', 'email', 
+            'first_name', 'last_name', 'telefone', 'endereco'
+        ]
+        extra_kwargs = {
+            'username': {'required': True},
+            'email': {'required': True},
+            'first_name': {'required': True},
+            'last_name': {'required': True},
+            'telefone': {'required': False},
+            'endereco': {'required': False},
+        }
         
     def validate(self, data):
         """Validação específica para auto-cadastro"""
-        data = super().validate(data)
+        if data['password'] != data['confirm_password']:
+            raise serializers.ValidationError({
+                'confirm_password': 'As senhas não coincidem.'
+            })
         # Força o role como CLIENTE para auto-cadastro
         data['role'] = Profile.Role.CLIENTE
         return data
+    
+    def create(self, validated_data):
+        """Cria usuário e perfil para auto-cadastro"""
+        from django.db import IntegrityError
+        from rest_framework import serializers as drf_serializers
+        
+        # Remove campos que não são do modelo User
+        confirm_password = validated_data.pop('confirm_password', None)
+        telefone = validated_data.pop('telefone', '')
+        endereco = validated_data.pop('endereco', '')
+        role = validated_data.pop('role', Profile.Role.CLIENTE)
+        
+        try:
+            # Cria o usuário
+            user = User.objects.create_user(**validated_data)
+            
+            # Cria o perfil
+            Profile.objects.create(
+                user=user,
+                role=role,
+                telefone=telefone,
+                endereco=endereco
+            )
+            
+            return user
+        except IntegrityError:
+            # Se houver erro de integridade (username duplicado), levanta ValidationError
+            raise drf_serializers.ValidationError({
+                'username': 'Este nome de usuário já existe.'
+            })
 
 class UserFuncionarioCreateSerializer(UserCreateSerializer):
     """Serializer para funcionários criarem usuários - CLIENTE, FUNCIONARIO ou VETERINARIO"""

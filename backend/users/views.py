@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework import generics, status, permissions, viewsets, serializers
 from rest_framework.decorators import action
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiExample
 from .serializers import (
     UserCreateSerializer, UserAdminSerializer, UserSelfRegisterSerializer,
     UserFuncionarioCreateSerializer, UserAdminCreateSerializer, UserDetailSerializer
@@ -11,6 +11,7 @@ from .serializers import (
 from django.conf import settings
 from .permissions import IsAdminRole, IsFuncionarioOrAdmin, CanManageClients # Importa nossas permissões
 from .models import Profile  # Importa o modelo Profile
+from .swagger_schemas import SELF_REGISTER_SCHEMA, USER_SELF_REGISTER_EXAMPLES
 import os
 
 class LogResponseSerializer(serializers.Serializer):
@@ -40,17 +41,12 @@ class LogFileView(APIView):
             return Response({"content": "Arquivo de log não encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
 @extend_schema(
-    summary="Registrar novo usuário",
-    description="Endpoint público para auto-cadastro de novos usuários como CLIENTE. Para outros tipos de usuário, use endpoints administrativos.",
-    tags=["Autenticação"],
+    summary=SELF_REGISTER_SCHEMA['summary'],
+    description=SELF_REGISTER_SCHEMA['description'],
+    tags=SELF_REGISTER_SCHEMA['tags'],
     request=UserSelfRegisterSerializer,
-    responses={201: UserDetailSerializer}
-)        
-@extend_schema(
-    summary="Auto-cadastro de cliente",
-    description="Endpoint público para auto-cadastro de novos usuários como CLIENTE. "
-               "Não requer autenticação e o role é automaticamente definido como CLIENTE.",
-    tags=["Autenticação"]
+    responses={201: UserDetailSerializer},
+    examples=SELF_REGISTER_SCHEMA['examples']
 )
 class UserCreateView(generics.CreateAPIView):
     """
@@ -201,10 +197,21 @@ class UserFuncionarioViewSet(viewsets.ModelViewSet):
     - Ver detalhes de clientes
     - Editar dados de clientes
     - Excluir clientes
+    - Criar novos clientes
     - Apenas para funcionários e admins
     """
     serializer_class = UserDetailSerializer
     permission_classes = [permissions.IsAuthenticated, CanManageClients]
+    
+    def get_serializer_class(self):
+        """
+        Retorna o serializer apropriado com base na ação.
+        """
+        if self.action == 'create':
+            return UserFuncionarioCreateSerializer
+        elif self.action in ['update', 'partial_update']:
+            return UserAdminSerializer  # Para permitir edição de perfil
+        return UserDetailSerializer
     
     def get_queryset(self):
         """
