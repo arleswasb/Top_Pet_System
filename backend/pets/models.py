@@ -18,7 +18,7 @@ class Pet(models.Model):
         UNKNOWN = "DESCONHECIDO", "Desconhecido"
 
     nome = models.CharField(max_length=100, verbose_name="Nome")
-    especie = models.CharField(max_length=50, verbose_name="Espécie") # Mantido como CharField por simplicidade inicial
+    especie = models.CharField(max_length=50, verbose_name="Espécie")
     raca = models.CharField(max_length=50, blank=True, null=True, verbose_name="Raça")
     
     data_de_nascimento = models.DateField(

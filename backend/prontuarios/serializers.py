@@ -1,0 +1,194 @@
+# prontuarios/serializers.py
+
+from rest_framework import serializers
+from django.utils import timezone
+from datetime import date
+from .models import Prontuario, Exame, Vacina
+
+
+class ProntuarioSerializer(serializers.ModelSerializer):
+    """
+    Serializer para o modelo Prontuario
+    """
+    pet_nome = serializers.CharField(source='pet.nome', read_only=True)
+    veterinario_nome = serializers.CharField(source='veterinario.username', read_only=True)
+    tipo_consulta_display = serializers.CharField(source='get_tipo_consulta_display', read_only=True)
+    idade_pet = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Prontuario
+        fields = [
+            'id', 'pet', 'pet_nome', 'veterinario', 'veterinario_nome',
+            'data_consulta', 'tipo_consulta', 'tipo_consulta_display',
+            'peso', 'temperatura', 'sintomas', 'diagnostico', 
+            'tratamento', 'medicamentos', 'observacoes',
+            'retorno_recomendado', 'idade_pet', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['data_consulta', 'created_at', 'updated_at']
+    
+    def get_idade_pet(self, obj):
+        """Retorna a idade do pet na data da consulta"""
+        if obj.pet.data_de_nascimento:
+            consulta_date = obj.data_consulta.date()
+            birth_date = obj.pet.data_de_nascimento
+            age = consulta_date.year - birth_date.year - \
+                  ((consulta_date.month, consulta_date.day) < (birth_date.month, birth_date.day))
+            return age
+        return None
+    
+    def validate_retorno_recomendado(self, value):
+        """Validar que a data de retorno não seja no passado"""
+        if value and value < date.today():
+            raise serializers.ValidationError("Data de retorno não pode ser no passado.")
+        return value
+    
+    def validate_peso(self, value):
+        """Validar peso do animal"""
+        if value is not None and (value <= 0 or value > 200):
+            raise serializers.ValidationError("Peso deve estar entre 0.1kg e 200kg.")
+        return value
+    
+    def validate_temperatura(self, value):
+        """Validar temperatura do animal"""
+        if value is not None and (value < 30 or value > 45):
+            raise serializers.ValidationError("Temperatura deve estar entre 30°C e 45°C.")
+        return value
+
+
+class ExameSerializer(serializers.ModelSerializer):
+    """
+    Serializer para o modelo Exame
+    """
+    prontuario_info = serializers.SerializerMethodField()
+    tipo_exame_display = serializers.CharField(source='get_tipo_exame_display', read_only=True)
+    pet_nome = serializers.CharField(source='prontuario.pet.nome', read_only=True)
+    
+    class Meta:
+        model = Exame
+        fields = [
+            'id', 'prontuario', 'prontuario_info', 'pet_nome',
+            'tipo_exame', 'tipo_exame_display', 'data_realizacao', 
+            'data_resultado', 'resultado', 'valores_referencia',
+            'observacoes', 'arquivo_resultado', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['created_at', 'updated_at']
+    
+    def get_prontuario_info(self, obj):
+        """Retorna informações básicas do prontuário"""
+        return {
+            'id': obj.prontuario.id,
+            'pet_nome': obj.prontuario.pet.nome,
+            'data_consulta': obj.prontuario.data_consulta.strftime('%d/%m/%Y'),
+            'tipo_consulta': obj.prontuario.get_tipo_consulta_display()
+        }
+    
+    def validate_data_realizacao(self, value):
+        """Validar que a data de realização não seja no futuro"""
+        if value > timezone.now():
+            raise serializers.ValidationError("Data de realização não pode ser no futuro.")
+        return value
+    
+    def validate_data_resultado(self, value):
+        """Validar que a data do resultado não seja anterior à realização"""
+        if value and self.initial_data.get('data_realizacao'):
+            data_realizacao = self.initial_data.get('data_realizacao')
+            if isinstance(data_realizacao, str):
+                # Se for string, converter para datetime
+                from django.utils.dateparse import parse_datetime
+                data_realizacao = parse_datetime(data_realizacao)
+            
+            if value < data_realizacao:
+                raise serializers.ValidationError(
+                    "Data do resultado não pode ser anterior à data de realização."
+                )
+        return value
+
+
+class VacinaSerializer(serializers.ModelSerializer):
+    """
+    Serializer para o modelo Vacina
+    """
+    pet_nome = serializers.CharField(source='pet.nome', read_only=True)
+    veterinario_nome = serializers.CharField(source='veterinario.username', read_only=True)
+    dias_para_proxima_dose = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Vacina
+        fields = [
+            'id', 'pet', 'pet_nome', 'veterinario', 'veterinario_nome',
+            'nome_vacina', 'fabricante', 'lote', 'data_aplicacao',
+            'data_vencimento', 'proxima_dose', 'dias_para_proxima_dose',
+            'observacoes', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['created_at', 'updated_at']
+    
+    def get_dias_para_proxima_dose(self, obj):
+        """Calcula quantos dias faltam para a próxima dose"""
+        if obj.proxima_dose:
+            hoje = date.today()
+            if obj.proxima_dose > hoje:
+                return (obj.proxima_dose - hoje).days
+            elif obj.proxima_dose == hoje:
+                return 0
+            else:
+                return -(hoje - obj.proxima_dose).days  # Negativo se atrasado
+        return None
+    
+    def validate_data_aplicacao(self, value):
+        """Validar que a data de aplicação não seja no futuro"""
+        if value > timezone.now():
+            raise serializers.ValidationError("Data de aplicação não pode ser no futuro.")
+        return value
+    
+    def validate_data_vencimento(self, value):
+        """Validar que a data de vencimento seja posterior à aplicação"""
+        if value and self.initial_data.get('data_aplicacao'):
+            data_aplicacao = self.initial_data.get('data_aplicacao')
+            if isinstance(data_aplicacao, str):
+                from django.utils.dateparse import parse_datetime
+                data_aplicacao = parse_datetime(data_aplicacao)
+            
+            if data_aplicacao and value < data_aplicacao.date():
+                raise serializers.ValidationError(
+                    "Data de vencimento deve ser posterior à data de aplicação."
+                )
+        return value
+    
+    def validate_proxima_dose(self, value):
+        """Validar que a próxima dose seja posterior à aplicação"""
+        if value and self.initial_data.get('data_aplicacao'):
+            data_aplicacao = self.initial_data.get('data_aplicacao')
+            if isinstance(data_aplicacao, str):
+                from django.utils.dateparse import parse_datetime
+                data_aplicacao = parse_datetime(data_aplicacao)
+            
+            if data_aplicacao and value < data_aplicacao.date():
+                raise serializers.ValidationError(
+                    "Data da próxima dose deve ser posterior à data de aplicação."
+                )
+        return value
+
+
+# Serializers aninhados para listagem completa
+
+class ProntuarioComExamesSerializer(ProntuarioSerializer):
+    """
+    Serializer do Prontuario incluindo lista de exames
+    """
+    exames = ExameSerializer(many=True, read_only=True)
+    
+    class Meta(ProntuarioSerializer.Meta):
+        fields = ProntuarioSerializer.Meta.fields + ['exames']
+
+
+class PetComVacinasSerializer(serializers.ModelSerializer):
+    """
+    Serializer para Pet incluindo histórico de vacinas
+    """
+    from pets.serializers import PetSerializer
+    
+    vacinas = VacinaSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = 'pets.Pet'  # Referência por string para evitar import circular
+        fields = ['id', 'nome', 'especie', 'raca', 'vacinas']
