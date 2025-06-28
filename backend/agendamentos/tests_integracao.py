@@ -190,7 +190,7 @@ class AgendamentoIntegrationTest(APITestCase):
             'observacoes': 'Serviço realizado com sucesso'
         }
         
-        response = self.client.put(f'/api/agendamentos/{agendamento.id}/', data, format='json')
+        response = self.client.patch(f'/api/agendamentos/{agendamento.id}/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         agendamento.refresh_from_db()
@@ -213,7 +213,7 @@ class AgendamentoIntegrationTest(APITestCase):
             'status': Agendamento.StatusChoices.CANCELADO
         }
         
-        response = self.client.put(f'/api/agendamentos/{agendamento.id}/', data, format='json')
+        response = self.client.patch(f'/api/agendamentos/{agendamento.id}/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         agendamento.refresh_from_db()
@@ -246,7 +246,7 @@ class AgendamentoIntegrationTest(APITestCase):
             'status': Agendamento.StatusChoices.CANCELADO
         }
         
-        response = self.client.put(f'/api/agendamentos/{agendamento_outro.id}/', data, format='json')
+        response = self.client.patch(f'/api/agendamentos/{agendamento_outro.id}/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         
@@ -357,7 +357,7 @@ class ServicoIntegrationTest(APITestCase):
             'disponivel': False
         }
         
-        response = self.client.put(f'/api/servicos/{servico.id}/', data, format='json')
+        response = self.client.patch(f'/api/servicos/{servico.id}/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         servico.refresh_from_db()
@@ -440,7 +440,7 @@ class AgendamentoWorkflowTest(APITestCase):
             'observacoes': 'Serviço realizado com sucesso. Pet se comportou bem.'
         }
         
-        response = self.client.put(f'/api/agendamentos/{agendamento_id}/', data_conclusao, format='json')
+        response = self.client.patch(f'/api/agendamentos/{agendamento_id}/', data_conclusao, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
         # 4. Verificar status final
@@ -470,9 +470,29 @@ class AgendamentoWorkflowTest(APITestCase):
             'observacoes': 'Reagendado por solicitação do cliente'
         }
         
-        response = self.client.put(f'/api/agendamentos/{agendamento.id}/', data_reagendamento, format='json')
+        response = self.client.patch(f'/api/agendamentos/{agendamento.id}/', data_reagendamento, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         agendamento.refresh_from_db()
         self.assertEqual(agendamento.data_hora.date(), data_nova.date())
         self.assertIn('Reagendado', agendamento.observacoes)
+
+    def test_put_method_not_allowed(self):
+        """Confirma que PUT foi removido e retorna 405 Method Not Allowed"""
+        agendamento = Agendamento.objects.create(
+            pet=self.pet,
+            servico=self.servico,
+            data_hora=timezone.now() + timedelta(days=1)
+        )
+        
+        data = {
+            'pet_id': self.pet.id,
+            'servico_id': self.servico.id,
+            'data_hora': (timezone.now() + timedelta(days=2)).isoformat(),
+            'status': Agendamento.StatusChoices.CONCLUIDO,
+            'observacoes': 'Teste PUT'
+        }
+        
+        response = self.client.put(f'/api/agendamentos/{agendamento.id}/', data, format='json')
+        # PUT deve retornar 405 Method Not Allowed - isso confirma nossa implementação
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)

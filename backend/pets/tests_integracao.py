@@ -102,13 +102,13 @@ class PetAPIPermissionsTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['nome'], 'Buddy')
         
-        # Testa PUT (atualização)
+        # Testa PATCH (atualização parcial) - PUT foi removido
         updated_data = {
             'nome': 'Buddy Atualizado',
-            'especie': 'Cachorro',
-            'tutor': self.tutor.id
+            'especie': 'Cachorro'
+            # Note: não precisamos enviar tutor no PATCH
         }
-        response = self.client.put(
+        response = self.client.patch(
             f'/api/pets/{self.pet.id}/',
             data=updated_data,
             format='json'
@@ -395,15 +395,15 @@ class PetAPIUpdateTestCase(TestCase):
         self.assertEqual(self.pet.nome, 'Pet Atualizado')
         self.assertEqual(self.pet.especie, 'Cachorro')  # Campo não alterado
 
-    def test_full_update_put(self):
-        """Testa atualização completa usando PUT"""
+    def test_partial_update_patch_with_multiple_fields(self):
+        """Testa atualização com múltiplos campos usando PATCH (PUT foi removido)"""
         update_data = {
             'nome': 'Pet Completamente Novo',
-            'especie': 'Gato',
-            'tutor': self.user.id
+            'especie': 'Gato'
+            # Com PATCH não precisamos enviar tutor
         }
         
-        response = self.client.put(
+        response = self.client.patch(
             f'/api/pets/{self.pet.id}/',
             data=update_data,
             format='json'
@@ -413,6 +413,21 @@ class PetAPIUpdateTestCase(TestCase):
         self.pet.refresh_from_db()
         self.assertEqual(self.pet.nome, 'Pet Completamente Novo')
         self.assertEqual(self.pet.especie, 'Gato')
+
+    def test_put_method_not_allowed(self):
+        """Confirma que PUT foi removido e retorna 405 Method Not Allowed"""
+        update_data = {
+            'nome': 'Teste PUT',
+            'especie': 'Gato'
+        }
+        
+        response = self.client.put(
+            f'/api/pets/{self.pet.id}/',
+            data=update_data,
+            format='json'
+        )
+        # PUT deve retornar 405 Method Not Allowed - isso confirma nossa implementação
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class PetAPIFilteringTestCase(TestCase):
