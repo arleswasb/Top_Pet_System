@@ -485,6 +485,9 @@ class AgendamentoWorkflowTest(APITestCase):
             data_hora=timezone.now() + timedelta(days=1)
         )
         
+        # Autenticar usuário para o teste
+        self.client.force_authenticate(user=self.tutor_user)
+        
         data = {
             'pet_id': self.pet.id,
             'servico_id': self.servico.id,
