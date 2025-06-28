@@ -72,7 +72,7 @@ SPECTACULAR_SETTINGS = {
     'COMPONENT_SPLIT_REQUEST': True,
     'SORT_OPERATIONS': False,
     'SCHEMA_PATH_PREFIX': '/api/',
-    'SCHEMA_PATH_PREFIX_TRIM': True,
+    'SCHEMA_PATH_PREFIX_TRIM': False,
     'DISABLE_ERRORS_AND_WARNINGS': False,
     'SWAGGER_UI_SETTINGS': {
         'deepLinking': True,

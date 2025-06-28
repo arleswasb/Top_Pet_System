@@ -1,6 +1,7 @@
 # prontuarios/views.py
 
-from rest_framework import viewsets, permissions, serializers
+from rest_framework import viewsets, permissions, serializers, status
+from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from .models import Prontuario
 from .serializers import ProntuarioSerializer
@@ -27,13 +28,8 @@ from users.models import Profile
         description="Cria um novo prontuário médico (apenas veterinários e admins).",
         tags=["Prontuários"]
     ),
-    update=extend_schema(
-        summary="Atualizar prontuário",
-        description="Atualiza completamente um prontuário médico.",
-        tags=["Prontuários"]
-    ),
     partial_update=extend_schema(
-        summary="Atualizar prontuário parcialmente",
+        summary="Atualizar prontuário",
         description="Atualiza parcialmente um prontuário médico.",
         tags=["Prontuários"]
     ),
@@ -56,6 +52,9 @@ class ProntuarioViewSet(viewsets.ModelViewSet):
     queryset = Prontuario.objects.select_related('pet', 'veterinario')
     serializer_class = ProntuarioSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdminOrVet]
+
+    # Lista de ações HTTP permitidas (removendo 'put' que é o método PUT)
+    http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
 
     def get_queryset(self):
         user = self.request.user

@@ -14,44 +14,98 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username']
 
 class PetSerializer(serializers.ModelSerializer):
+    """
+    Serializer para criação e atualização de pets.
+    
+    Exemplo de uso:
+    {
+        "nome": "Rex",
+        "especie": "Cão", 
+        "raca": "Golden Retriever",
+        "data_de_nascimento": "2020-05-15",
+        "sexo": "MACHO",
+        "observacoes": "Pet muito dócil e brincalhão"
+    }
+    """
+    # Campos somente leitura
     tutor_detail = UserSerializer(source='tutor', read_only=True)
+    idade = serializers.SerializerMethodField()
+    
+    # Campos de escrita
     tutor = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.filter(is_active=True),
         write_only=True,
-        required=False
+        required=False,
+        help_text="ID do usuário que será o tutor do pet (opcional para clientes)"
     )
-    idade = serializers.SerializerMethodField()
+    
+    # Campos do modelo com documentação
+    nome = serializers.CharField(
+        max_length=100,
+        help_text="Nome do pet"
+    )
+    especie = serializers.CharField(
+        max_length=50,
+        help_text="Espécie do pet (ex: Cão, Gato, Pássaro)"
+    )
+    raca = serializers.CharField(
+        max_length=50,
+        required=False,
+        allow_blank=True,
+        help_text="Raça do pet (opcional)"
+    )
+    data_de_nascimento = serializers.DateField(
+        required=False,
+        allow_null=True,
+        help_text="Data de nascimento do pet (formato: YYYY-MM-DD)"
+    )
+    sexo = serializers.ChoiceField(
+        choices=Pet.Gender.choices,
+        default=Pet.Gender.UNKNOWN,
+        help_text="Sexo do pet"
+    )
     foto = serializers.ImageField(
         required=False,
-        validators=[FileExtensionValidator(['jpg', 'jpeg', 'png'])]
+        validators=[FileExtensionValidator(['jpg', 'jpeg', 'png'])],
+        help_text="Upload de foto do pet (JPG, JPEG ou PNG)"
+    )
+    observacoes = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        style={'base_template': 'textarea.html'},
+        help_text="Observações adicionais sobre o pet"
     )
 
     class Meta:
         model = Pet
         fields = [
-            'id', 'nome', 'especie', 'raca',
-            'idade', 'data_de_nascimento',
+            # Campos principais (obrigatórios)
+            'nome',
+            'especie', 
+            # Campos opcionais de identificação
+            'raca',
+            'data_de_nascimento',
             'sexo',
             'foto',
             'observacoes',
+            # Campo de relacionamento
             'tutor',
+            # Campos somente leitura
+            'id',
+            'idade',
             'tutor_detail',
             'created_at',
             'updated_at'
         ]
+        read_only_fields = ['id', 'idade', 'tutor_detail', 'created_at', 'updated_at']
 
-    @extend_schema_field(serializers.IntegerField)
-    def get_idade(self, obj) -> int:
-        # A propriedade 'idade' já está definida no modelo Pet.
-        # Não é necessário reimplementar aqui, a menos que você queira um comportamento diferente.
-        # Se for o mesmo, pode remover este método e a asserção no teste.
-        # No entanto, se o campo 'idade' no modelo for uma propriedade,
-        # o SerializerMethodField é a forma correta de expô-lo via API.
-        if obj.data_de_nascimento:
-            today = date.today()
-            return today.year - obj.data_de_nascimento.year - \
-                   ((today.month, today.day) < (obj.data_de_nascimento.month, obj.data_de_nascimento.day))
-        return None
+    @extend_schema_field(serializers.IntegerField(allow_null=True))
+    def get_idade(self, obj):
+        """
+        Retorna a idade calculada do pet baseada na data de nascimento.
+        Retorna 0 se não houver data de nascimento.
+        """
+        return obj.idade if obj.idade is not None else 0
 
     def validate_tutor(self, value):
         """Validação customizada: apenas clientes podem ser tutores"""

@@ -135,63 +135,110 @@ class UserAdminSerializer(serializers.ModelSerializer):
 
 class UserSelfRegisterSerializer(UserCreateSerializer):
     """
-    Serializer para auto-cadastro de usuários (público) - apenas CLIENTE
+    🌟 SERIALIZER PARA AUTO-CADASTRO DE USUÁRIOS (PÚBLICO) - APENAS CLIENTE
     
-    CAMPOS OBRIGATÓRIOS: username, password, confirm_password, email, first_name, last_name
-    CAMPOS OPCIONAIS: telefone, endereco
+    Este endpoint permite que novos usuários se cadastrem no sistema como CLIENTE.
+    Perfeito para donos de pets que querem agendar consultas.
+    
+    📋 EXEMPLO DE USO:
+    {
+        "username": "maria_silva",
+        "password": "minhasenha123",
+        "confirm_password": "minhasenha123",
+        "email": "maria@email.com",
+        "first_name": "Maria",
+        "last_name": "Silva",
+        "telefone": "(11) 99999-9999",
+        "endereco": "Rua das Flores, 123, São Paulo - SP"
+    }
+    
+    🎯 RESULTADO: Usuário criado automaticamente como CLIENTE, pronto para usar o sistema.
     """
     
-    # Redefinindo campos para adicionar help_text específico para auto-cadastro
+    # ===============================
+    # 🔴 CAMPOS OBRIGATÓRIOS
+    # ===============================
     username = serializers.CharField(
         max_length=150,
         required=True,
-        help_text="🔴 OBRIGATÓRIO: Nome de usuário único no sistema",
-        style={'placeholder': 'Digite seu nome de usuário'}
+        help_text="🔴 OBRIGATÓRIO: Nome de usuário único no sistema. Será usado para fazer login.",
+        style={
+            'placeholder': 'Exemplo: maria_silva, joao123, ana_santos',
+            'input_type': 'text'
+        }
     )
+    
     password = serializers.CharField(
         write_only=True, 
         min_length=8,
         required=True,
-        help_text="🔴 OBRIGATÓRIO: Senha com no mínimo 8 caracteres",
-        style={'input_type': 'password', 'placeholder': 'Digite sua senha'}
+        help_text="🔴 OBRIGATÓRIO: Senha segura com no mínimo 8 caracteres. Use letras, números e símbolos.",
+        style={
+            'input_type': 'password', 
+            'placeholder': 'Digite uma senha forte com 8+ caracteres'
+        }
     )
+    
     confirm_password = serializers.CharField(
         write_only=True,
         required=True,
-        help_text="🔴 OBRIGATÓRIO: Confirme a senha digitada",
-        style={'input_type': 'password', 'placeholder': 'Confirme sua senha'}
+        help_text="🔴 OBRIGATÓRIO: Digite a mesma senha para confirmar. Deve ser idêntica à senha acima.",
+        style={
+            'input_type': 'password', 
+            'placeholder': 'Repita a senha digitada acima'
+        }
     )
+    
     email = serializers.EmailField(
         required=True,
-        help_text="🔴 OBRIGATÓRIO: Email válido para contato",
-        style={'placeholder': 'exemplo@email.com'}
+        help_text="🔴 OBRIGATÓRIO: Email válido para contato e recuperação de senha. Exemplo: nome@provedor.com",
+        style={
+            'placeholder': 'Exemplo: maria@gmail.com, joao@outlook.com',
+            'input_type': 'email'
+        }
     )
+    
     first_name = serializers.CharField(
         max_length=150,
         required=True,
-        help_text="🔴 OBRIGATÓRIO: Primeiro nome",
-        style={'placeholder': 'João'}
+        help_text="🔴 OBRIGATÓRIO: Primeiro nome do usuário. Como você gostaria de ser chamado(a).",
+        style={
+            'placeholder': 'Exemplo: Maria, João, Ana, Carlos'
+        }
     )
+    
     last_name = serializers.CharField(
         max_length=150,
         required=True,
-        help_text="🔴 OBRIGATÓRIO: Sobrenome",
-        style={'placeholder': 'Silva'}
+        help_text="🔴 OBRIGATÓRIO: Sobrenome do usuário. Seu nome de família.",
+        style={
+            'placeholder': 'Exemplo: Silva, Santos, Oliveira, Pereira'
+        }
     )
+    
+    # ===============================
+    # ⚪ CAMPOS OPCIONAIS
+    # ===============================
     telefone = serializers.CharField(
         max_length=20, 
         required=False, 
         allow_blank=True,
         allow_null=True,
-        help_text="⚪ OPCIONAL: Telefone de contato (pode ficar em branco)",
-        style={'placeholder': '(11) 99999-9999'}
+        help_text="⚪ OPCIONAL: Telefone para contato (pode ficar em branco). Inclua DDD.",
+        style={
+            'placeholder': 'Exemplo: (11) 99999-9999, (21) 88888-8888'
+        }
     )
+    
     endereco = serializers.CharField(
         required=False, 
         allow_blank=True,
         allow_null=True,
-        help_text="⚪ OPCIONAL: Endereço residencial (pode ficar em branco)",
-        style={'placeholder': 'Rua das Flores, 123, São Paulo'}
+        help_text="⚪ OPCIONAL: Endereço residencial completo (pode ficar em branco). Rua, número, bairro, cidade.",
+        style={
+            'base_template': 'textarea.html',
+            'placeholder': 'Exemplo: Rua das Flores, 123, Centro, São Paulo - SP, CEP: 01234-567'
+        }
     )
     
     class Meta:
@@ -234,13 +281,11 @@ class UserSelfRegisterSerializer(UserCreateSerializer):
             # Cria o usuário
             user = User.objects.create_user(**validated_data)
             
-            # Cria o perfil
-            Profile.objects.create(
-                user=user,
-                role=role,
-                telefone=telefone,
-                endereco=endereco
-            )
+            # Atualiza o perfil criado automaticamente pelo signal
+            user.profile.role = role
+            user.profile.telefone = telefone
+            user.profile.endereco = endereco
+            user.profile.save()
             
             return user
         except IntegrityError:
@@ -250,7 +295,174 @@ class UserSelfRegisterSerializer(UserCreateSerializer):
             })
 
 class UserFuncionarioCreateSerializer(UserCreateSerializer):
-    """Serializer para funcionários criarem usuários - CLIENTE, FUNCIONARIO ou VETERINARIO"""
+    """
+    🌟 SERIALIZER PARA CRIAÇÃO DE USUÁRIOS POR FUNCIONÁRIOS
+    
+    Permite que funcionários do sistema criem novos usuários dos tipos:
+    CLIENTE, FUNCIONARIO ou VETERINARIO
+    
+    📋 EXEMPLO DE USO:
+    {
+        "username": "novousuario",
+        "password": "minhasenha123",
+        "confirm_password": "minhasenha123",
+        "email": "user@example.com",
+        "first_name": "Maria",
+        "last_name": "Santos",
+        "role": "CLIENTE",
+        "telefone": "(11) 88888-8888",
+        "endereco": "Av. Principal, 456, São Paulo",
+        "crmv": "SP-12345",
+        "especialidade": "Clínica Geral"
+    }
+    
+    💡 DICA: Para veterinários, o campo CRMV é obrigatório!
+    """
+    
+    # ===============================
+    # 🔴 CAMPOS OBRIGATÓRIOS
+    # ===============================
+    username = serializers.CharField(
+        max_length=150,
+        required=True,
+        help_text="🔴 OBRIGATÓRIO: Nome de usuário único no sistema para login",
+        style={
+            'placeholder': 'Exemplo: maria_silva, dr_joao, func_ana'
+        }
+    )
+    
+    password = serializers.CharField(
+        write_only=True, 
+        min_length=8,
+        required=True,
+        help_text="🔴 OBRIGATÓRIO: Senha segura com no mínimo 8 caracteres",
+        style={
+            'input_type': 'password',
+            'placeholder': 'Digite uma senha forte'
+        }
+    )
+    
+    confirm_password = serializers.CharField(
+        write_only=True,
+        required=True,
+        help_text="🔴 OBRIGATÓRIO: Confirme a senha digitada acima",
+        style={
+            'input_type': 'password',
+            'placeholder': 'Repita a senha'
+        }
+    )
+    
+    email = serializers.EmailField(
+        required=True,
+        help_text="🔴 OBRIGATÓRIO: Email válido para contato profissional",
+        style={
+            'placeholder': 'usuario@clinica.com.br'
+        }
+    )
+    
+    first_name = serializers.CharField(
+        max_length=150,
+        required=True,
+        help_text="🔴 OBRIGATÓRIO: Primeiro nome do usuário",
+        style={
+            'placeholder': 'Maria, João, Ana'
+        }
+    )
+    
+    last_name = serializers.CharField(
+        max_length=150,
+        required=True,
+        help_text="🔴 OBRIGATÓRIO: Sobrenome do usuário",
+        style={
+            'placeholder': 'Silva, Santos, Oliveira'
+        }
+    )
+    
+    # ===============================
+    # 🟡 CAMPO TIPO DE USUÁRIO
+    # ===============================
+    role = serializers.ChoiceField(
+        choices=[
+            (Profile.Role.CLIENTE, "Cliente - Dono de pet"),
+            (Profile.Role.FUNCIONARIO, "Funcionário - Atendente/Recepção"),
+            (Profile.Role.VETERINARIO, "Veterinário - Profissional médico")
+        ], 
+        default=Profile.Role.CLIENTE,
+        help_text="🟡 ESCOLHA: Tipo de usuário que será criado. Define as permissões no sistema.",
+        style={
+            'base_template': 'select.html'
+        }
+    )
+    
+    # ===============================
+    # ⚪ CAMPOS OPCIONAIS - CONTATO
+    # ===============================
+    telefone = serializers.CharField(
+        max_length=20, 
+        required=False, 
+        allow_blank=True,
+        allow_null=True,
+        help_text="⚪ OPCIONAL: Telefone de contato. Recomendado para funcionários e veterinários.",
+        style={
+            'placeholder': '(11) 99999-9999'
+        }
+    )
+    
+    endereco = serializers.CharField(
+        required=False, 
+        allow_blank=True,
+        allow_null=True,
+        help_text="⚪ OPCIONAL: Endereço residencial ou comercial completo",
+        style={
+            'base_template': 'textarea.html',
+            'placeholder': 'Rua, número, bairro, cidade - estado'
+        }
+    )
+    
+    # ===============================
+    # 🔵 CAMPOS ESPECÍFICOS VETERINÁRIOS
+    # ===============================
+    crmv = serializers.CharField(
+        max_length=20, 
+        required=False, 
+        allow_blank=True,
+        allow_null=True,
+        help_text="🔵 VETERINÁRIO: OBRIGATÓRIO para veterinários. Número do CRMV com estado (ex: SP-12345)",
+        style={
+            'placeholder': 'SP-12345, RJ-67890, MG-54321'
+        }
+    )
+    
+    especialidade = serializers.CharField(
+        max_length=100, 
+        required=False, 
+        allow_blank=True,
+        allow_null=True,
+        help_text="🔵 VETERINÁRIO: Especialidade médica (opcional)",
+        style={
+            'placeholder': 'Clínica Geral, Cirurgia, Dermatologia, Cardiologia'
+        }
+    )
+    
+    class Meta:
+        model = User
+        fields = [
+            # Campos principais (obrigatórios)
+            'username',
+            'password', 
+            'confirm_password',
+            'email',
+            'first_name',
+            'last_name',
+            # Tipo de usuário
+            'role',
+            # Campos opcionais de contato
+            'telefone',
+            'endereco',
+            # Campos específicos para veterinários
+            'crmv',
+            'especialidade'
+        ]
     
     def validate_role(self, value):
         """Funcionários podem criar: CLIENTE, FUNCIONARIO, VETERINARIO"""
@@ -262,7 +474,170 @@ class UserFuncionarioCreateSerializer(UserCreateSerializer):
         return value
 
 class UserAdminCreateSerializer(UserCreateSerializer):
-    """Serializer para administradores criarem usuários - todos os tipos"""
+    """
+    🌟 SERIALIZER PARA CRIAÇÃO DE USUÁRIOS POR ADMINISTRADORES
+    
+    Administradores podem criar usuários de QUALQUER tipo no sistema:
+    CLIENTE, FUNCIONARIO, VETERINARIO ou ADMIN
+    
+    📋 EXEMPLO DE USO:
+    {
+        "username": "ATEJhFGqAim",
+        "password": "minhasenha123",
+        "confirm_password": "minhasenha123",
+        "email": "user@example.com",
+        "first_name": "João",
+        "last_name": "Silva",
+        "role": "VETERINARIO",
+        "telefone": "(11) 99999-9999",
+        "endereco": "Rua das Flores, 123, São Paulo",
+        "crmv": "SP-12345",
+        "especialidade": "Clínica Geral"
+    }
+    
+    🔑 PRIVILÉGIOS: Admins têm acesso total - podem criar inclusive outros admins!
+    """
+    
+    # ===============================
+    # 🔴 CAMPOS OBRIGATÓRIOS
+    # ===============================
+    username = serializers.CharField(
+        max_length=150,
+        required=True,
+        help_text="🔴 OBRIGATÓRIO: Nome de usuário único no sistema para login",
+        style={
+            'placeholder': 'admin_joao, dr_maria, func_ana, cliente_carlos'
+        }
+    )
+    
+    password = serializers.CharField(
+        write_only=True, 
+        min_length=8,
+        required=True,
+        help_text="🔴 OBRIGATÓRIO: Senha segura com no mínimo 8 caracteres",
+        style={
+            'input_type': 'password',
+            'placeholder': 'Digite uma senha forte e segura'
+        }
+    )
+    
+    confirm_password = serializers.CharField(
+        write_only=True,
+        required=True,
+        help_text="🔴 OBRIGATÓRIO: Confirme a senha digitada acima para validação",
+        style={
+            'input_type': 'password',
+            'placeholder': 'Repita exatamente a senha acima'
+        }
+    )
+    
+    email = serializers.EmailField(
+        required=True,
+        help_text="🔴 OBRIGATÓRIO: Email válido para contato e recuperação de conta",
+        style={
+            'placeholder': 'nome@clinica.com.br, admin@empresa.com'
+        }
+    )
+    
+    first_name = serializers.CharField(
+        max_length=150,
+        required=True,
+        help_text="🔴 OBRIGATÓRIO: Primeiro nome do usuário",
+        style={
+            'placeholder': 'João, Maria, Carlos, Ana'
+        }
+    )
+    
+    last_name = serializers.CharField(
+        max_length=150,
+        required=True,
+        help_text="🔴 OBRIGATÓRIO: Sobrenome do usuário",
+        style={
+            'placeholder': 'Silva, Santos, Oliveira, Costa'
+        }
+    )
+    
+    # ===============================
+    # 🟡 CAMPO TIPO DE USUÁRIO
+    # ===============================
+    role = serializers.ChoiceField(
+        choices=Profile.Role.choices, 
+        default=Profile.Role.CLIENTE,
+        help_text="🟡 ESCOLHA: Tipo de usuário no sistema. Admins podem criar qualquer tipo, inclusive outros admins.",
+        style={
+            'base_template': 'select.html'
+        }
+    )
+    
+    # ===============================
+    # ⚪ CAMPOS OPCIONAIS - CONTATO
+    # ===============================
+    telefone = serializers.CharField(
+        max_length=20, 
+        required=False, 
+        allow_blank=True,
+        allow_null=True,
+        help_text="⚪ OPCIONAL: Telefone de contato. Inclua DDD para melhor comunicação.",
+        style={
+            'placeholder': '(11) 99999-9999, (21) 88888-8888'
+        }
+    )
+    
+    endereco = serializers.CharField(
+        required=False, 
+        allow_blank=True,
+        allow_null=True,
+        help_text="⚪ OPCIONAL: Endereço residencial ou comercial completo",
+        style={
+            'base_template': 'textarea.html',
+            'placeholder': 'Rua das Flores, 123, Centro\nSão Paulo - SP\nCEP: 01234-567'
+        }
+    )
+    
+    # ===============================
+    # 🔵 CAMPOS ESPECÍFICOS VETERINÁRIOS
+    # ===============================
+    crmv = serializers.CharField(
+        max_length=20, 
+        required=False, 
+        allow_blank=True,
+        allow_null=True,
+        help_text="🔵 VETERINÁRIO: OBRIGATÓRIO apenas para veterinários. Número do CRMV com estado.",
+        style={
+            'placeholder': 'SP-12345, RJ-67890, MG-54321, RS-11111'
+        }
+    )
+    
+    especialidade = serializers.CharField(
+        max_length=100, 
+        required=False, 
+        allow_blank=True,
+        allow_null=True,
+        help_text="🔵 VETERINÁRIO: Especialidade médica veterinária (opcional)",
+        style={
+            'placeholder': 'Clínica Geral, Cirurgia, Dermatologia, Cardiologia, Oncologia'
+        }
+    )
+    
+    class Meta:
+        model = User
+        fields = [
+            # Campos principais (obrigatórios)
+            'username',
+            'password', 
+            'confirm_password',
+            'email',
+            'first_name',
+            'last_name',
+            # Tipo de usuário
+            'role',
+            # Campos opcionais de contato
+            'telefone',
+            'endereco',
+            # Campos específicos para veterinários
+            'crmv',
+            'especialidade'
+        ]
     
     def validate_role(self, value):
         """Administradores podem criar qualquer tipo de usuário"""

@@ -22,12 +22,12 @@ class ProfileModelTest(TestCase):
     
     def test_profile_creation(self):
         """Testa criação de perfil"""
-        profile = Profile.objects.create(
-            user=self.user,
-            role=Profile.Role.CLIENTE,
-            telefone='(11) 99999-9999',
-            endereco='Rua Teste, 123'
-        )
+        # Profile já foi criado automaticamente pelo signal
+        profile = self.user.profile
+        profile.role = Profile.Role.CLIENTE
+        profile.telefone = '(11) 99999-9999'
+        profile.endereco = 'Rua Teste, 123'
+        profile.save()
         
         self.assertEqual(profile.user, self.user)
         self.assertEqual(profile.role, Profile.Role.CLIENTE)
@@ -36,10 +36,10 @@ class ProfileModelTest(TestCase):
     
     def test_profile_str(self):
         """Testa representação string do perfil"""
-        profile = Profile.objects.create(
-            user=self.user,
-            role=Profile.Role.VETERINARIO
-        )
+        # Profile já foi criado automaticamente pelo signal
+        profile = self.user.profile
+        profile.role = Profile.Role.VETERINARIO
+        profile.save()
         
         expected = f"{self.user.username} - {profile.get_role_display()}"
         self.assertEqual(str(profile), expected)
@@ -154,10 +154,10 @@ class UserAuthenticationTest(APITestCase):
             email='test@email.com',
             password='testpassword123'
         )
-        Profile.objects.create(
-            user=self.user,
-            role=Profile.Role.CLIENTE
-        )
+        # Atualizar perfil criado automaticamente pelo signal
+        profile = self.user.profile
+        profile.role = Profile.Role.CLIENTE
+        profile.save()
         self.client = APIClient()
     
     def test_login_valid_credentials(self):
@@ -196,10 +196,10 @@ class UserPermissionsTest(APITestCase):
             email='admin@email.com',
             password='admin123'
         )
-        Profile.objects.create(
-            user=self.admin_user,
-            role=Profile.Role.ADMIN
-        )
+        # Atualizar perfil criado automaticamente pelo signal
+        admin_profile = self.admin_user.profile
+        admin_profile.role = Profile.Role.ADMIN
+        admin_profile.save()
         
         # Usuário funcionário
         self.funcionario_user = User.objects.create_user(
@@ -207,10 +207,10 @@ class UserPermissionsTest(APITestCase):
             email='funcionario@email.com',
             password='func123'
         )
-        Profile.objects.create(
-            user=self.funcionario_user,
-            role=Profile.Role.FUNCIONARIO
-        )
+        # Atualizar perfil criado automaticamente pelo signal
+        funcionario_profile = self.funcionario_user.profile
+        funcionario_profile.role = Profile.Role.FUNCIONARIO
+        funcionario_profile.save()
         
         # Usuário cliente
         self.cliente_user = User.objects.create_user(
@@ -218,10 +218,10 @@ class UserPermissionsTest(APITestCase):
             email='cliente@email.com',
             password='cliente123'
         )
-        Profile.objects.create(
-            user=self.cliente_user,
-            role=Profile.Role.CLIENTE
-        )
+        # Atualizar perfil criado automaticamente pelo signal
+        cliente_profile = self.cliente_user.profile
+        cliente_profile.role = Profile.Role.CLIENTE
+        cliente_profile.save()
         
         self.client = APIClient()
     
@@ -303,11 +303,11 @@ class UserSerializerTest(TestCase):
             first_name='Test',
             last_name='User'
         )
-        Profile.objects.create(
-            user=user,
-            role=Profile.Role.CLIENTE,
-            telefone='(11) 99999-9999'
-        )
+        # Atualizar perfil criado automaticamente pelo signal
+        profile = user.profile
+        profile.role = Profile.Role.CLIENTE
+        profile.telefone = '(11) 99999-9999'
+        profile.save()
         
         serializer = UserDetailSerializer(user)
         data = serializer.data
@@ -328,10 +328,10 @@ class UserFuncionarioViewSetTest(APITestCase):
             email='funcionario@email.com',
             password='func123'
         )
-        Profile.objects.create(
-            user=self.funcionario_user,
-            role=Profile.Role.FUNCIONARIO
-        )
+        # Atualizar perfil criado automaticamente pelo signal
+        funcionario_profile = self.funcionario_user.profile
+        funcionario_profile.role = Profile.Role.FUNCIONARIO
+        funcionario_profile.save()
         
         # Cliente para teste
         self.cliente_user = User.objects.create_user(
@@ -339,10 +339,10 @@ class UserFuncionarioViewSetTest(APITestCase):
             email='cliente@email.com',
             password='cliente123'
         )
-        Profile.objects.create(
-            user=self.cliente_user,
-            role=Profile.Role.CLIENTE
-        )
+        # Atualizar perfil criado automaticamente pelo signal
+        cliente_profile = self.cliente_user.profile
+        cliente_profile.role = Profile.Role.CLIENTE
+        cliente_profile.save()
         
         self.client = APIClient()
         token = Token.objects.create(user=self.funcionario_user)

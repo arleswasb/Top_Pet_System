@@ -30,29 +30,37 @@ class PetAPIPermissionsTestCase(TestCase):
             is_staff=True,
             is_superuser=True
         )
-        # Criar perfil manualmente
-        admin_profile = Profile.objects.create(user=self.admin, role=Profile.Role.ADMIN)
+        # Atualizar perfil criado automaticamente pelo signal
+        admin_profile = self.admin.profile
+        admin_profile.role = Profile.Role.ADMIN
+        admin_profile.save()
 
         self.funcionario = User.objects.create_user(
             username='func_api',
             password='funcpass'
         )
-        # Criar perfil manualmente
-        func_profile = Profile.objects.create(user=self.funcionario, role=Profile.Role.FUNCIONARIO)
+        # Atualizar perfil criado automaticamente pelo signal
+        func_profile = self.funcionario.profile
+        func_profile.role = Profile.Role.FUNCIONARIO
+        func_profile.save()
 
         self.tutor = User.objects.create_user(
             username='tutor_api',
             password='tutorpass'
         )
-        # Criar perfil manualmente
-        tutor_profile = Profile.objects.create(user=self.tutor, role=Profile.Role.CLIENTE)
+        # Atualizar perfil criado automaticamente pelo signal
+        tutor_profile = self.tutor.profile
+        tutor_profile.role = Profile.Role.CLIENTE
+        tutor_profile.save()
 
         self.outro_user = User.objects.create_user(
             username='outro_api',
             password='outropass'
         )
-        # Criar perfil manualmente
-        outro_profile = Profile.objects.create(user=self.outro_user, role=Profile.Role.CLIENTE)
+        # Atualizar perfil criado automaticamente pelo signal
+        outro_profile = self.outro_user.profile
+        outro_profile.role = Profile.Role.CLIENTE
+        outro_profile.save()
 
         # Cria pet para teste, associado ao self.tutor
         self.pet = Pet.objects.create(
@@ -129,7 +137,10 @@ class PetAPIPermissionsTestCase(TestCase):
             username='funcionario2',
             password='testpass'
         )
-        funcionario2_profile = Profile.objects.create(user=funcionario2, role=Profile.Role.FUNCIONARIO)
+        # Atualizar perfil criado automaticamente pelo signal
+        funcionario2_profile = funcionario2.profile
+        funcionario2_profile.role = Profile.Role.FUNCIONARIO
+        funcionario2_profile.save()
         
         pet_funcionario = Pet.objects.create(
             nome='Pet do Funcionário',
@@ -178,15 +189,19 @@ class PetAPICreateTestCase(TestCase):
             username='cliente_create',
             password='testpass'
         )
-        # Criar perfil manualmente
-        cliente_profile = Profile.objects.create(user=self.cliente, role=Profile.Role.CLIENTE)
+        # Atualizar perfil criado automaticamente pelo signal
+        cliente_profile = self.cliente.profile
+        cliente_profile.role = Profile.Role.CLIENTE
+        cliente_profile.save()
         
         self.funcionario = User.objects.create_user(
             username='func_create',
             password='testpass'
         )
-        # Criar perfil manualmente
-        func_profile = Profile.objects.create(user=self.funcionario, role=Profile.Role.FUNCIONARIO)
+        # Atualizar perfil criado automaticamente pelo signal
+        func_profile = self.funcionario.profile
+        func_profile.role = Profile.Role.FUNCIONARIO
+        func_profile.save()
         
         self.client = APIClient()
 
@@ -246,8 +261,10 @@ class PetSerializerIntegrationTestCase(TestCase):
             username='serializer_user',
             password='testpass'
         )
-        # Criar perfil manualmente
-        user_profile = Profile.objects.create(user=self.user, role=Profile.Role.CLIENTE)
+        # Atualizar perfil criado automaticamente pelo signal
+        user_profile = self.user.profile
+        user_profile.role = Profile.Role.CLIENTE
+        user_profile.save()
         
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
@@ -349,8 +366,10 @@ class PetAPIUpdateTestCase(TestCase):
             username='update_user',
             password='testpass'
         )
-        # Criar perfil manualmente
-        user_profile = Profile.objects.create(user=self.user, role=Profile.Role.CLIENTE)
+        # Atualizar perfil criado automaticamente pelo signal
+        user_profile = self.user.profile
+        user_profile.role = Profile.Role.CLIENTE
+        user_profile.save()
         
         self.pet = Pet.objects.create(
             nome='Pet Original',
@@ -404,8 +423,10 @@ class PetAPIFilteringTestCase(TestCase):
             username='filter_user',
             password='testpass'
         )
-        # Criar perfil manualmente
-        user_profile = Profile.objects.create(user=self.user, role=Profile.Role.CLIENTE)
+        # Atualizar perfil criado automaticamente pelo signal
+        user_profile = self.user.profile
+        user_profile.role = Profile.Role.CLIENTE
+        user_profile.save()
         
         # Cria pets de teste
         Pet.objects.create(nome='Rex', especie='Cachorro', tutor=self.user)

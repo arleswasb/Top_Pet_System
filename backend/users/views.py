@@ -73,14 +73,9 @@ class UserCreateView(generics.CreateAPIView):
         description="Retorna detalhes de um usuário específico.",
         tags=["Usuários"]
     ),
-    update=extend_schema(
-        summary="Atualizar usuário",
-        description="Atualiza completamente um usuário.",
-        tags=["Usuários"]
-    ),
     partial_update=extend_schema(
-        summary="Atualizar usuário parcialmente",
-        description="Atualiza parcialmente um usuário.",
+        summary="Atualizar usuário",
+        description="Atualiza parcialmente um usuário. Apenas os campos enviados serão alterados.",
         tags=["Usuários"]
     ),
     destroy=extend_schema(
@@ -101,6 +96,9 @@ class UserAdminViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserAdminSerializer
     permission_classes = [permissions.IsAuthenticated, IsAdminRole]
+    
+    # Lista de ações HTTP permitidas (removendo 'put' que é o método PUT)
+    http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
     
     @action(detail=True, methods=['post'])
     def toggle_active(self, request, pk=None):
@@ -172,13 +170,8 @@ class UserAdminCreateView(generics.CreateAPIView):
         description="Funcionários podem ver detalhes apenas de clientes.",
         tags=["Usuários"]
     ),
-    update=extend_schema(
-        summary="Atualizar cliente (Funcionário)",
-        description="Funcionários podem atualizar dados de clientes.",
-        tags=["Usuários"]
-    ),
     partial_update=extend_schema(
-        summary="Atualizar cliente parcialmente (Funcionário)",
+        summary="Atualizar cliente (Funcionário)",
         description="Funcionários podem atualizar parcialmente dados de clientes.",
         tags=["Usuários"]
     ),
@@ -202,6 +195,9 @@ class UserFuncionarioViewSet(viewsets.ModelViewSet):
     """
     serializer_class = UserDetailSerializer
     permission_classes = [permissions.IsAuthenticated, CanManageClients]
+    
+    # Lista de ações HTTP permitidas (removendo 'put' que é o método PUT)
+    http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
     
     def get_serializer_class(self):
         """

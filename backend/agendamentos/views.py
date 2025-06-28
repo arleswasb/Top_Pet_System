@@ -1,6 +1,7 @@
 # agendamentos/views.py
 
-from rest_framework import viewsets, permissions, serializers
+from rest_framework import viewsets, permissions, serializers, status
+from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from .models import Agendamento, Servico
 from .serializers import AgendamentoSerializer, ServicoSerializer
@@ -23,13 +24,8 @@ from users.models import Profile
         description="Cria um novo serviço (apenas admin).",
         tags=["Serviços"]
     ),
-    update=extend_schema(
-        summary="Atualizar serviço",
-        description="Atualiza completamente um serviço (apenas admin).",
-        tags=["Serviços"]
-    ),
     partial_update=extend_schema(
-        summary="Atualizar serviço parcialmente",
+        summary="Atualizar serviço",
         description="Atualiza parcialmente um serviço (apenas admin).",
         tags=["Serviços"]
     ),
@@ -49,6 +45,9 @@ class ServicoViewSet(viewsets.ModelViewSet):
     queryset = Servico.objects.all()
     serializer_class = ServicoSerializer
     permission_classes = [permissions.IsAdminUser]
+
+    # Lista de ações HTTP permitidas (removendo 'put' que é o método PUT)
+    http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
 
     def get_permissions(self):
         # Permite que qualquer usuário autenticado possa listar ou ver detalhes (leitura)
@@ -76,13 +75,8 @@ class ServicoViewSet(viewsets.ModelViewSet):
         description="Cria um novo agendamento para um pet.",
         tags=["Agendamentos"]
     ),
-    update=extend_schema(
-        summary="Atualizar agendamento",
-        description="Atualiza completamente um agendamento.",
-        tags=["Agendamentos"]
-    ),
     partial_update=extend_schema(
-        summary="Atualizar agendamento parcialmente",
+        summary="Atualizar agendamento",
         description="Atualiza parcialmente um agendamento (ex: alterar status).",
         tags=["Agendamentos"]
     ),
@@ -104,6 +98,9 @@ class AgendamentoViewSet(viewsets.ModelViewSet):
     queryset = Agendamento.objects.all()
     serializer_class = AgendamentoSerializer
     permission_classes = [permissions.IsAuthenticated, IsTutorOrAdminOrFuncionario]
+
+    # Lista de ações HTTP permitidas (removendo 'put' que é o método PUT)
+    http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
 
     def get_queryset(self):
         user = self.request.user

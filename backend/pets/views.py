@@ -1,6 +1,8 @@
 # pets/views.py
 import logging
-from rest_framework import viewsets, permissions, serializers
+from rest_framework import viewsets, permissions, serializers, status
+from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from .models import Pet
 from .serializers import PetSerializer
@@ -17,7 +19,7 @@ logger = logging.getLogger(__name__)
     ),
     create=extend_schema(
         summary="Criar pet",
-        description="Cria um novo pet. Para clientes, o tutor é definido automaticamente.",
+        description="Cria um novo pet. Para clientes, o tutor é definido automaticamente. Suporte a upload de foto (multipart/form-data).",
         tags=["Pets"]
     ),
     retrieve=extend_schema(
@@ -25,14 +27,9 @@ logger = logging.getLogger(__name__)
         description="Retorna detalhes de um pet específico.",
         tags=["Pets"]
     ),
-    update=extend_schema(
-        summary="Atualizar pet",
-        description="Atualiza completamente um pet.",
-        tags=["Pets"]
-    ),
     partial_update=extend_schema(
-        summary="Atualizar pet parcialmente",
-        description="Atualiza parcialmente um pet.",
+        summary="Atualizar pet",
+        description="Atualiza parcialmente um pet. Apenas os campos enviados serão alterados, preservando os demais dados.",
         tags=["Pets"]
     ),
     destroy=extend_schema(
@@ -50,10 +47,15 @@ class PetViewSet(viewsets.ModelViewSet):
     - Funcionários e admins veem todos os pets
     - Upload de fotos suportado
     - Validações automáticas de permissão
+    - Apenas atualização parcial (PATCH) para segurança dos dados
     """
     queryset = Pet.objects.select_related('tutor')
     serializer_class = PetSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdminOrFuncionario] # <-- Permissões
+    parser_classes = [MultiPartParser, FormParser, JSONParser] # <-- Suporte a multipart/form-data
+    
+    # Lista de ações HTTP permitidas (removendo 'put' que é o método PUT)
+    http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
 
     def get_queryset(self):
         user = self.request.user
