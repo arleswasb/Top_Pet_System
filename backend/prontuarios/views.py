@@ -2,6 +2,7 @@
 
 from rest_framework import viewsets, permissions, serializers, status
 from rest_framework.response import Response
+from rest_framework.generics import UpdateAPIView
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from .models import Prontuario
 from .serializers import ProntuarioSerializer
@@ -88,3 +89,8 @@ class ProntuarioViewSet(viewsets.ModelViewSet):
             serializer.save(veterinario=user)
         else:
             serializer.save()
+
+class ProntuarioUpdateView(UpdateAPIView):
+    queryset = Prontuario.objects.all()
+    serializer_class = ProntuarioSerializer
+    # Remova o lookup_field para usar o padrão 'pk'

@@ -59,6 +59,7 @@ class ProntuarioSerializer(serializers.ModelSerializer):
     veterinario_nome = serializers.CharField(source='veterinario.username', read_only=True)
     tipo_consulta_display = serializers.CharField(source='get_tipo_consulta_display', read_only=True)
     idade_pet = serializers.SerializerMethodField()
+    data_de_nascimento = serializers.SerializerMethodField()
     
     # === CAMPOS OBRIGATÓRIOS ===
     pet = serializers.PrimaryKeyRelatedField(
@@ -148,14 +149,7 @@ class ProntuarioSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Prontuario
-        fields = [
-            'id', 'pet', 'pet_nome', 'veterinario', 'veterinario_nome',
-            'data_consulta', 'tipo_consulta', 'tipo_consulta_display',
-            'peso', 'temperatura', 'motivo_consulta', 'exame_fisico', 'diagnostico', 
-            'tratamento', 'medicamentos', 'observacoes', 'proxima_consulta',
-            'idade_pet', 'created_at', 'updated_at'
-        ]
-        read_only_fields = ['created_at', 'updated_at']
+        fields = '__all__'
     
     @extend_schema_field(serializers.IntegerField(allow_null=True))
     def get_idade_pet(self, obj):
@@ -170,3 +164,31 @@ class ProntuarioSerializer(serializers.ModelSerializer):
             diferenca = data_consulta - obj.pet.data_de_nascimento
             return diferenca.days // 365
         return None
+
+    def get_data_de_nascimento(self, obj):
+        """
+        Retorna a data de nascimento do pet associado ao prontuário.
+        
+        Returns:
+            date: Data de nascimento do pet ou None se não informado
+        """
+        return obj.pet.data_de_nascimento if obj.pet and obj.pet.data_de_nascimento else None
+
+    def validate_pet(self, value):
+        if not value or getattr(value, 'pk', None) == 0:
+            raise serializers.ValidationError("Selecione um pet válido (não use 0).")
+        return value
+
+    def validate_veterinario(self, value):
+        if not value or getattr(value, 'pk', None) == 0:
+            raise serializers.ValidationError("Selecione um veterinário válido (não use 0).")
+        return value
+
+    def validate_temperatura(self, value):
+        if value is None:
+            raise serializers.ValidationError("Temperatura é obrigatória.")
+        try:
+            float(value)
+        except (TypeError, ValueError):
+            raise serializers.ValidationError("Informe um número válido para temperatura.")
+        return value

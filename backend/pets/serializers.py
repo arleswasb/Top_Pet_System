@@ -29,15 +29,13 @@ class PetSerializer(serializers.ModelSerializer):
     """
     # Campos somente leitura
     tutor_detail = UserSerializer(source='tutor', read_only=True)
-    idade = serializers.SerializerMethodField()
-    
-    # Campos de escrita
     tutor = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.filter(is_active=True),
         write_only=True,
-        required=False,
-        help_text="ID do usuário que será o tutor do pet (opcional para clientes)"
+        required=False,  # Deixe como False, a view irá validar conforme o perfil
+        help_text="ID do usuário que será o tutor do pet (obrigatório para funcionários)"
     )
+    idade = serializers.SerializerMethodField()
     
     # Campos do modelo com documentação
     nome = serializers.CharField(
@@ -89,11 +87,11 @@ class PetSerializer(serializers.ModelSerializer):
             'foto',
             'observacoes',
             # Campo de relacionamento
+            'tutor_detail',
             'tutor',
             # Campos somente leitura
             'id',
             'idade',
-            'tutor_detail',
             'created_at',
             'updated_at'
         ]
@@ -108,10 +106,10 @@ class PetSerializer(serializers.ModelSerializer):
         return obj.idade if obj.idade is not None else 0
 
     def validate_tutor(self, value):
-        """Validação customizada: apenas clientes podem ser tutores"""
+        """Validação customizada: apenas clientes ou veterinários podem ser tutores"""
         if not hasattr(value, 'profile'):
             raise serializers.ValidationError("O usuário selecionado não possui um perfil associado.")
-        # Agora Profile.Role.CLIENTE deve ser acessível corretamente
-        if value.profile.role != Profile.Role.CLIENTE:
-            raise serializers.ValidationError("O tutor deve ser um cliente.")
+        # Permitir CLIENTE ou VETERINARIO como tutor
+        if value.profile.role not in [Profile.Role.CLIENTE, Profile.Role.VETERINARIO]:
+            raise serializers.ValidationError("O tutor deve ser um cliente ou veterinário.")
         return value
