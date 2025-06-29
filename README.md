@@ -80,6 +80,8 @@ cd Top_Pet_System
 # Construir e executar com Docker Compose
 docker-compose up -d --build
 
+docker-compose exec web python manage.py createsuperuser
+
 # Acessar em http://localhost:8000
 ```
 
