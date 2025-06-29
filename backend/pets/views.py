@@ -69,16 +69,6 @@ class PetViewSet(viewsets.ModelViewSet):
         return self.queryset.all()
 
     def perform_create(self, serializer): # <-- Lógica de criação
-        user = self.request.user
-        profile = getattr(user, 'profile', None)
-        # Funcionário/Admin: deve especificar tutor
-        if profile and profile.role in [Profile.Role.ADMIN, Profile.Role.FUNCIONARIO]:
-            tutor = serializer.validated_data.get('tutor')
-            if not tutor:
-                raise serializers.ValidationError({"tutor": "Funcionário deve especificar o tutor do pet."})
-            serializer.save()
-        else:
-            # Cliente: tutor é sempre o próprio usuário
-            serializer.save(tutor=user)
+        serializer.save(tutor=self.request.user)
         
         logger.info(f"Pet criado por {self.request.user.email}")

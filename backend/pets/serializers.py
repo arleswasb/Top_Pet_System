@@ -28,13 +28,7 @@ class PetSerializer(serializers.ModelSerializer):
     }
     """
     # Campos somente leitura
-    tutor_detail = UserSerializer(source='tutor', read_only=True)
-    tutor = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.filter(is_active=True),
-        write_only=True,
-        required=False,  # Deixe como False, a view irá validar conforme o perfil
-        help_text="ID do usuário que será o tutor do pet (obrigatório para funcionários)"
-    )
+    tutor_detail = UserSerializer(read_only=True)
     idade = serializers.SerializerMethodField()
     
     # Campos do modelo com documentação
@@ -88,7 +82,6 @@ class PetSerializer(serializers.ModelSerializer):
             'observacoes',
             # Campo de relacionamento
             'tutor_detail',
-            'tutor',
             # Campos somente leitura
             'id',
             'idade',
