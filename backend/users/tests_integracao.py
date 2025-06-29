@@ -398,3 +398,39 @@ class UserFuncionarioViewSetTest(APITestCase):
         
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(User.objects.filter(pk=self.cliente_user.pk).exists())
+
+class UserAdminViewSetTest(APITestCase):
+    """Testes para o ViewSet de administradores (/api/admin/users/)."""
+
+    def setUp(self):
+        # Usuário administrador que fará as requisições
+        self.admin_user = User.objects.create_user(
+            username='admin_test',
+            email='admin@test.com',
+            password='adminpass'
+        )
+        self.admin_user.profile.role = Profile.Role.ADMIN
+        self.admin_user.profile.save()
+
+        # Usuário cliente para ser deletado
+        self.cliente_user = User.objects.create_user(
+            username='cliente_a_deletar',
+            email='cliente@test.com',
+            password='clientepass'
+        )
+        self.cliente_user.profile.role = Profile.Role.CLIENTE
+        self.cliente_user.profile.save()
+
+        self.client = APIClient()
+        token = Token.objects.create(user=self.admin_user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+    def test_admin_can_delete_client(self):
+        """Testa que um administrador pode deletar um usuário cliente."""
+        # A URL correta para o endpoint de admin
+        url = reverse('user-admin-detail', kwargs={'pk': self.cliente_user.pk})
+        
+        response = self.client.delete(url)
+        
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(User.objects.filter(pk=self.cliente_user.pk).exists())   
