@@ -1,4 +1,4 @@
-# 🐾 Top Pet System
+activate# 🐾 Top Pet System
 
 Sistema de gestão veterinária moderno e completo para clínicas e hospitais veterinários.
 
@@ -78,7 +78,7 @@ coverage run --source='.' manage.py test  # Com cobertura
 cd Top_Pet_System
 
 # Construir e executar com Docker Compose
-docker-compose up --build
+docker-compose up -d --build
 
 # Acessar em http://localhost:8000
 ```
