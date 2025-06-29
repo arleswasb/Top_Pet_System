@@ -81,7 +81,9 @@ cd Top_Pet_System
 docker-compose up -d --build
 #cria o super usuario
 docker-compose exec web python manage.py createsuperuser
-
+#destruir e recriar os conteiners
+docker-compose donw
+docker-compose up -d --build
 # Acessar em http://localhost:8000
 ```
 
