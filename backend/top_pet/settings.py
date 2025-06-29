@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'pets',
     'rest_framework',
     'rest_framework.authtoken',
+    'drf_spectacular',
     'users',
     'agendamentos',
     'prontuarios',
@@ -44,6 +45,57 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+# Configuração do drf-spectacular (Swagger/OpenAPI)
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Top Pet System API',
+    'DESCRIPTION': 'Sistema de gestão para pet shops - API completa para gerenciamento de pets, usuários, agendamentos e prontuários médicos.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'CONTACT': {
+        'name': 'Top Pet System',
+        'email': 'contato@toppetsystem.com',
+    },
+    'LICENSE': {
+        'name': 'MIT License',
+    },
+    'TAGS': [
+        {'name': 'Autenticação', 'description': 'Endpoints de login e registro de usuários'},
+        {'name': 'Usuários', 'description': 'Gestão de perfis de usuários do sistema'},
+        {'name': 'Pets', 'description': 'Operações relacionadas ao cadastro e gestão de pets'},
+        {'name': 'Serviços', 'description': 'Catálogo de serviços veterinários disponíveis'},
+        {'name': 'Agendamentos', 'description': 'Sistema de agendamento de consultas e serviços'},
+        {'name': 'Prontuários', 'description': 'Prontuários médicos e histórico de atendimentos'},
+    ],
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SORT_OPERATIONS': False,
+    'SCHEMA_PATH_PREFIX': '/api/',
+    'SCHEMA_PATH_PREFIX_TRIM': False,
+    'DISABLE_ERRORS_AND_WARNINGS': False,
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True,
+        'displayOperationId': False,
+        'displayRequestDuration': True,
+        'docExpansion': 'none',
+        'filter': True,
+        'showExtensions': True,
+        'showCommonExtensions': True,
+        'defaultModelsExpandDepth': 1,
+        'defaultModelExpandDepth': 1,
+    },
+    'REDOC_UI_SETTINGS': {
+        'hideDownloadButton': False,
+        'theme': {
+            'colors': {
+                'primary': {
+                    'main': '#3f51b5'
+                }
+            }
+        }
+    },
 }
 
 

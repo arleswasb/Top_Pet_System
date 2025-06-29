@@ -42,11 +42,13 @@ class AgendamentoIntegrationTest(APITestCase):
             is_staff=True
         )
         
-        # Profiles são criados automaticamente via signal
-        # Configurar perfil do funcionário
-        funcionario_profile = Profile.objects.get(user=self.funcionario_user)
-        funcionario_profile.role = Profile.Role.FUNCIONARIO
-        funcionario_profile.save()
+        # Atualizar perfis criados automaticamente pelos signals
+        self.admin_user.profile.role = Profile.Role.ADMIN
+        self.admin_user.profile.save()
+        self.tutor_user.profile.role = Profile.Role.CLIENTE
+        self.tutor_user.profile.save()
+        self.funcionario_user.profile.role = Profile.Role.FUNCIONARIO
+        self.funcionario_user.profile.save()
         
         # Criar tokens para autenticação
         self.admin_token = Token.objects.create(user=self.admin_user)
@@ -188,7 +190,7 @@ class AgendamentoIntegrationTest(APITestCase):
             'observacoes': 'Serviço realizado com sucesso'
         }
         
-        response = self.client.put(f'/api/agendamentos/{agendamento.id}/', data, format='json')
+        response = self.client.patch(f'/api/agendamentos/{agendamento.id}/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         agendamento.refresh_from_db()
@@ -211,7 +213,7 @@ class AgendamentoIntegrationTest(APITestCase):
             'status': Agendamento.StatusChoices.CANCELADO
         }
         
-        response = self.client.put(f'/api/agendamentos/{agendamento.id}/', data, format='json')
+        response = self.client.patch(f'/api/agendamentos/{agendamento.id}/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         agendamento.refresh_from_db()
@@ -244,7 +246,7 @@ class AgendamentoIntegrationTest(APITestCase):
             'status': Agendamento.StatusChoices.CANCELADO
         }
         
-        response = self.client.put(f'/api/agendamentos/{agendamento_outro.id}/', data, format='json')
+        response = self.client.patch(f'/api/agendamentos/{agendamento_outro.id}/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         
@@ -355,7 +357,7 @@ class ServicoIntegrationTest(APITestCase):
             'disponivel': False
         }
         
-        response = self.client.put(f'/api/servicos/{servico.id}/', data, format='json')
+        response = self.client.patch(f'/api/servicos/{servico.id}/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         servico.refresh_from_db()
@@ -380,8 +382,12 @@ class AgendamentoWorkflowTest(APITestCase):
             is_staff=True
         )
         
-        # Configurar perfil do funcionário
-        funcionario_profile = Profile.objects.get(user=self.funcionario_user)
+        # Atualizar perfis criados automaticamente pelo signal
+        tutor_profile = self.tutor_user.profile
+        tutor_profile.role = Profile.Role.CLIENTE
+        tutor_profile.save()
+        
+        funcionario_profile = self.funcionario_user.profile  
         funcionario_profile.role = Profile.Role.FUNCIONARIO
         funcionario_profile.save()
         
@@ -434,7 +440,7 @@ class AgendamentoWorkflowTest(APITestCase):
             'observacoes': 'Serviço realizado com sucesso. Pet se comportou bem.'
         }
         
-        response = self.client.put(f'/api/agendamentos/{agendamento_id}/', data_conclusao, format='json')
+        response = self.client.patch(f'/api/agendamentos/{agendamento_id}/', data_conclusao, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
         # 4. Verificar status final
@@ -464,9 +470,32 @@ class AgendamentoWorkflowTest(APITestCase):
             'observacoes': 'Reagendado por solicitação do cliente'
         }
         
-        response = self.client.put(f'/api/agendamentos/{agendamento.id}/', data_reagendamento, format='json')
+        response = self.client.patch(f'/api/agendamentos/{agendamento.id}/', data_reagendamento, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         agendamento.refresh_from_db()
         self.assertEqual(agendamento.data_hora.date(), data_nova.date())
         self.assertIn('Reagendado', agendamento.observacoes)
+
+    def test_put_method_not_allowed(self):
+        """Confirma que PUT foi removido e retorna 405 Method Not Allowed"""
+        agendamento = Agendamento.objects.create(
+            pet=self.pet,
+            servico=self.servico,
+            data_hora=timezone.now() + timedelta(days=1)
+        )
+        
+        # Autenticar usuário para o teste
+        self.client.force_authenticate(user=self.tutor_user)
+        
+        data = {
+            'pet_id': self.pet.id,
+            'servico_id': self.servico.id,
+            'data_hora': (timezone.now() + timedelta(days=2)).isoformat(),
+            'status': Agendamento.StatusChoices.CONCLUIDO,
+            'observacoes': 'Teste PUT'
+        }
+        
+        response = self.client.put(f'/api/agendamentos/{agendamento.id}/', data, format='json')
+        # PUT deve retornar 405 Method Not Allowed - isso confirma nossa implementação
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
