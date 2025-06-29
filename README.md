@@ -74,11 +74,15 @@ docker-compose up --build
 
 ## 🧪 Executar Testes
 
-### Windows (PowerShell):
+### Dentro do docker-compose:
 ```powershell
 cd backend
-.\run_tests.ps1 -TestType all      # Todos os testes
-.\run_tests.ps1 -TestType coverage # Com cobertura
+docker-compose exec web ./run_tests.sh --coverage      # Todos os testes com cobertura
+TESTES INDIVIDUAIS
+docker-compose exec web python manage.py test pets  #PETS
+docker-compose exec web python manage.py test users  #USERS
+docker-compose exec web python manage.py test agendamentos #agendamentos
+docker-compose exec web python manage.py test prontuarios  #prontuarios
 ```
 
 ### Linux/macOS:
