@@ -128,8 +128,8 @@ Top_Pet_System/
 ## 📚 Documentação da API
 
 A documentação completa da API está disponível em:
-- **Swagger UI**: `http://localhost:8000/swagger/`
-- **ReDoc**: `http://localhost:8000/redoc/`
+- **Swagger UI**: `http://localhost:8000/api/docs/`
+- **Django**: `http://localhost:8000/admin/`
 
 ### Endpoints Principais:
 
