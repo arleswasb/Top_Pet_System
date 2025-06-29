@@ -62,10 +62,21 @@ python manage.py createsuperuser
 # Executar servidor
 python manage.py runserver
 ```
-
-### Usando Docker
+### Realizando Testes Manualmente :
 
 ```bash
+cd backend
+python manage.py test              # Todos os testes
+python manage.py test pets         # Apenas app pets
+coverage run --source='.' manage.py test  # Com cobertura
+```
+
+### Usando Docker-Compose para rodar conteinerizado
+### Comandos na pasta do projeto 
+
+```bash
+cd Top_Pet_System
+
 # Construir e executar com Docker Compose
 docker-compose up --build
 
@@ -92,13 +103,7 @@ cd backend
 ./run_tests.sh --coverage          # Com cobertura
 ```
 
-### Manualmente:
-```bash
-cd backend
-python manage.py test              # Todos os testes
-python manage.py test pets         # Apenas app pets
-coverage run --source='.' manage.py test  # Com cobertura
-```
+
 
 ## 📁 Estrutura do Projeto
 
