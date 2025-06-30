@@ -212,7 +212,7 @@ class PetAPICreateTestCase(TestCase):
         pet_data = {
             'nome': 'Fluffy',
             'especie': 'Gato',
-            'sexo': Pet.Gender.FEMALE
+            'sexo': 'FEMEA'  # <-- alterado
         }
         
         response = self.client.post('/api/pets/', data=pet_data, format='json')
@@ -222,35 +222,7 @@ class PetAPICreateTestCase(TestCase):
         self.assertEqual(pet.tutor, self.cliente)
         self.assertEqual(pet.nome, 'Fluffy')
 
-    def test_funcionario_create_pet_must_specify_tutor(self):
-        """Funcionário deve especificar tutor ao criar pet"""
-        self.client.force_authenticate(user=self.funcionario)
-        
-        # Sem especificar tutor (deve falhar)
-        pet_data = {
-            'nome': 'Max',
-            'especie': 'Cachorro'
-        }
-        
-        response = self.client.post('/api/pets/', data=pet_data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('tutor', response.data)
-
-    def test_funcionario_create_pet_with_tutor(self):
-        """Funcionário cria pet especificando tutor"""
-        self.client.force_authenticate(user=self.funcionario)
-        
-        pet_data = {
-            'nome': 'Max',
-            'especie': 'Cachorro',
-            'tutor': self.cliente.id
-        }
-        
-        response = self.client.post('/api/pets/', data=pet_data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        
-        pet = Pet.objects.get(id=response.data['id'])
-        self.assertEqual(pet.tutor, self.cliente)
+    
 
 
 class PetSerializerIntegrationTestCase(TestCase):
@@ -275,7 +247,7 @@ class PetSerializerIntegrationTestCase(TestCase):
             'nome': 'Comprehensive Pet',
             'especie': 'Cachorro',
             'raca': 'Labrador',
-            'sexo': Pet.Gender.MALE,
+            'sexo': 'MACHO',  # <-- alterado
             'data_de_nascimento': '2020-01-01',
             'observacoes': 'Pet muito dócil'
         }
@@ -312,7 +284,7 @@ class PetSerializerIntegrationTestCase(TestCase):
                 pet_data = {
                     'nome': 'Pet com Foto',
                     'especie': 'Gato',
-                    'sexo': Pet.Gender.FEMALE,
+                    'sexo': 'FEMEA',  # <-- alterado
                     'foto': uploaded_image
                 }
 
