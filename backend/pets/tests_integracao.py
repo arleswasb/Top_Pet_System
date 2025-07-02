@@ -176,10 +176,39 @@ class PetAPIPermissionsTestCase(TestCase):
         response = self.client.get('/api/pets/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
-        # Deve retornar apenas o pet do usuário autenticado
-        pets_nomes = [pet['nome'] for pet in response.data]
+        # Corrigir verificação da estrutura de resposta
+        if isinstance(response.data, dict) and 'results' in response.data:
+            pets_nomes = [pet['nome'] for pet in response.data['results']]
+        elif isinstance(response.data, list):
+            pets_nomes = [pet['nome'] for pet in response.data]
+        else:
+            pets_nomes = []
+            
         self.assertIn('Buddy', pets_nomes)
         self.assertNotIn('Rex', pets_nomes)
+
+    def test_api_response_structure(self):
+        """Testa a estrutura da resposta da API"""
+        response = self.client.get('/api/pets/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        # Corrigir verificação da estrutura
+        if isinstance(response.data, dict) and 'results' in response.data:
+            pet_data = response.data['results'][0] if response.data['results'] else None
+        elif isinstance(response.data, list) and response.data:
+            pet_data = response.data[0]
+        else:
+            pet_data = None
+            
+        if pet_data:
+            expected_fields = [
+                'id', 'nome', 'especie', 'raca', 'sexo',
+                'data_de_nascimento', 'foto', 'observacoes',
+                'tutor_detail', 'created_at', 'updated_at'
+            ]
+            
+            for field in expected_fields:
+                self.assertIn(field, pet_data)
 
 
 class PetAPICreateTestCase(TestCase):
@@ -213,7 +242,7 @@ class PetAPICreateTestCase(TestCase):
         pet_data = {
             'nome': 'Fluffy',
             'especie': 'Gato',
-            'sexo': Pet.Gender.FEMALE
+            'sexo': 'FEMEA'  # Usar string literal em vez de Pet.Gender.FEMALE
         }
         
         response = self.client.post('/api/pets/', data=pet_data, format='json')
@@ -276,7 +305,7 @@ class PetSerializerIntegrationTestCase(TestCase):
             'nome': 'Comprehensive Pet',
             'especie': 'Cachorro',
             'raca': 'Labrador',
-            'sexo': Pet.Gender.MALE,
+            'sexo': 'MACHO',  # Usar string literal em vez de Pet.Gender.MALE
             'data_de_nascimento': '2020-01-01',
             'observacoes': 'Pet muito dócil'
         }
@@ -313,7 +342,7 @@ class PetSerializerIntegrationTestCase(TestCase):
                 pet_data = {
                     'nome': 'Pet com Foto',
                     'especie': 'Gato',
-                    'sexo': Pet.Gender.FEMALE,
+                    'sexo': 'FEMEA',  # Usar string literal
                     'foto': uploaded_image
                 }
 
@@ -469,8 +498,15 @@ class PetAPIFilteringTestCase(TestCase):
         response = self.client.get('/api/pets/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
-        if response.data:
+        # Corrigir verificação da estrutura
+        if isinstance(response.data, dict) and 'results' in response.data:
+            pet_data = response.data['results'][0] if response.data['results'] else None
+        elif isinstance(response.data, list) and response.data:
             pet_data = response.data[0]
+        else:
+            pet_data = None
+            
+        if pet_data:
             expected_fields = [
                 'id', 'nome', 'especie', 'raca', 'sexo',
                 'data_de_nascimento', 'foto', 'observacoes',

@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'users',
     'agendamentos',
     'prontuarios',
+    'configuracao',
 ]
 
 # Configuração de autenticação do DRF 
@@ -68,6 +69,7 @@ SPECTACULAR_SETTINGS = {
         {'name': 'Serviços', 'description': 'Catálogo de serviços veterinários disponíveis'},
         {'name': 'Agendamentos', 'description': 'Sistema de agendamento de consultas e serviços'},
         {'name': 'Prontuários', 'description': 'Prontuários médicos e histórico de atendimentos'},
+        {'name': 'Configuração', 'description': 'Configurações de horarios de funcionamento e feriados do sistema'},
     ],
     'COMPONENT_SPLIT_REQUEST': True,
     'SORT_OPERATIONS': False,
