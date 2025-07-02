@@ -25,6 +25,18 @@ class HorarioFuncionamento(models.Model):
     
     def __str__(self):
         return f"{self.get_dia_semana_display()}: {self.hora_abertura} - {self.hora_fechamento}"
+    
+    @classmethod
+    def get_horario_dia(cls, dia_semana):
+        """Retorna o horário de funcionamento para um dia específico"""
+        try:
+            return cls.objects.get(dia_semana=dia_semana, ativo=True)
+        except cls.DoesNotExist:
+            return None
+    
+    def is_horario_valido(self, hora):
+        """Verifica se uma hora está dentro do horário de funcionamento"""
+        return self.hora_abertura <= hora <= self.hora_fechamento
 
 class Feriado(models.Model):
     nome = models.CharField(max_length=100)
@@ -39,3 +51,17 @@ class Feriado(models.Model):
     
     def __str__(self):
         return f"{self.nome} - {self.data}"
+    
+    @classmethod
+    def is_feriado(cls, data):
+        """Verifica se uma data é feriado"""
+        return cls.objects.filter(data=data, ativo=True).exists()
+    
+    @classmethod
+    def get_feriados_mes(cls, ano, mes):
+        """Retorna todos os feriados de um mês específico"""
+        return cls.objects.filter(
+            data__year=ano,
+            data__month=mes,
+            ativo=True
+        ).order_by('data')

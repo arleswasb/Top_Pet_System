@@ -91,19 +91,17 @@ python manage.py runserver
 **👑 ADMINISTRADOR:**
 - Username: admin
 - Password: admin123
-- Token: 297af8e30d64f2cee360713bfecb6e8703ca5232
 
 **👤 CLIENTE:**
 - Username: testuser
 - Password: testpass123
-- Token: 0e012c51b22276f49cbb08701af45911cf39f35d
 
 ### 🔑 Método 1: Autenticação por Token Direto
 1. No Swagger UI, clique no botão **"Authorize"** (ícone de cadeado 🔒) no topo
 2. No popup que abrir, encontre o campo **"TokenAuthentication"**
 3. Digite EXATAMENTE (com espaço após "Token"):
    ```
-   Token 297af8e30d64f2cee360713bfecb6e8703ca5232
+   Token 297af8e30d64f2cee360713bfecb6e8703ca5232 ####exemplo
    ```
 4. Clique em **"Authorize"**
 5. Clique em **"Close"**

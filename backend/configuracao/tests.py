@@ -66,16 +66,28 @@ class HorarioFuncionamentoPermissionTests(ConfiguracaoAPITests):
     def test_admin_user_can_create_horario(self):
         self.client.force_authenticate(user=self.admin_user)
         data = {
-            "dia_semana": 0,  # Corrigir nome do campo
-            "hora_abertura": "09:00:00",  # Corrigir nome do campo
-            "hora_fechamento": "18:00:00",  # Corrigir nome do campo
+            "dia_semana": 0,
+            "hora_abertura": "09:00:00",
+            "hora_fechamento": "18:00:00",
             "ativo": True
         }
         response = self.client.post(self.horarios_list_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(HorarioFuncionamento.objects.count(), 1)
         self.assertEqual(HorarioFuncionamento.objects.get().dia_semana, 0)
-
+    
+    def test_validation_hora_fechamento_before_abertura(self):
+        """Teste de validação: hora fechamento deve ser posterior à abertura"""
+        self.client.force_authenticate(user=self.admin_user)
+        data = {
+            "dia_semana": 1,
+            "hora_abertura": "18:00:00",
+            "hora_fechamento": "09:00:00",  # Erro: fechamento antes da abertura
+            "ativo": True
+        }
+        response = self.client.post(self.horarios_list_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('hora_fechamento', response.data)
 
 # --- Testes para o endpoint de Feriados ---
 
@@ -105,3 +117,25 @@ class FeriadoPermissionTests(ConfiguracaoAPITests):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Feriado.objects.count(), 1)
         self.assertEqual(Feriado.objects.get().nome, "Ano Novo")
+    
+    def test_validation_data_passado(self):
+        """Teste de validação: data não pode ser no passado"""
+        self.client.force_authenticate(user=self.admin_user)
+        data = {
+            "nome": "Feriado Passado",
+            "data": "2020-01-01"  # Data no passado
+        }
+        response = self.client.post(self.feriados_list_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('data', response.data)
+    
+    def test_validation_nome_muito_curto(self):
+        """Teste de validação: nome deve ter pelo menos 3 caracteres"""
+        self.client.force_authenticate(user=self.admin_user)
+        data = {
+            "nome": "AA",  # Nome muito curto
+            "data": "2026-01-01"
+        }
+        response = self.client.post(self.feriados_list_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('nome', response.data)
