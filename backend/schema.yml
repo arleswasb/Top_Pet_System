@@ -9,151 +9,20 @@ info:
     email: contato@toppetsystem.com
   license:
     name: MIT License
+tags:
+- name: Autenticação
+  description: Endpoints de login e registro de usuários
+- name: Pets
+  description: Operações relacionadas ao cadastro e gestão de pets
+- name: Serviços
+  description: Catálogo de serviços veterinários disponíveis
+- name: Agendamentos
+  description: Sistema de agendamento de consultas e serviços
+- name: Prontuários
+  description: Prontuários médicos e histórico de atendimentos
+- name: Usuários
+  description: Gestão de perfis de usuários do sistema
 paths:
-  /api/pets/:
-    post:
-      operationId: pets_create
-      description: Cria um novo pet. Para clientes, o tutor é definido automaticamente.
-        Suporte a upload de foto (multipart/form-data).
-      summary: Criar pet
-      tags:
-      - Pets
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PetRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PetRequest'
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PetRequest'
-        required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'
-          description: ''
-    get:
-      operationId: pets_list
-      description: Retorna lista de pets. Clientes veem apenas seus pets, funcionários/admins
-        veem todos.
-      summary: Listar pets
-      tags:
-      - Pets
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'
-          description: ''
-  /api/pets/{id}/:
-    get:
-      operationId: pets_retrieve
-      description: Retorna detalhes de um pet específico.
-      summary: Detalhes do pet
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Pet.
-        required: true
-      tags:
-      - Pets
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'
-          description: ''
-    patch:
-      operationId: pets_partial_update
-      description: Atualiza parcialmente um pet. Apenas os campos enviados serão alterados,
-        preservando os demais dados.
-      summary: Atualizar pet
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Pet.
-        required: true
-      tags:
-      - Pets
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedPetRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedPetRequest'
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedPetRequest'
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'
-          description: ''
-    delete:
-      operationId: pets_destroy
-      description: Remove um pet do sistema. Apenas o dono ou admin pode deletar.
-      summary: Deletar pet
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Pet.
-        required: true
-      tags:
-      - Pets
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
-  /api/logs/:
-    get:
-      operationId: logs_retrieve
-      description: Retorna as últimas 100 linhas do log de debug. Apenas administradores.
-      summary: Visualizar logs do sistema
-      tags:
-      - Usuários
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LogResponse'
-          description: ''
   /api/register/:
     post:
       operationId: register_create
@@ -270,13 +139,25 @@ paths:
                   summary: Apenas com Telefone
                   description: Campos obrigatórios + telefone (endereço continua opcional)
           description: ''
-  /api/me/:
-    get:
-      operationId: me_retrieve
-      description: Retorna informações do perfil do usuário logado.
-      summary: Meu perfil
+  /api-token-auth/:
+    post:
+      operationId: api_token_auth_create
+      summary: Login e obter token
+      description: Envie `username` e `password` para receber um token de autenticação.
       tags:
-      - Usuários
+      - Autenticação
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AuthTokenRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AuthTokenRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthTokenRequest'
+        required: true
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -285,102 +166,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserDetail'
+                $ref: '#/components/schemas/AuthToken'
           description: ''
-  /api/funcionario/create-user/:
-    post:
-      operationId: funcionario_create_user_create
-      description: 'Endpoint para funcionários criarem usuários dos tipos: Cliente,
-        Funcionário ou Veterinário.'
-      summary: Criar usuário (Funcionário)
-      tags:
-      - Usuários
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserFuncionarioCreateRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UserFuncionarioCreateRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/UserFuncionarioCreateRequest'
-        required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserDetail'
-          description: ''
-  /api/admin/create-user/:
-    post:
-      operationId: admin_create_user_create
-      description: Endpoint para administradores criarem usuários de qualquer tipo.
-      summary: Criar usuário (Admin)
-      tags:
-      - Usuários
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserAdminCreateRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UserAdminCreateRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/UserAdminCreateRequest'
-        required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserDetail'
-          description: ''
-  /api/admin/users/:
-    post:
-      operationId: admin_users_create
-      description: Cria um novo usuário via administrador.
-      summary: Criar usuário
-      tags:
-      - Usuários
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserAdminRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UserAdminRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/UserAdminRequest'
-        required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserAdmin'
-          description: ''
+  /api/pets/:
     get:
-      operationId: admin_users_list
-      description: Lista todos os usuários do sistema. Apenas administradores.
-      summary: Listar usuários
+      operationId: pets_list
+      description: Retorna lista de pets. Clientes veem apenas seus pets, funcionários/admins
+        veem todos.
+      summary: Listar pets
       tags:
-      - Usuários
+      - Pets
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -391,147 +186,26 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/UserAdmin'
+                  $ref: '#/components/schemas/Pet'
           description: ''
-  /api/admin/users/{id}/:
-    get:
-      operationId: admin_users_retrieve
-      description: Retorna detalhes de um usuário específico.
-      summary: Detalhes do usuário
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this user.
-        required: true
-      tags:
-      - Usuários
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserAdmin'
-          description: ''
-    patch:
-      operationId: admin_users_partial_update
-      description: Atualiza parcialmente um usuário. Apenas os campos enviados serão
-        alterados.
-      summary: Atualizar usuário
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this user.
-        required: true
-      tags:
-      - Usuários
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedUserAdminRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedUserAdminRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedUserAdminRequest'
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserAdmin'
-          description: ''
-    delete:
-      operationId: admin_users_destroy
-      description: Remove um usuário do sistema.
-      summary: Deletar usuário
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this user.
-        required: true
-      tags:
-      - Usuários
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
-  /api/admin/users/{id}/toggle_active/:
     post:
-      operationId: admin_users_toggle_active_create
-      description: Toggle user active status
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this user.
-        required: true
+      operationId: pets_create
+      description: Cria um novo pet. Para clientes, o tutor é definido automaticamente.
+        Suporte a upload de foto (multipart/form-data).
+      summary: Criar pet
       tags:
-      - admin
+      - Pets
       requestBody:
         content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserAdminRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UserAdminRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/UserAdminRequest'
-        required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserAdmin'
-          description: ''
-  /api/funcionario/users/:
-    post:
-      operationId: funcionario_users_create
-      description: |-
-        ViewSet para funcionários gerenciarem usuários clientes.
-
-        Funcionalidades:
-        - Listar apenas clientes
-        - Ver detalhes de clientes
-        - Editar dados de clientes
-        - Excluir clientes
-        - Criar novos clientes
-        - Apenas para funcionários e admins
-      tags:
-      - funcionario
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserFuncionarioCreateRequest'
+              $ref: '#/components/schemas/PetRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/UserFuncionarioCreateRequest'
-          multipart/form-data:
+              $ref: '#/components/schemas/PetRequest'
+          application/json:
             schema:
-              $ref: '#/components/schemas/UserFuncionarioCreateRequest'
+              $ref: '#/components/schemas/PetRequest'
         required: true
       security:
       - tokenAuth: []
@@ -541,40 +215,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserFuncionarioCreate'
+                $ref: '#/components/schemas/Pet'
           description: ''
+  /api/pets/{id}/:
     get:
-      operationId: funcionario_users_list
-      description: Funcionários podem listar apenas usuários do tipo CLIENTE.
-      summary: Listar clientes (Funcionário)
-      tags:
-      - Usuários
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserDetail'
-          description: ''
-  /api/funcionario/users/{id}/:
-    get:
-      operationId: funcionario_users_retrieve
-      description: Funcionários podem ver detalhes apenas de clientes.
-      summary: Detalhes do cliente (Funcionário)
+      operationId: pets_retrieve
+      description: Retorna detalhes de um pet específico.
+      summary: Detalhes do pet
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this user.
+        description: A unique integer value identifying this Pet.
         required: true
       tags:
-      - Usuários
+      - Pets
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -583,32 +239,33 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserDetail'
+                $ref: '#/components/schemas/Pet'
           description: ''
     patch:
-      operationId: funcionario_users_partial_update
-      description: Funcionários podem atualizar parcialmente dados de clientes.
-      summary: Atualizar cliente (Funcionário)
+      operationId: pets_partial_update
+      description: Atualiza parcialmente um pet. Apenas os campos enviados serão alterados,
+        preservando os demais dados.
+      summary: Atualizar pet
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this user.
+        description: A unique integer value identifying this Pet.
         required: true
       tags:
-      - Usuários
+      - Pets
       requestBody:
         content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedUserAdminRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedUserAdminRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedUserAdminRequest'
+              $ref: '#/components/schemas/PatchedPetRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPetRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPetRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -617,21 +274,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserAdmin'
+                $ref: '#/components/schemas/Pet'
           description: ''
     delete:
-      operationId: funcionario_users_destroy
-      description: Funcionários podem excluir usuários clientes.
-      summary: Excluir cliente (Funcionário)
+      operationId: pets_destroy
+      description: Remove um pet do sistema. Apenas o dono ou admin pode deletar.
+      summary: Deletar pet
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this user.
+        description: A unique integer value identifying this Pet.
         required: true
       tags:
-      - Usuários
+      - Pets
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -639,6 +296,24 @@ paths:
         '204':
           description: No response body
   /api/servicos/:
+    get:
+      operationId: servicos_list
+      description: Lista todos os serviços disponíveis na clínica veterinária.
+      summary: Listar serviços
+      tags:
+      - Serviços
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Servico'
+          description: ''
     post:
       operationId: servicos_create
       description: Cria um novo serviço (apenas admin).
@@ -666,24 +341,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Servico'
-          description: ''
-    get:
-      operationId: servicos_list
-      description: Lista todos os serviços disponíveis na clínica veterinária.
-      summary: Listar serviços
-      tags:
-      - Serviços
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Servico'
           description: ''
   /api/servicos/{id}/:
     get:
@@ -763,6 +420,27 @@ paths:
         '204':
           description: No response body
   /api/agendamentos/:
+    get:
+      operationId: agendamentos_list
+      description: |-
+        Lista agendamentos conforme permissão do usuário:
+        - **Clientes**: Apenas seus próprios agendamentos
+        - **Funcionários/Veterinários/Admins**: Todos os agendamentos
+      summary: Listar agendamentos
+      tags:
+      - Agendamentos
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Agendamento'
+          description: ''
     post:
       operationId: agendamentos_create
       description: Cria um novo agendamento para um pet.
@@ -790,27 +468,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Agendamento'
-          description: ''
-    get:
-      operationId: agendamentos_list
-      description: |-
-        Lista agendamentos conforme permissão do usuário:
-        - **Clientes**: Apenas seus próprios agendamentos
-        - **Funcionários/Veterinários/Admins**: Todos os agendamentos
-      summary: Listar agendamentos
-      tags:
-      - Agendamentos
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Agendamento'
           description: ''
   /api/agendamentos/{id}/:
     get:
@@ -890,6 +547,28 @@ paths:
         '204':
           description: No response body
   /api/prontuarios/:
+    get:
+      operationId: prontuarios_list
+      description: |-
+        Lista prontuários médicos conforme permissão do usuário:
+        - **Clientes**: Apenas prontuários dos seus pets
+        - **Funcionários/Admins**: Todos os prontuários
+        - **Veterinários**: Podem criar e ver todos os prontuários
+      summary: Listar prontuários
+      tags:
+      - Prontuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Prontuario'
+          description: ''
     post:
       operationId: prontuarios_create
       description: Cria um novo prontuário médico (apenas veterinários e admins).
@@ -917,28 +596,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Prontuario'
-          description: ''
-    get:
-      operationId: prontuarios_list
-      description: |-
-        Lista prontuários médicos conforme permissão do usuário:
-        - **Clientes**: Apenas prontuários dos seus pets
-        - **Funcionários/Admins**: Todos os prontuários
-        - **Veterinários**: Podem criar e ver todos os prontuários
-      summary: Listar prontuários
-      tags:
-      - Prontuários
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Prontuario'
           description: ''
   /api/prontuarios/{id}/:
     get:
@@ -1017,22 +674,382 @@ paths:
       responses:
         '204':
           description: No response body
-  /api-token-auth/:
-    post:
-      operationId: api_token_auth_create
+  /api/me/:
+    get:
+      operationId: me_retrieve
+      description: Retorna informações do perfil do usuário logado.
+      summary: Meu perfil
       tags:
-      - api-token-auth
+      - Usuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+          description: ''
+  /api/funcionario/create-user/:
+    post:
+      operationId: funcionario_create_user_create
+      description: 'Endpoint para funcionários criarem usuários dos tipos: Cliente,
+        Funcionário ou Veterinário.'
+      summary: Criar usuário (Funcionário)
+      tags:
+      - Usuários
       requestBody:
         content:
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/AuthTokenRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/AuthTokenRequest'
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthTokenRequest'
+              $ref: '#/components/schemas/UserFuncionarioCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserFuncionarioCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserFuncionarioCreateRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+          description: ''
+  /api/admin/create-user/:
+    post:
+      operationId: admin_create_user_create
+      description: Endpoint para administradores criarem usuários de qualquer tipo.
+      summary: Criar usuário (Admin)
+      tags:
+      - Usuários
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserAdminCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserAdminCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserAdminCreateRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+          description: ''
+  /api/admin/users/:
+    get:
+      operationId: admin_users_list
+      description: Lista todos os usuários do sistema. Apenas administradores.
+      summary: Listar usuários (Admin)
+      tags:
+      - Usuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserAdmin'
+          description: ''
+    post:
+      operationId: admin_users_create
+      description: Cria um novo usuário via administrador.
+      summary: Criar usuário (Admin)
+      tags:
+      - Usuários
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserAdminRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserAdminRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserAdminRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAdmin'
+          description: ''
+  /api/admin/users/{id}/:
+    get:
+      operationId: admin_users_retrieve
+      description: Retorna detalhes de um usuário específico.
+      summary: Detalhes do usuário (Admin)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - Usuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAdmin'
+          description: ''
+    patch:
+      operationId: admin_users_partial_update
+      description: Atualiza parcialmente um usuário. Apenas os campos enviados serão
+        alterados.
+      summary: Atualizar usuário (Admin)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - Usuários
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserAdminRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserAdminRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserAdminRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAdmin'
+          description: ''
+    delete:
+      operationId: admin_users_destroy
+      description: Remove um usuário do sistema.
+      summary: Deletar usuário (Admin)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - Usuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/funcionario/users/:
+    get:
+      operationId: funcionario_users_list
+      description: Funcionários podem listar apenas usuários do tipo CLIENTE.
+      summary: Listar clientes (Funcionário)
+      tags:
+      - Usuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDetail'
+          description: ''
+    post:
+      operationId: funcionario_users_create
+      description: |-
+        ViewSet para funcionários gerenciarem usuários clientes.
+
+        Funcionalidades:
+        - Listar apenas clientes
+        - Ver detalhes de clientes
+        - Editar dados de clientes
+        - Excluir clientes
+        - Criar novos clientes
+        - Apenas para funcionários e admins
+      summary: Criar cliente (Funcionário)
+      tags:
+      - Usuários
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserFuncionarioCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserFuncionarioCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserFuncionarioCreateRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserFuncionarioCreate'
+          description: ''
+  /api/funcionario/users/{id}/:
+    get:
+      operationId: funcionario_users_retrieve
+      description: Funcionários podem ver detalhes apenas de clientes.
+      summary: Detalhes do cliente (Funcionário)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - Usuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+          description: ''
+    patch:
+      operationId: funcionario_users_partial_update
+      description: Funcionários podem atualizar parcialmente dados de clientes.
+      summary: Atualizar cliente (Funcionário)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - Usuários
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserAdminRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserAdminRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserAdminRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAdmin'
+          description: ''
+    delete:
+      operationId: funcionario_users_destroy
+      description: Funcionários podem excluir usuários clientes.
+      summary: Excluir cliente (Funcionário)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - Usuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/logs/:
+    get:
+      operationId: logs_retrieve
+      description: Retorna as últimas 100 linhas do log de debug. Apenas administradores.
+      summary: Visualizar logs do sistema
+      tags:
+      - Usuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogResponse'
+          description: ''
+  /api/admin/users/{id}/toggle_active/:
+    post:
+      operationId: admin_users_toggle_active_create
+      description: Ativa ou desativa um usuário. Apenas administradores.
+      summary: Ativar/Desativar usuário (Admin)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - Usuários
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserAdminRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserAdminRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserAdminRequest'
         required: true
       security:
       - tokenAuth: []
@@ -1042,7 +1059,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthToken'
+                $ref: '#/components/schemas/UserAdmin'
           description: ''
 components:
   schemas:
@@ -2574,16 +2591,3 @@ components:
       in: header
       name: Authorization
       description: Token-based authentication with required prefix "Token"
-tags:
-- name: Autenticação
-  description: Endpoints de login e registro de usuários
-- name: Usuários
-  description: Gestão de perfis de usuários do sistema
-- name: Pets
-  description: Operações relacionadas ao cadastro e gestão de pets
-- name: Serviços
-  description: Catálogo de serviços veterinários disponíveis
-- name: Agendamentos
-  description: Sistema de agendamento de consultas e serviços
-- name: Prontuários
-  description: Prontuários médicos e histórico de atendimentos
