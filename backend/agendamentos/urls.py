@@ -4,12 +4,9 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import AgendamentoViewSet, ServicoViewSet
 
-# Cria o router
 router = DefaultRouter()
-
-# Registra as rotas
-router.register(r'servicos', ServicoViewSet, basename='servico')
 router.register(r'agendamentos', AgendamentoViewSet, basename='agendamento')
+router.register(r'servicos', ServicoViewSet, basename='servico')
 
 urlpatterns = [
     # Inclui as URLs geradas pelo router

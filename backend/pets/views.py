@@ -54,8 +54,8 @@ class PetViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdminOrFuncionario] # <-- Permissões
     parser_classes = [MultiPartParser, FormParser, JSONParser] # <-- Suporte a multipart/form-data
     
-    # Lista de ações HTTP permitidas (removendo 'put' que é o método PUT)
-    http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
+    # Permitir todos os métodos HTTP padrão do ModelViewSet
+    http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options', 'trace']
 
     def get_queryset(self):
         user = self.request.user

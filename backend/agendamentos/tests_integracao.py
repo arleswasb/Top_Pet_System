@@ -1,5 +1,4 @@
 # agendamentos/tests_integracao.py
-
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -9,6 +8,7 @@ from rest_framework.authtoken.models import Token
 from datetime import datetime, timedelta
 from decimal import Decimal
 from django.utils import timezone
+import unittest
 
 from .models import Agendamento, Servico
 from pets.models import Pet
@@ -97,7 +97,7 @@ class AgendamentoIntegrationTest(APITestCase):
             'observacoes': 'Pet muito agitado'
         }
         
-        response = self.client.post('/api/agendamentos/', data, format='json')
+        response = self.client.post('/api/agendamentos/agendamentos/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Agendamento.objects.count(), 1)
@@ -133,7 +133,7 @@ class AgendamentoIntegrationTest(APITestCase):
         )
         
         self.client.force_authenticate(user=self.tutor_user, token=self.tutor_token)
-        response = self.client.get('/api/agendamentos/')
+        response = self.client.get('/api/agendamentos/agendamentos/')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Tutor deve ver apenas seus agendamentos
@@ -166,7 +166,7 @@ class AgendamentoIntegrationTest(APITestCase):
         )
         
         self.client.force_authenticate(user=self.funcionario_user, token=self.funcionario_token)
-        response = self.client.get('/api/agendamentos/')
+        response = self.client.get('/api/agendamentos/agendamentos/')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Funcionário deve ver todos os agendamentos
@@ -190,7 +190,7 @@ class AgendamentoIntegrationTest(APITestCase):
             'observacoes': 'Serviço realizado com sucesso'
         }
         
-        response = self.client.patch(f'/api/agendamentos/{agendamento.id}/', data, format='json')
+        response = self.client.patch(f'/api/agendamentos/agendamentos/{agendamento.id}/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         agendamento.refresh_from_db()
@@ -213,7 +213,7 @@ class AgendamentoIntegrationTest(APITestCase):
             'status': Agendamento.StatusChoices.CANCELADO
         }
         
-        response = self.client.patch(f'/api/agendamentos/{agendamento.id}/', data, format='json')
+        response = self.client.patch(f'/api/agendamentos/agendamentos/{agendamento.id}/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         agendamento.refresh_from_db()
@@ -246,7 +246,7 @@ class AgendamentoIntegrationTest(APITestCase):
             'status': Agendamento.StatusChoices.CANCELADO
         }
         
-        response = self.client.patch(f'/api/agendamentos/{agendamento_outro.id}/', data, format='json')
+        response = self.client.patch(f'/api/agendamentos/agendamentos/{agendamento_outro.id}/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         
@@ -259,7 +259,7 @@ class AgendamentoIntegrationTest(APITestCase):
         )
         
         self.client.force_authenticate(user=self.admin_user, token=self.admin_token)
-        response = self.client.delete(f'/api/agendamentos/{agendamento.id}/')
+        response = self.client.delete(f'/api/agendamentos/agendamentos/{agendamento.id}/')
         
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Agendamento.objects.count(), 0)
@@ -284,6 +284,12 @@ class ServicoIntegrationTest(APITestCase):
             password='tutorpass123'
         )
         
+        # Atualizar perfis criados automaticamente pelos signals
+        self.admin_user.profile.role = Profile.Role.ADMIN
+        self.admin_user.profile.save()
+        self.tutor_user.profile.role = Profile.Role.CLIENTE
+        self.tutor_user.profile.save()
+        
         self.admin_token = Token.objects.create(user=self.admin_user)
         self.tutor_token = Token.objects.create(user=self.tutor_user)
         self.client = APIClient()
@@ -299,7 +305,7 @@ class ServicoIntegrationTest(APITestCase):
             'preco': '120.00'
         }
         
-        response = self.client.post('/api/servicos/', data, format='json')
+        response = self.client.post('/api/agendamentos/servicos/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Servico.objects.count(), 1)
@@ -321,7 +327,7 @@ class ServicoIntegrationTest(APITestCase):
         )
         
         self.client.force_authenticate(user=self.tutor_user, token=self.tutor_token)
-        response = self.client.get('/api/servicos/')
+        response = self.client.get('/api/agendamentos/servicos/')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)  # Lista todos, independente de disponibilidade
@@ -335,7 +341,7 @@ class ServicoIntegrationTest(APITestCase):
             'preco': '100.00'
         }
         
-        response = self.client.post('/api/servicos/', data, format='json')
+        response = self.client.post('/api/agendamentos/servicos/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         
@@ -357,7 +363,7 @@ class ServicoIntegrationTest(APITestCase):
             'disponivel': False
         }
         
-        response = self.client.patch(f'/api/servicos/{servico.id}/', data, format='json')
+        response = self.client.patch(f'/api/agendamentos/servicos/{servico.id}/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         servico.refresh_from_db()
@@ -421,13 +427,13 @@ class AgendamentoWorkflowTest(APITestCase):
             'observacoes': 'Pet precisa de cuidado especial'
         }
         
-        response = self.client.post('/api/agendamentos/', data_criacao, format='json')
+        response = self.client.post('/api/agendamentos/agendamentos/', data_criacao, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         agendamento_id = response.data['id']
         
         # 2. Funcionário visualiza agendamento
         self.client.force_authenticate(user=self.funcionario_user, token=self.funcionario_token)
-        response = self.client.get(f'/api/agendamentos/{agendamento_id}/')
+        response = self.client.get(f'/api/agendamentos/agendamentos/{agendamento_id}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['status'], Agendamento.StatusChoices.AGENDADO)
         
@@ -440,7 +446,7 @@ class AgendamentoWorkflowTest(APITestCase):
             'observacoes': 'Serviço realizado com sucesso. Pet se comportou bem.'
         }
         
-        response = self.client.patch(f'/api/agendamentos/{agendamento_id}/', data_conclusao, format='json')
+        response = self.client.patch(f'/api/agendamentos/agendamentos/{agendamento_id}/', data_conclusao, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
         # 4. Verificar status final
@@ -470,7 +476,7 @@ class AgendamentoWorkflowTest(APITestCase):
             'observacoes': 'Reagendado por solicitação do cliente'
         }
         
-        response = self.client.patch(f'/api/agendamentos/{agendamento.id}/', data_reagendamento, format='json')
+        response = self.client.patch(f'/api/agendamentos/agendamentos/{agendamento.id}/', data_reagendamento, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         agendamento.refresh_from_db()
@@ -496,6 +502,6 @@ class AgendamentoWorkflowTest(APITestCase):
             'observacoes': 'Teste PUT'
         }
         
-        response = self.client.put(f'/api/agendamentos/{agendamento.id}/', data, format='json')
+        response = self.client.put(f'/api/agendamentos/agendamentos/{agendamento.id}/', data, format='json')
         # PUT deve retornar 405 Method Not Allowed - isso confirma nossa implementação
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)

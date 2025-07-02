@@ -6,8 +6,8 @@ from .views import PetViewSet
 router = DefaultRouter()
 
 # Registra a nossa PetViewSet com o roteador.
-# O prefixo da URL será 'pets'. Ex: /api/pets/ e /api/pets/1/
-router.register(r'pets', PetViewSet, basename='pet')
+# O prefixo da URL será vazio já que a URL pai já inclui 'pets'. Ex: /api/pets/ e /api/pets/1/
+router.register(r'', PetViewSet, basename='pet')
 
 # As URLs da API são agora determinadas automaticamente pelo roteador.
 urlpatterns = router.urls

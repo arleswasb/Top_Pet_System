@@ -1,12 +1,11 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import ProntuarioViewSet
 
-# Cria o router
+# Comentar temporariamente até implementar as views
+# from .views import ProntuarioViewSet
+
 router = DefaultRouter()
-
-# Registra as rotas
-router.register(r'prontuarios', ProntuarioViewSet, basename='prontuario')
+# router.register(r'prontuarios', ProntuarioViewSet, basename='prontuario')
 
 urlpatterns = [
     # Inclui as URLs geradas pelo router
