@@ -60,9 +60,7 @@ class IsOwnerOrAdminOrFuncionario(permissions.BasePermission):
                     logger.debug(f"DELETE de pet de cliente permitido para funcionário {request.user}")
                     return True
                 else:
-                    logger.warning(
-                        f"Tentativa de DELETE de pet não-cliente por funcionário {request.user}"
-                    )
+                    # Remover log de debug para reduzir output nos testes
                     raise PermissionDenied(
                         "Funcionários podem excluir apenas pets de clientes",
                         code="funcionario_delete_cliente_only"
