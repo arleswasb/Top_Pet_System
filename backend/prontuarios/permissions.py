@@ -8,13 +8,38 @@ class IsOwnerOrAdminOrVet(permissions.BasePermission):
     """
     Permissão customizada para prontuários:
     - Admin: acesso total
-    - Veterinário: pode ver/editar todos
+    - Veterinário: pode ver/editar/criar todos
+    - Funcionário: pode ver/editar/criar todos
     - Cliente: só pode ver os próprios pets
     """
     
     def has_permission(self, request, view):
         # Usuário deve estar autenticado
-        return request.user and request.user.is_authenticated
+        if not (request.user and request.user.is_authenticated):
+            return False
+            
+        # Para operações de criação, verificar se o usuário pode criar
+        if view.action == 'create':
+            # Admin e Superuser sempre podem criar
+            if request.user.is_superuser:
+                return True
+                
+            # Verificar se tem perfil
+            if hasattr(request.user, 'profile'):
+                profile = request.user.profile
+                # Veterinário, Funcionário e Admin podem criar
+                if profile.role in [Profile.Role.ADMIN, Profile.Role.VETERINARIO, Profile.Role.FUNCIONARIO]:
+                    return True
+            
+            # Staff também pode criar
+            if request.user.is_staff:
+                return True
+                
+            # Cliente não pode criar prontuários
+            return False
+        
+        # Para outras operações (list, retrieve), todos autenticados podem tentar
+        return True
     
     def has_object_permission(self, request, view, obj):
         # Admin tem acesso total
@@ -22,17 +47,32 @@ class IsOwnerOrAdminOrVet(permissions.BasePermission):
             return True
         
         # Verificar se o usuário tem perfil
-        if not hasattr(request.user, 'profile'):
-            return False
+        profile = getattr(request.user, 'profile', None)
         
-        profile = request.user.profile
+        # Para operações de exclusão, apenas admin
+        if view.action == 'destroy':
+            if profile and profile.role == Profile.Role.ADMIN:
+                return True
+            return request.user.is_superuser
         
-        # Admin e Veterinário têm acesso total
-        if profile.role in [Profile.Role.ADMIN, Profile.Role.VETERINARIO, Profile.Role.FUNCIONARIO]:
+        # Admin, Veterinário e Funcionário têm acesso de leitura/edição
+        if profile and profile.role in [Profile.Role.ADMIN, Profile.Role.VETERINARIO, Profile.Role.FUNCIONARIO]:
             return True
         
-        # Cliente só pode ver prontuários dos próprios pets
-        if profile.role == Profile.Role.CLIENTE:
+        # Staff também tem acesso de leitura/edição
+        if request.user.is_staff:
+            return True
+        
+        # Cliente só pode ver prontuários dos próprios pets (apenas leitura)
+        if profile and profile.role == Profile.Role.CLIENTE:
+            if view.action in ['retrieve', 'list']:
+                return obj.pet.tutor == request.user
+            else:
+                # Cliente não pode editar prontuários
+                return False
+        
+        # Se não tem perfil, assumir que é cliente e só pode ver seus pets
+        if not profile and view.action in ['retrieve', 'list']:
             return obj.pet.tutor == request.user
         
         return False
