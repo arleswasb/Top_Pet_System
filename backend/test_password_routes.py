@@ -14,34 +14,34 @@ client = Client()
 print("=== Testando rotas de password reset ===")
 
 # Testar rota principal
-response = client.options('/api/password-reset/')
-print(f"/api/password-reset/ -> Status: {response.status_code}")
+response = client.options('/api/users/auth/password-reset/')
+print(f"/api/users/auth/password-reset/ -> Status: {response.status_code}")
 if response.status_code == 200:
     print(f"Methods: {response.get('Allow', 'N/A')}")
 
 # Testar rota de confirmação
-response = client.options('/api/password-reset/confirm/')
-print(f"/api/password-reset/confirm/ -> Status: {response.status_code}")
+response = client.options('/api/users/auth/password-reset/confirm/')
+print(f"/api/users/auth/password-reset/confirm/ -> Status: {response.status_code}")
 if response.status_code == 200:
     print(f"Methods: {response.get('Allow', 'N/A')}")
 
 # Testar rota de validação
-response = client.options('/api/password-reset/validate_token/')
-print(f"/api/password-reset/validate_token/ -> Status: {response.status_code}")
+response = client.options('/api/users/auth/password-reset/validate_token/')
+print(f"/api/users/auth/password-reset/validate_token/ -> Status: {response.status_code}")
 if response.status_code == 200:
     print(f"Methods: {response.get('Allow', 'N/A')}")
 
 print("\n=== Testando com POST para verificar estrutura ===")
 
 # Testar POST na rota principal (solicitar reset)
-response = client.post('/api/password-reset/', {'email': 'test@example.com'})
-print(f"POST /api/password-reset/ -> Status: {response.status_code}")
+response = client.post('/api/users/auth/password-reset/', {'email': 'test@example.com'})
+print(f"POST /api/users/auth/password-reset/ -> Status: {response.status_code}")
 print(f"Response: {response.content.decode()}")
 
 # Testar POST na rota de confirmação (sem token válido)
-response = client.post('/api/password-reset/confirm/', {
+response = client.post('/api/users/auth/password-reset/confirm/', {
     'token': 'fake-token',
     'password': 'newpassword123'
 })
-print(f"POST /api/password-reset/confirm/ -> Status: {response.status_code}")
+print(f"POST /api/users/auth/password-reset/confirm/ -> Status: {response.status_code}")
 print(f"Response: {response.content.decode()}")

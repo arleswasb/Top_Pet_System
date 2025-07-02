@@ -9,6 +9,7 @@ from rest_framework import generics, status, permissions, viewsets, serializers
 from rest_framework.decorators import action
 from rest_framework.authtoken.views import ObtainAuthToken
 from drf_spectacular.utils import extend_schema, extend_schema_view
+from django_rest_passwordreset.views import ResetPasswordRequestToken, ResetPasswordConfirm, ResetPasswordValidateToken
 
 from .models import Profile
 from .permissions import IsAdminRole, CanManageClients
@@ -157,4 +158,125 @@ class CustomAuthTokenView(ObtainAuthToken):
     View customizada que herda da original para obter token,
     permitindo adicionar a documentação Swagger correta.
     """
+    pass
+
+
+# --- VIEWS DE PASSWORD RESET CUSTOMIZADAS ---
+
+@extend_schema(
+    summary="Solicitar reset de senha",
+    description="Solicita o reset de senha enviando um token para o email do usuário.",
+    tags=['Autenticação'],
+    request={
+        'application/json': {
+            'type': 'object',
+            'properties': {
+                'email': {
+                    'type': 'string',
+                    'format': 'email',
+                    'description': 'Email do usuário'
+                }
+            },
+            'required': ['email']
+        }
+    },
+    responses={
+        200: {
+            'description': 'Token de reset enviado com sucesso',
+            'content': {
+                'application/json': {
+                    'schema': {
+                        'type': 'object',
+                        'properties': {
+                            'status': {'type': 'string', 'example': 'OK'}
+                        }
+                    }
+                }
+            }
+        },
+        400: {'description': 'Email não encontrado'}
+    }
+)
+class CustomResetPasswordRequestToken(ResetPasswordRequestToken):
+    """View customizada para solicitar reset de senha com tag Autenticação"""
+    pass
+
+
+@extend_schema(
+    summary="Confirmar reset de senha",
+    description="Confirma o reset de senha com o token recebido e define nova senha.",
+    tags=['Autenticação'],
+    request={
+        'application/json': {
+            'type': 'object',
+            'properties': {
+                'token': {
+                    'type': 'string',
+                    'description': 'Token de reset recebido por email'
+                },
+                'password': {
+                    'type': 'string',
+                    'description': 'Nova senha'
+                }
+            },
+            'required': ['token', 'password']
+        }
+    },
+    responses={
+        200: {
+            'description': 'Senha alterada com sucesso',
+            'content': {
+                'application/json': {
+                    'schema': {
+                        'type': 'object',
+                        'properties': {
+                            'status': {'type': 'string', 'example': 'OK'}
+                        }
+                    }
+                }
+            }
+        },
+        404: {'description': 'Token inválido ou expirado'}
+    }
+)
+class CustomResetPasswordConfirm(ResetPasswordConfirm):
+    """View customizada para confirmar reset de senha com tag Autenticação"""
+    pass
+
+
+@extend_schema(
+    summary="Validar token de reset",
+    description="Valida se um token de reset de senha é válido.",
+    tags=['Autenticação'],
+    request={
+        'application/json': {
+            'type': 'object',
+            'properties': {
+                'token': {
+                    'type': 'string',
+                    'description': 'Token de reset a ser validado'
+                }
+            },
+            'required': ['token']
+        }
+    },
+    responses={
+        200: {
+            'description': 'Token válido',
+            'content': {
+                'application/json': {
+                    'schema': {
+                        'type': 'object',
+                        'properties': {
+                            'status': {'type': 'string', 'example': 'OK'}
+                        }
+                    }
+                }
+            }
+        },
+        404: {'description': 'Token inválido ou expirado'}
+    }
+)
+class CustomResetPasswordValidateToken(ResetPasswordValidateToken):
+    """View customizada para validar token de reset com tag Autenticação"""
     pass

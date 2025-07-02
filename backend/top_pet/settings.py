@@ -66,7 +66,7 @@ SPECTACULAR_SETTINGS = {
         'name': 'MIT License',
     },
     'TAGS': [
-        {'name': 'Autenticação', 'description': 'Endpoints de login e registro de usuários'},
+        {'name': 'Autenticação', 'description': 'Endpoints de login, registro e reset de senha'},
         {'name': 'Usuários', 'description': 'Gestão de perfis de usuários do sistema'},
         {'name': 'Pets', 'description': 'Operações relacionadas ao cadastro e gestão de pets'},
         {'name': 'Serviços', 'description': 'Catálogo de serviços veterinários disponíveis'},
