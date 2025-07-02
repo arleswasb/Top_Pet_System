@@ -35,7 +35,7 @@ class PetSerializer(serializers.ModelSerializer):
         required=False,  # Deixe como False, a view irá validar conforme o perfil
         help_text="ID do usuário que será o tutor do pet (obrigatório para funcionários)"
     )
-    idade = serializers.SerializerMethodField()
+    idade = serializers.SerializerMethodField(help_text="Idade formatada do pet (ex: '2 anos e 3 meses')")
     
     # Campos do modelo com documentação
     nome = serializers.CharField(
@@ -97,13 +97,34 @@ class PetSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['id', 'idade', 'tutor_detail', 'created_at', 'updated_at']
 
-    @extend_schema_field(serializers.IntegerField(allow_null=True))
+    @extend_schema_field(serializers.CharField(default="Idade não informada"))
     def get_idade(self, obj):
         """
-        Retorna a idade calculada do pet baseada na data de nascimento.
-        Retorna 0 se não houver data de nascimento.
+        Retorna a idade formatada do pet.
+        Ex: "1 ano e 5 meses", "3 meses e 10 dias", "15 dias".
         """
-        return obj.idade if obj.idade is not None else 0
+        detalhes = obj.idade_detalhada
+        if detalhes is None:
+            return "Idade não informada"
+
+        anos = detalhes["anos"]
+        meses = detalhes["meses"]
+        dias = detalhes["dias"]
+
+        parts = []
+        if anos > 0:
+            parts.append(f"{anos} ano{'s' if anos > 1 else ''}")
+        if meses > 0:
+            parts.append(f"{meses} {'mês' if meses == 1 else 'meses'}")
+        # Só mostrar dias se o pet tiver menos de 1 ano
+        if anos == 0 and dias > 0:
+            parts.append(f"{dias} dia{'s' if dias > 1 else ''}")
+        
+        # Se for um recém-nascido (menos de 1 dia de idade)
+        if not parts:
+            return "Recém-nascido"
+            
+        return " e ".join(parts)
 
     def validate_tutor(self, value):
         """Validação customizada: apenas clientes ou veterinários podem ser tutores"""

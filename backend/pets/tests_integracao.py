@@ -11,7 +11,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 from .models import Pet
 from users.models import Profile
-from datetime import date
+from datetime import date, timedelta
 from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -474,6 +474,42 @@ class PetAPIFilteringTestCase(TestCase):
                 'id', 'nome', 'especie', 'raca', 'sexo',
                 'data_de_nascimento', 'foto', 'observacoes',
                 'tutor_detail', 'created_at', 'updated_at'
+            ]
+            
+            for field in expected_fields:
+                self.assertIn(field, pet_data)
+
+    def test_api_response_idade_formatada(self):
+        """Testa se a API retorna a idade formatada como um texto."""
+        # Cria um pet com 2 meses e alguns dias de idade
+        data_nascimento = date.today() - timedelta(days=70) # Aprox. 2 meses e 10 dias
+        pet_jovem = Pet.objects.create(
+            nome='Filhote',
+            especie='Gato',
+            tutor=self.user,
+            data_de_nascimento=data_nascimento
+        )
+
+        response = self.client.get(f'/api/pets/{pet_jovem.id}/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Verifica se o campo 'idade' contém um texto esperado
+        idade_api = response.data['idade']
+        self.assertIn('2 meses', idade_api) # Verifica se a string contém "2 meses"
+        self.assertIsInstance(idade_api, str) # Confirma que o tipo é string
+
+    def test_api_response_structure(self):
+        """Testa a estrutura da resposta da API"""
+        response = self.client.get('/api/pets/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        if response.data:
+            pet_data = response.data[0]
+            expected_fields = [
+                'id', 'nome', 'especie', 'raca', 'sexo',
+                'data_de_nascimento', 'foto', 'observacoes',
+                'tutor_detail', 'created_at', 'updated_at',
+                'idade' # <--- O campo idade agora é string, mas continua presente
             ]
             
             for field in expected_fields:

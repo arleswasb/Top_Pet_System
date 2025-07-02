@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator
 from datetime import date
+import calendar
 
 class Pet(models.Model):
     class Gender(models.TextChoices):
@@ -58,10 +59,31 @@ class Pet(models.Model):
         return f"{self.nome} ({self.especie})"
 
     @property
-    def idade(self):
-        if self.data_de_nascimento:
-            today = date.today()
-            age = today.year - self.data_de_nascimento.year - \
-                  ((today.month, today.day) < (self.data_de_nascimento.month, self.data_de_nascimento.day))
-            return age
-        return None
+    def idade_detalhada(self):
+        """
+        Calcula a idade de forma detalhada e retorna um dicionário
+        com anos, meses e dias.
+        """
+        if not self.data_de_nascimento:
+            return None
+
+        today = date.today()
+        birth_date = self.data_de_nascimento
+
+        # Lógica para "emprestar" dos meses e anos se os dias/meses forem negativos
+        anos = today.year - birth_date.year
+        meses = today.month - birth_date.month
+        dias = today.day - birth_date.day
+
+        if dias < 0:
+            meses -= 1
+            # Pega o número de dias do mês anterior
+            last_month = today.month - 1 if today.month > 1 else 12
+            year_of_last_month = today.year if today.month > 1 else today.year - 1
+            dias += calendar.monthrange(year_of_last_month, last_month)[1]
+
+        if meses < 0:
+            anos -= 1
+            meses += 12
+            
+        return {"anos": anos, "meses": meses, "dias": dias}

@@ -13,7 +13,7 @@ from datetime import date
 
 from .models import Pet
 
-
+'''
 class PetAgeCalculationTest(TestCase):
     """Testes unitários para o cálculo de idade do pet"""
     
@@ -116,6 +116,63 @@ class PetAgeCalculationTest(TestCase):
         )
         
         self.assertIsNone(pet.idade)
+'''
+
+class PetDetailedAgeCalculationTest(TestCase):
+    """Testes unitários para o cálculo detalhado de idade do pet."""
+
+    def setUp(self):
+        """Configuração básica para os testes."""
+        self.user = User.objects.create_user(
+            username='test_user_detailed_age',
+            password='testpass123'
+        )
+
+    def test_idade_detalhada_anos_exatos(self):
+        """Teste: Cálculo para um pet com exatamente 2 anos."""
+        data_atual_mock = date(2025, 7, 1)
+        with patch('pets.models.date') as mock_date:
+            mock_date.today.return_value = data_atual_mock
+            
+            pet = Pet(data_de_nascimento=date(2023, 7, 1))
+            esperado = {"anos": 2, "meses": 0, "dias": 0}
+            self.assertEqual(pet.idade_detalhada, esperado)
+
+    def test_idade_detalhada_meses_e_dias(self):
+        """Teste: Cálculo para um pet com 0 anos, alguns meses e dias."""
+        data_atual_mock = date(2025, 7, 1)
+        with patch('pets.models.date') as mock_date:
+            mock_date.today.return_value = data_atual_mock
+
+            pet = Pet(data_de_nascimento=date(2025, 3, 20))
+            # De 20/Mar a 01/Jul -> 3 meses e 11 dias
+            esperado = {"anos": 0, "meses": 3, "dias": 11}
+            self.assertEqual(pet.idade_detalhada, esperado)
+
+    def test_idade_detalhada_apenas_dias(self):
+        """Teste: Cálculo para um pet com menos de 1 mês de vida."""
+        data_atual_mock = date(2025, 7, 1)
+        with patch('pets.models.date') as mock_date:
+            mock_date.today.return_value = data_atual_mock
+
+            pet = Pet(data_de_nascimento=date(2025, 6, 15))
+            esperado = {"anos": 0, "meses": 0, "dias": 16}
+            self.assertEqual(pet.idade_detalhada, esperado)
+
+    def test_idade_detalhada_pet_nascido_hoje(self):
+        """Teste: Cálculo para um pet que nasceu hoje."""
+        data_atual_mock = date(2025, 7, 1)
+        with patch('pets.models.date') as mock_date:
+            mock_date.today.return_value = data_atual_mock
+            
+            pet = Pet(data_de_nascimento=date(2025, 7, 1))
+            esperado = {"anos": 0, "meses": 0, "dias": 0}
+            self.assertEqual(pet.idade_detalhada, esperado)
+
+    def test_idade_detalhada_sem_data_retorna_none(self):
+        """Teste: Deve retornar None se não houver data de nascimento."""
+        pet = Pet(data_de_nascimento=None)
+        self.assertIsNone(pet.idade_detalhada)
 
 
 class PetStringRepresentationTest(TestCase):
