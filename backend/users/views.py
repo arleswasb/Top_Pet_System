@@ -1,44 +1,52 @@
+# users/views.py
+
+import os
+from django.conf import settings
+from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.contrib.auth.models import User
 from rest_framework import generics, status, permissions, viewsets, serializers
 from rest_framework.decorators import action
-from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiExample
+from rest_framework.authtoken.views import ObtainAuthToken
+from drf_spectacular.utils import extend_schema, extend_schema_view
+
+from .models import Profile
+from .permissions import IsAdminRole, CanManageClients
 from .serializers import (
-    UserCreateSerializer, UserAdminSerializer, UserSelfRegisterSerializer,
-    UserFuncionarioCreateSerializer, UserAdminCreateSerializer, UserDetailSerializer
+    UserAdminSerializer,
+    UserSelfRegisterSerializer,
+    UserFuncionarioCreateSerializer,
+    UserAdminCreateSerializer,
+    UserDetailSerializer
 )
-from django.conf import settings
-from .permissions import IsAdminRole, IsFuncionarioOrAdmin, CanManageClients # Importa nossas permissões
-from .models import Profile  # Importa o modelo Profile
-from .swagger_schemas import SELF_REGISTER_SCHEMA, USER_SELF_REGISTER_EXAMPLES
-import os
+from .swagger_schemas import SELF_REGISTER_SCHEMA
+
+# --- VIEWS DE UTILIDADES E PÚBLICAS ---
 
 class LogResponseSerializer(serializers.Serializer):
-    """Serializer para resposta dos logs"""
+    """Serializer para a resposta do endpoint de logs."""
     content = serializers.CharField(help_text="Conteúdo do arquivo de log")
 
 @extend_schema(
-    summary="Visualizar logs do sistema",
-    description="Retorna as últimas 100 linhas do log de debug. Apenas administradores.",
+    summary="Visualizar logs do sistema (Admin)",
+    description="Retorna as últimas 100 linhas do log de debug. Acesso restrito a administradores.",
     responses={200: LogResponseSerializer},
     tags=["Usuários"]
 )
 class LogFileView(APIView):
     """Endpoint para visualização dos logs do sistema por administradores."""
     permission_classes = [permissions.IsAuthenticated, IsAdminRole]
-    serializer_class = LogResponseSerializer
 
     def get(self, request, *args, **kwargs):
         log_file_path = os.path.join(settings.BASE_DIR, 'logs', 'debug.log')
         try:
-            with open(log_file_path, 'r') as log_file:
-                # Lê as últimas 100 linhas para não sobrecarregar
+            with open(log_file_path, 'r', encoding='utf-8') as log_file:
                 lines = log_file.readlines()[-100:]
                 log_content = "".join(lines)
             return Response({"content": log_content}, status=status.HTTP_200_OK)
         except FileNotFoundError:
             return Response({"content": "Arquivo de log não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
 
 @extend_schema(
     summary=SELF_REGISTER_SCHEMA['summary'],
@@ -49,191 +57,104 @@ class LogFileView(APIView):
     examples=SELF_REGISTER_SCHEMA['examples']
 )
 class UserCreateView(generics.CreateAPIView):
-    """
-    Endpoint público para auto-cadastro de novos usuários.
-    Usuários cadastrados por este endpoint são sempre do tipo CLIENTE.
-    """
+    """Endpoint público para auto-cadastro de novos usuários como CLIENTE."""
     queryset = User.objects.all()
     serializer_class = UserSelfRegisterSerializer
     permission_classes = [permissions.AllowAny]
 
+
+@extend_schema(
+    summary="Meu perfil",
+    description="Retorna informações detalhadas do perfil do usuário atualmente logado.",
+    tags=["Usuários"],
+    responses={200: UserDetailSerializer}
+)
+class UserProfileView(generics.RetrieveAPIView):
+    """View para o usuário visualizar seu próprio perfil."""
+    serializer_class = UserDetailSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+
+# --- VIEWSETS DE GERENCIAMENTO ---
+
 @extend_schema_view(
-    list=extend_schema(
-        summary="Listar usuários",
-        description="Lista todos os usuários do sistema. Apenas administradores.",
-        tags=["Usuários"]
-    ),
-    create=extend_schema(
-        summary="Criar usuário",
-        description="Cria um novo usuário via administrador.",
-        tags=["Usuários"]
-    ),
-    retrieve=extend_schema(
-        summary="Detalhes do usuário",
-        description="Retorna detalhes de um usuário específico.",
-        tags=["Usuários"]
-    ),
-    partial_update=extend_schema(
-        summary="Atualizar usuário",
-        description="Atualiza parcialmente um usuário. Apenas os campos enviados serão alterados.",
-        tags=["Usuários"]
-    ),
-    destroy=extend_schema(
-        summary="Deletar usuário",
-        description="Remove um usuário do sistema.",
-        tags=["Usuários"]
-    ),
+    list=extend_schema(summary="Listar todos os usuários (Admin)", tags=["Usuários"]),
+    create=extend_schema(summary="Criar usuário (Admin)", tags=["Usuários"]),
+    retrieve=extend_schema(summary="Detalhes do usuário (Admin)", tags=["Usuários"]),
+    partial_update=extend_schema(summary="Atualizar usuário (Admin)", tags=["Usuários"]),
+    destroy=extend_schema(summary="Deletar usuário (Admin)", tags=["Usuários"]),
+    toggle_active=extend_schema(summary="Ativar/Desativar usuário (Admin)", tags=["Usuários"])
 )
 class UserAdminViewSet(viewsets.ModelViewSet):
-    """
-    ViewSet para gestão administrativa de usuários.
-    
-    Funcionalidades:
-    - CRUD completo de usuários
-    - Ativar/desativar usuários
-    - Apenas para administradores
-    """
-    queryset = User.objects.all()
-    serializer_class = UserAdminSerializer
+    """ViewSet para gestão completa de todos os usuários por administradores."""
+    queryset = User.objects.all().order_by('-date_joined')
     permission_classes = [permissions.IsAuthenticated, IsAdminRole]
-    
-    # Lista de ações HTTP permitidas (removendo 'put' que é o método PUT)
     http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
-    
-    @action(detail=True, methods=['post'])
+
+    def get_serializer_class(self):
+        """Retorna o serializer correto baseado na ação (create vs. update/list)."""
+        if self.action == 'create':
+            return UserAdminCreateSerializer
+        return UserAdminSerializer
+
+    @action(detail=True, methods=['post'], url_path='toggle-active')
     def toggle_active(self, request, pk=None):
-        """
-        Toggle user active status
-        """
+        """Ação customizada para ativar ou desativar um usuário."""
         user = self.get_object()
         user.is_active = not user.is_active
         user.save()
         serializer = self.get_serializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-@extend_schema(
-    summary="Meu perfil",
-    description="Retorna informações do perfil do usuário logado.",
-    tags=["Usuários"],
-    responses={200: UserDetailSerializer}
-)
-class UserProfileView(generics.RetrieveAPIView):
-    """
-    View para o usuário visualizar seu próprio perfil.
-    """
-    serializer_class = UserDetailSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    
-    def get_object(self):
-        return self.request.user
-
-@extend_schema(
-    summary="Criar usuário (Funcionário)",
-    description="Endpoint para funcionários criarem usuários dos tipos: Cliente, Funcionário ou Veterinário.",
-    tags=["Usuários"],
-    request=UserFuncionarioCreateSerializer,
-    responses={201: UserDetailSerializer}
-)
-class UserFuncionarioCreateView(generics.CreateAPIView):
-    """
-    Endpoint para funcionários criarem usuários.
-    Funcionários podem criar: CLIENTE, FUNCIONARIO ou VETERINARIO.
-    """
-    queryset = User.objects.all()
-    serializer_class = UserFuncionarioCreateSerializer
-    permission_classes = [permissions.IsAuthenticated, IsFuncionarioOrAdmin]
-
-@extend_schema(
-    summary="Criar usuário (Admin)", 
-    description="Endpoint para administradores criarem usuários de qualquer tipo.",
-    tags=["Usuários"],
-    request=UserAdminCreateSerializer,
-    responses={201: UserDetailSerializer}
-)
-class UserAdminCreateView(generics.CreateAPIView):
-    """
-    Endpoint para administradores criarem usuários.
-    Administradores podem criar qualquer tipo de usuário.
-    """
-    queryset = User.objects.all()
-    serializer_class = UserAdminCreateSerializer
-    permission_classes = [permissions.IsAuthenticated, IsAdminRole]
 
 @extend_schema_view(
-    list=extend_schema(
-        summary="Listar clientes (Funcionário)",
-        description="Funcionários podem listar apenas usuários do tipo CLIENTE.",
-        tags=["Usuários"]
-    ),
-    retrieve=extend_schema(
-        summary="Detalhes do cliente (Funcionário)",
-        description="Funcionários podem ver detalhes apenas de clientes.",
-        tags=["Usuários"]
-    ),
-    partial_update=extend_schema(
-        summary="Atualizar cliente (Funcionário)",
-        description="Funcionários podem atualizar parcialmente dados de clientes.",
-        tags=["Usuários"]
-    ),
-    destroy=extend_schema(
-        summary="Excluir cliente (Funcionário)",
-        description="Funcionários podem excluir usuários clientes.",
-        tags=["Usuários"]
-    ),
+    list=extend_schema(summary="Listar clientes (Funcionário)", tags=["Usuários"]),
+    create=extend_schema(summary="Criar usuário (Funcionário)", tags=["Usuários"]),
+    retrieve=extend_schema(summary="Detalhes do cliente (Funcionário)", tags=["Usuários"]),
+    partial_update=extend_schema(summary="Atualizar cliente (Funcionário)", tags=["Usuários"]),
+    destroy=extend_schema(summary="Excluir cliente (Funcionário)", tags=["Usuários"]),
 )
 class UserFuncionarioViewSet(viewsets.ModelViewSet):
-    """
-    ViewSet para funcionários gerenciarem usuários clientes.
-    
-    Funcionalidades:
-    - Listar apenas clientes
-    - Ver detalhes de clientes
-    - Editar dados de clientes
-    - Excluir clientes
-    - Criar novos clientes
-    - Apenas para funcionários e admins
-    """
-    serializer_class = UserDetailSerializer
+    """ViewSet para funcionários gerenciarem usuários do tipo CLIENTE."""
     permission_classes = [permissions.IsAuthenticated, CanManageClients]
-    
-    # Lista de ações HTTP permitidas (removendo 'put' que é o método PUT)
     http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
-    
+
     def get_serializer_class(self):
-        """
-        Retorna o serializer apropriado com base na ação.
-        """
+        """Retorna o serializer apropriado com base na ação."""
         if self.action == 'create':
             return UserFuncionarioCreateSerializer
         elif self.action in ['update', 'partial_update']:
-            return UserAdminSerializer  # Para permitir edição de perfil
+            return UserAdminSerializer
         return UserDetailSerializer
-    
+
     def get_queryset(self):
-        """
-        Funcionários veem apenas usuários clientes.
-        Admins veem todos os usuários.
-        """
+        """Admins veem todos. Funcionários veem apenas usuários clientes."""
         user = self.request.user
-        
         if not hasattr(user, 'profile'):
             return User.objects.none()
-        
-        # Admin vê todos os usuários
+
         if user.profile.role == Profile.Role.ADMIN:
-            return User.objects.all()
-        
-        # Funcionário vê apenas clientes
+            return User.objects.all().order_by('-date_joined')
+
         if user.profile.role == Profile.Role.FUNCIONARIO:
-            return User.objects.filter(profile__role=Profile.Role.CLIENTE)
-        
+            return User.objects.filter(profile__role=Profile.Role.CLIENTE).order_by('-date_joined')
+
         return User.objects.none()
-    
-    def perform_destroy(self, instance):
-        """
-        Permite que funcionários excluam apenas clientes.
-        """
-        if hasattr(instance, 'profile') and instance.profile.role == Profile.Role.CLIENTE:
-            instance.delete()
-        else:
-            raise serializers.ValidationError({"detail": "Funcionários podem excluir apenas usuários clientes."})
+
+
+# --- VIEW DE AUTENTICAÇÃO CUSTOMIZADA ---
+
+@extend_schema(
+    summary="Login e obter token",
+    description="Envie `username` e `password` para receber um token de autenticação.",
+    tags=['Autenticação']
+)
+class CustomAuthTokenView(ObtainAuthToken):
+    """
+    View customizada que herda da original para obter token,
+    permitindo adicionar a documentação Swagger correta.
+    """
+    pass
