@@ -1,5 +1,5 @@
 # prontuarios/serializers.py
-
+from decimal import Decimal
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -185,10 +185,12 @@ class ProntuarioSerializer(serializers.ModelSerializer):
         return value
 
     def validate_temperatura(self, value):
+        # Se a temperatura não for fornecida, não há o que validar.
         if value is None:
-            raise serializers.ValidationError("Temperatura é obrigatória.")
-        try:
-            float(value)
-        except (TypeError, ValueError):
-            raise serializers.ValidationError("Informe um número válido para temperatura.")
+            return value  # Permite que o valor seja nulo
+
+        # A validação de faixa só é aplicada se um valor for enviado.
+        if not (Decimal('35.0') <= value <= Decimal('45.0')):
+            raise serializers.ValidationError("A temperatura deve estar entre 35.0°C e 45.0°C.")
+
         return value

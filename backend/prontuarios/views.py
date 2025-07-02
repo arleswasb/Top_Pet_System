@@ -90,7 +90,9 @@ class ProntuarioViewSet(viewsets.ModelViewSet):
         else:
             serializer.save()
 
+'''
 class ProntuarioUpdateView(UpdateAPIView):
     queryset = Prontuario.objects.all()
     serializer_class = ProntuarioSerializer
     # Remova o lookup_field para usar o padrão 'pk'
+'''
