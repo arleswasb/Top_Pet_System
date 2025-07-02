@@ -23,10 +23,9 @@ urlpatterns = [
     path('api/configuracao/', include('configuracao.urls')),
     path('api/agendamentos/', include('agendamentos.urls')),
     path('api/prontuarios/', include('prontuarios.urls')),
-    
     # Descomente as linhas abaixo quando os respectivos apps tiverem seus arquivos urls.py
 
-    # 3. Rotas de Documentação da API (Swagger/OpenAPI)
+    # 4. Rotas de Documentação da API (Swagger/OpenAPI)
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
