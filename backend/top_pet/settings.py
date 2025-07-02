@@ -15,7 +15,7 @@ SECRET_KEY = 'django-insecure-etva7+wfjug1hjg$5mb4fzq***=o&w0$rllq%!czw!xmj)y8xa
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver']
 
 
 # Application definition
@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_rest_passwordreset',
     'pets',
     'rest_framework',
     'rest_framework.authtoken',
@@ -35,6 +36,8 @@ INSTALLED_APPS = [
     'agendamentos',
     'prontuarios',
     'configuracao',
+    # Adicionar CORS para APIs (opcional, mas recomendado)
+    # 'corsheaders',  # Descomente se precisar de CORS
 ]
 
 # Configuração de autenticação do DRF 
@@ -100,8 +103,17 @@ SPECTACULAR_SETTINGS = {
     },
 }
 
-
-
+# Cache configuration (para melhor performance da API)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'TIMEOUT': 300,  # 5 minutos
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000,
+        }
+    }
+}
 
 
 MIDDLEWARE = [
@@ -227,8 +239,6 @@ MEDIA_URL = '/media/'
 os.makedirs(MEDIA_ROOT, exist_ok=True)
 
 #conficuração do logging
-import os
-from .settings import BASE_DIR
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -283,3 +293,6 @@ if 'test' in sys.argv or 'pytest' in sys.modules or 'unittest' in sys.modules:
     # Desabilitar logs durante testes para performance
     LOGGING['loggers']['django']['level'] = 'ERROR'
 
+    # Configuração de Email para Desenvolvimento
+    # Imprime os e-mails no console em vez de enviá-los de verdade.
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

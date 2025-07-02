@@ -23,7 +23,7 @@ urlpatterns = [
     path('api/configuracao/', include('configuracao.urls')),
     path('api/agendamentos/', include('agendamentos.urls')),
     path('api/prontuarios/', include('prontuarios.urls')),
-    
+    path('api/password-reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
     # Descomente as linhas abaixo quando os respectivos apps tiverem seus arquivos urls.py
 
     # 3. Rotas de Documentação da API (Swagger/OpenAPI)
