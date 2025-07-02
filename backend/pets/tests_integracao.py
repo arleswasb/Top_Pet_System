@@ -149,6 +149,7 @@ class PetAPIPermissionsTestCase(TestCase):
         )
         
         self.client.force_authenticate(user=self.funcionario)
+    
         
         # Testa DELETE (deve ser negado para pets de não-clientes)
         response = self.client.delete(f'/api/pets/{pet_funcionario.id}/')

@@ -82,3 +82,14 @@ class PetViewSet(viewsets.ModelViewSet):
             serializer.save(tutor=user)
         
         logger.info(f"Pet criado por {self.request.user.email}")
+    
+    def destroy(self, request, *args, **kwargs):
+        """Override do método destroy para adicionar logs"""
+        pet = self.get_object()
+        user_profile = getattr(request.user, 'profile', None)
+        
+        # Log para debug
+        if user_profile and user_profile.role == 'FUNCIONARIO':
+            print(f"Tentativa de DELETE de pet {pet.nome} por funcionário {request.user.username}")
+            
+        return super().destroy(request, *args, **kwargs)
