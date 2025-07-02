@@ -22,23 +22,14 @@ urlpatterns = [
     path('api/users/', include('users.urls')),
     path('api/configuracao/', include('configuracao.urls')),
     path('api/agendamentos/', include('agendamentos.urls')),
+    path('api/prontuarios/', include('prontuarios.urls')),
     
     # Descomente as linhas abaixo quando os respectivos apps tiverem seus arquivos urls.py
-    # path('api/prontuarios/', include('prontuarios.urls')),
 
     # 3. Rotas de Documentação da API (Swagger/OpenAPI)
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-]
-
-# Agrupando as URLs da API
-api_urlpatterns = [
-    path('', include('pets.urls')),
-    path('', include('users.urls')),
-    path('', include('agendamentos.urls')),
-    path('', include('prontuarios.urls')),
-    path('', include('configuracao.urls')),  # <-- Adicionar esta linha
 ]
 
 # Servir arquivos de mídia em modo DEBUG
