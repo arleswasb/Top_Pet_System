@@ -1,5 +1,4 @@
 # agendamentos/tests_integracao.py
-
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -9,6 +8,7 @@ from rest_framework.authtoken.models import Token
 from datetime import datetime, timedelta
 from decimal import Decimal
 from django.utils import timezone
+import unittest
 
 from .models import Agendamento, Servico
 from pets.models import Pet
@@ -86,7 +86,6 @@ class AgendamentoIntegrationTest(APITestCase):
         # Data para agendamentos
         self.data_agendamento = timezone.now() + timedelta(days=1)
         
-    @unittest.skip("App agendamentos não implementado ainda")
     def test_criar_agendamento_como_tutor(self):
         """Teste: Tutor pode criar agendamento para seu pet"""
         self.client.force_authenticate(user=self.tutor_user, token=self.tutor_token)
@@ -98,7 +97,7 @@ class AgendamentoIntegrationTest(APITestCase):
             'observacoes': 'Pet muito agitado'
         }
         
-        response = self.client.post('/api/agendamentos/', data, format='json')
+        response = self.client.post('/api/agendamentos/agendamentos/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Agendamento.objects.count(), 1)
@@ -107,7 +106,6 @@ class AgendamentoIntegrationTest(APITestCase):
         self.assertEqual(agendamento.servico, self.servico_banho)
         self.assertEqual(agendamento.status, Agendamento.StatusChoices.AGENDADO)
         
-    @unittest.skip("App agendamentos não implementado ainda")
     def test_listar_agendamentos_como_tutor(self):
         """Teste: Tutor vê apenas agendamentos de seus pets"""
         # Criar agendamento do tutor
@@ -135,14 +133,13 @@ class AgendamentoIntegrationTest(APITestCase):
         )
         
         self.client.force_authenticate(user=self.tutor_user, token=self.tutor_token)
-        response = self.client.get('/api/agendamentos/')
+        response = self.client.get('/api/agendamentos/agendamentos/')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Tutor deve ver apenas seus agendamentos
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['pet']['id'], self.pet.id)
         
-    @unittest.skip("App agendamentos não implementado ainda")
     def test_funcionario_ve_todos_agendamentos(self):
         """Teste: Funcionário vê todos os agendamentos"""
         # Criar múltiplos agendamentos
@@ -169,13 +166,12 @@ class AgendamentoIntegrationTest(APITestCase):
         )
         
         self.client.force_authenticate(user=self.funcionario_user, token=self.funcionario_token)
-        response = self.client.get('/api/agendamentos/')
+        response = self.client.get('/api/agendamentos/agendamentos/')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Funcionário deve ver todos os agendamentos
         self.assertEqual(len(response.data), 2)
         
-    @unittest.skip("App agendamentos não implementado ainda")
     def test_atualizar_status_agendamento(self):
         """Teste: Funcionário pode atualizar status do agendamento"""
         agendamento = Agendamento.objects.create(
@@ -194,13 +190,12 @@ class AgendamentoIntegrationTest(APITestCase):
             'observacoes': 'Serviço realizado com sucesso'
         }
         
-        response = self.client.patch(f'/api/agendamentos/{agendamento.id}/', data, format='json')
+        response = self.client.patch(f'/api/agendamentos/agendamentos/{agendamento.id}/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         agendamento.refresh_from_db()
         self.assertEqual(agendamento.status, Agendamento.StatusChoices.CONCLUIDO)
         
-    @unittest.skip("App agendamentos não implementado ainda")
     def test_cancelar_agendamento_como_tutor(self):
         """Teste: Tutor pode cancelar seu próprio agendamento"""
         agendamento = Agendamento.objects.create(
@@ -224,7 +219,6 @@ class AgendamentoIntegrationTest(APITestCase):
         agendamento.refresh_from_db()
         self.assertEqual(agendamento.status, Agendamento.StatusChoices.CANCELADO)
         
-    @unittest.skip("App agendamentos não implementado ainda")
     def test_tutor_nao_pode_editar_agendamento_de_outro(self):
         """Teste: Tutor não pode editar agendamento de outro tutor"""
         outro_user = User.objects.create_user(
@@ -256,7 +250,6 @@ class AgendamentoIntegrationTest(APITestCase):
         
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         
-    @unittest.skip("App agendamentos não implementado ainda")
     def test_deletar_agendamento_como_admin(self):
         """Teste: Admin pode deletar qualquer agendamento"""
         agendamento = Agendamento.objects.create(
@@ -291,11 +284,16 @@ class ServicoIntegrationTest(APITestCase):
             password='tutorpass123'
         )
         
+        # Atualizar perfis criados automaticamente pelos signals
+        self.admin_user.profile.role = Profile.Role.ADMIN
+        self.admin_user.profile.save()
+        self.tutor_user.profile.role = Profile.Role.CLIENTE
+        self.tutor_user.profile.save()
+        
         self.admin_token = Token.objects.create(user=self.admin_user)
         self.tutor_token = Token.objects.create(user=self.tutor_user)
         self.client = APIClient()
         
-    @unittest.skip("App agendamentos não implementado ainda")
     def test_admin_pode_criar_servico(self):
         """Teste: Admin pode criar novos serviços"""
         self.client.force_authenticate(user=self.admin_user, token=self.admin_token)
@@ -307,7 +305,7 @@ class ServicoIntegrationTest(APITestCase):
             'preco': '120.00'
         }
         
-        response = self.client.post('/api/servicos/', data, format='json')
+        response = self.client.post('/api/agendamentos/servicos/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Servico.objects.count(), 1)
@@ -315,7 +313,6 @@ class ServicoIntegrationTest(APITestCase):
         self.assertEqual(servico.nome, 'Vacinação')
         self.assertEqual(servico.preco, Decimal('120.00'))
         
-    @unittest.skip("App agendamentos não implementado ainda")
     def test_tutor_pode_listar_servicos(self):
         """Teste: Tutor pode listar serviços disponíveis"""
         Servico.objects.create(
@@ -330,12 +327,11 @@ class ServicoIntegrationTest(APITestCase):
         )
         
         self.client.force_authenticate(user=self.tutor_user, token=self.tutor_token)
-        response = self.client.get('/api/servicos/')
+        response = self.client.get('/api/agendamentos/servicos/')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)  # Lista todos, independente de disponibilidade
         
-    @unittest.skip("App agendamentos não implementado ainda")
     def test_tutor_nao_pode_criar_servico(self):
         """Teste: Tutor não pode criar serviços"""
         self.client.force_authenticate(user=self.tutor_user, token=self.tutor_token)
@@ -345,11 +341,10 @@ class ServicoIntegrationTest(APITestCase):
             'preco': '100.00'
         }
         
-        response = self.client.post('/api/servicos/', data, format='json')
+        response = self.client.post('/api/agendamentos/servicos/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         
-    @unittest.skip("App agendamentos não implementado ainda")
     def test_admin_pode_desativar_servico(self):
         """Teste: Admin pode desativar serviços"""
         servico = Servico.objects.create(
@@ -368,7 +363,7 @@ class ServicoIntegrationTest(APITestCase):
             'disponivel': False
         }
         
-        response = self.client.patch(f'/api/servicos/{servico.id}/', data, format='json')
+        response = self.client.patch(f'/api/agendamentos/servicos/{servico.id}/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         servico.refresh_from_db()
@@ -418,7 +413,6 @@ class AgendamentoWorkflowTest(APITestCase):
             disponivel=True
         )
         
-    @unittest.skip("App agendamentos não implementado ainda")
     def test_fluxo_completo_agendamento(self):
         """Teste: Fluxo completo de agendamento do início ao fim"""
         data_agendamento = timezone.now() + timedelta(days=1)
@@ -433,7 +427,7 @@ class AgendamentoWorkflowTest(APITestCase):
             'observacoes': 'Pet precisa de cuidado especial'
         }
         
-        response = self.client.post('/api/agendamentos/', data_criacao, format='json')
+        response = self.client.post('/api/agendamentos/agendamentos/', data_criacao, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         agendamento_id = response.data['id']
         
@@ -460,7 +454,6 @@ class AgendamentoWorkflowTest(APITestCase):
         self.assertEqual(agendamento.status, Agendamento.StatusChoices.CONCLUIDO)
         self.assertIn('Serviço realizado com sucesso', agendamento.observacoes)
         
-    @unittest.skip("App agendamentos não implementado ainda")
     def test_reagendamento(self):
         """Teste: Reagendamento de um agendamento existente"""
         data_original = timezone.now() + timedelta(days=1)
@@ -490,7 +483,6 @@ class AgendamentoWorkflowTest(APITestCase):
         self.assertEqual(agendamento.data_hora.date(), data_nova.date())
         self.assertIn('Reagendado', agendamento.observacoes)
 
-    @unittest.skip("App agendamentos não implementado ainda")
     def test_put_method_not_allowed(self):
         """Confirma que PUT foi removido e retorna 405 Method Not Allowed"""
         agendamento = Agendamento.objects.create(

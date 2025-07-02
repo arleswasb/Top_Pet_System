@@ -21,9 +21,9 @@ urlpatterns = [
     path('api/pets/', include('pets.urls')),
     path('api/users/', include('users.urls')),
     path('api/configuracao/', include('configuracao.urls')),
+    path('api/agendamentos/', include('agendamentos.urls')),
     
     # Descomente as linhas abaixo quando os respectivos apps tiverem seus arquivos urls.py
-    # path('api/agendamentos/', include('agendamentos.urls')),
     # path('api/prontuarios/', include('prontuarios.urls')),
 
     # 3. Rotas de Documentação da API (Swagger/OpenAPI)
@@ -36,10 +36,9 @@ urlpatterns = [
 api_urlpatterns = [
     path('', include('pets.urls')),
     path('', include('users.urls')),
-    path('', include('configuracao.urls')),
-    # Comentar temporariamente apps não implementados
-    # path('', include('agendamentos.urls')),
-    # path('', include('prontuarios.urls')),
+    path('', include('agendamentos.urls')),
+    path('', include('prontuarios.urls')),
+    path('', include('configuracao.urls')),  # <-- Adicionar esta linha
 ]
 
 # Servir arquivos de mídia em modo DEBUG

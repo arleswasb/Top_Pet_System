@@ -189,6 +189,8 @@ class PetAPIPermissionsTestCase(TestCase):
 
     def test_api_response_structure(self):
         """Testa a estrutura da resposta da API"""
+        # Autenticar como tutor para testar a estrutura da resposta
+        self.client.force_authenticate(user=self.tutor)
         response = self.client.get('/api/pets/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
