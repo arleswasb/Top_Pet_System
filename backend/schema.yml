@@ -26,6 +26,7 @@ paths:
   /api/register/:
     post:
       operationId: register_create
+      summary: Auto-cadastro de cliente
       description: "\n    **\U0001F513 Endpoint público para auto-cadastro** de novos\
         \ usuários como CLIENTE.\n    \n    **✅ CAMPOS OBRIGATÓRIOS:**\n    - `username`:\
         \ Nome de usuário único\n    - `password`: Senha com no mínimo 8 caracteres\
@@ -41,7 +42,6 @@ paths:
         \ ter pelo menos 8 caracteres\n    \n    **\U0001F4A1 Dica:** Os campos telefone\
         \ e endereço podem ser preenchidos posteriormente no perfil do usuário.\n\
         \    "
-      summary: Auto-cadastro de cliente
       tags:
       - Autenticação
       requestBody:
@@ -49,95 +49,13 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserSelfRegisterRequest'
-            examples:
-              CadastroCompleto:
-                value:
-                  username: joao_silva
-                  password: minhasenha123
-                  confirm_password: minhasenha123
-                  email: joao@email.com
-                  first_name: João
-                  last_name: Silva
-                  telefone: (11) 99999-9999
-                  endereco: Rua das Flores, 123 - São Paulo/SP
-                summary: Cadastro Completo
-                description: Exemplo com todos os campos (obrigatórios e opcionais)
-                  preenchidos
-              CadastroMínimo:
-                value:
-                  username: maria_santos
-                  password: senha123
-                  confirm_password: senha123
-                  email: maria@email.com
-                  first_name: Maria
-                  last_name: Santos
-                summary: Cadastro Mínimo
-                description: Apenas campos obrigatórios - telefone e endereço são
-                  OPCIONAIS
-              ApenasComTelefone:
-                value:
-                  username: carlos_oliveira
-                  password: novasenha456
-                  confirm_password: novasenha456
-                  email: carlos@email.com
-                  first_name: Carlos
-                  last_name: Oliveira
-                  telefone: (21) 88888-8888
-                summary: Apenas com Telefone
-                description: Campos obrigatórios + telefone (endereço continua opcional)
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UserSelfRegisterRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/UserSelfRegisterRequest'
         required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      - {}
       responses:
         '201':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserDetail'
-              examples:
-                CadastroCompleto:
-                  value:
-                    username: joao_silva
-                    password: minhasenha123
-                    confirm_password: minhasenha123
-                    email: joao@email.com
-                    first_name: João
-                    last_name: Silva
-                    telefone: (11) 99999-9999
-                    endereco: Rua das Flores, 123 - São Paulo/SP
-                  summary: Cadastro Completo
-                  description: Exemplo com todos os campos (obrigatórios e opcionais)
-                    preenchidos
-                CadastroMínimo:
-                  value:
-                    username: maria_santos
-                    password: senha123
-                    confirm_password: senha123
-                    email: maria@email.com
-                    first_name: Maria
-                    last_name: Santos
-                  summary: Cadastro Mínimo
-                  description: Apenas campos obrigatórios - telefone e endereço são
-                    OPCIONAIS
-                ApenasComTelefone:
-                  value:
-                    username: carlos_oliveira
-                    password: novasenha456
-                    confirm_password: novasenha456
-                    email: carlos@email.com
-                    first_name: Carlos
-                    last_name: Oliveira
-                    telefone: (21) 88888-8888
-                  summary: Apenas com Telefone
-                  description: Campos obrigatórios + telefone (endereço continua opcional)
           description: ''
   /api-token-auth/:
     post:
@@ -148,19 +66,10 @@ paths:
       - Autenticação
       requestBody:
         content:
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/AuthTokenRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/AuthTokenRequest'
           application/json:
             schema:
               $ref: '#/components/schemas/AuthTokenRequest'
         required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -171,14 +80,13 @@ paths:
   /api/pets/:
     get:
       operationId: pets_list
+      summary: Listar pets
       description: Retorna lista de pets. Clientes veem apenas seus pets, funcionários/admins
         veem todos.
-      summary: Listar pets
       tags:
       - Pets
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -190,9 +98,9 @@ paths:
           description: ''
     post:
       operationId: pets_create
+      summary: Criar pet
       description: Cria um novo pet. Para clientes, o tutor é definido automaticamente.
         Suporte a upload de foto (multipart/form-data).
-      summary: Criar pet
       tags:
       - Pets
       requestBody:
@@ -200,16 +108,9 @@ paths:
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/PetRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PetRequest'
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PetRequest'
         required: true
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '201':
           content:
@@ -220,20 +121,18 @@ paths:
   /api/pets/{id}/:
     get:
       operationId: pets_retrieve
-      description: Retorna detalhes de um pet específico.
       summary: Detalhes do pet
+      description: Retorna detalhes de um pet específico.
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this Pet.
         required: true
       tags:
       - Pets
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -243,15 +142,13 @@ paths:
           description: ''
     patch:
       operationId: pets_partial_update
-      description: Atualiza parcialmente um pet. Apenas os campos enviados serão alterados,
-        preservando os demais dados.
       summary: Atualizar pet
+      description: Atualiza parcialmente um pet. Apenas os campos enviados serão alterados.
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this Pet.
         required: true
       tags:
       - Pets
@@ -260,15 +157,8 @@ paths:
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/PatchedPetRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedPetRequest'
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedPetRequest'
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -278,33 +168,30 @@ paths:
           description: ''
     delete:
       operationId: pets_destroy
-      description: Remove um pet do sistema. Apenas o dono ou admin pode deletar.
       summary: Deletar pet
+      description: Remove um pet do sistema. Apenas o dono ou admin pode deletar.
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this Pet.
         required: true
       tags:
       - Pets
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '204':
           description: No response body
   /api/servicos/:
     get:
       operationId: servicos_list
-      description: Lista todos os serviços disponíveis na clínica veterinária.
       summary: Listar serviços
+      description: Lista todos os serviços disponíveis na clínica veterinária.
       tags:
       - Serviços
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -316,8 +203,8 @@ paths:
           description: ''
     post:
       operationId: servicos_create
-      description: Cria um novo serviço (apenas admin).
       summary: Criar serviço
+      description: Cria um novo serviço (apenas admin).
       tags:
       - Serviços
       requestBody:
@@ -325,16 +212,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ServicoRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/ServicoRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/ServicoRequest'
         required: true
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '201':
           content:
@@ -345,20 +225,18 @@ paths:
   /api/servicos/{id}/:
     get:
       operationId: servicos_retrieve
-      description: Obtém os detalhes de um serviço específico.
       summary: Detalhes do serviço
+      description: Obtém os detalhes de um serviço específico.
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this servico.
         required: true
       tags:
       - Serviços
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -368,14 +246,13 @@ paths:
           description: ''
     patch:
       operationId: servicos_partial_update
-      description: Atualiza parcialmente um serviço (apenas admin).
       summary: Atualizar serviço
+      description: Atualiza parcialmente um serviço (apenas admin).
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this servico.
         required: true
       tags:
       - Serviços
@@ -384,15 +261,8 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchedServicoRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedServicoRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedServicoRequest'
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -402,36 +272,33 @@ paths:
           description: ''
     delete:
       operationId: servicos_destroy
-      description: Exclui um serviço (apenas admin).
       summary: Excluir serviço
+      description: Exclui um serviço (apenas admin).
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this servico.
         required: true
       tags:
       - Serviços
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '204':
           description: No response body
   /api/agendamentos/:
     get:
       operationId: agendamentos_list
+      summary: Listar agendamentos
       description: |-
         Lista agendamentos conforme permissão do usuário:
         - **Clientes**: Apenas seus próprios agendamentos
         - **Funcionários/Veterinários/Admins**: Todos os agendamentos
-      summary: Listar agendamentos
       tags:
       - Agendamentos
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -443,8 +310,8 @@ paths:
           description: ''
     post:
       operationId: agendamentos_create
-      description: Cria um novo agendamento para um pet.
       summary: Criar agendamento
+      description: Cria um novo agendamento para um pet.
       tags:
       - Agendamentos
       requestBody:
@@ -452,16 +319,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/AgendamentoRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/AgendamentoRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/AgendamentoRequest'
         required: true
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '201':
           content:
@@ -472,20 +332,18 @@ paths:
   /api/agendamentos/{id}/:
     get:
       operationId: agendamentos_retrieve
-      description: Obtém os detalhes de um agendamento específico.
       summary: Detalhes do agendamento
+      description: Obtém os detalhes de um agendamento específico.
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this agendamento.
         required: true
       tags:
       - Agendamentos
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -495,14 +353,13 @@ paths:
           description: ''
     patch:
       operationId: agendamentos_partial_update
-      description: 'Atualiza parcialmente um agendamento (ex: alterar status).'
       summary: Atualizar agendamento
+      description: 'Atualiza parcialmente um agendamento (ex: alterar status).'
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this agendamento.
         required: true
       tags:
       - Agendamentos
@@ -511,15 +368,8 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchedAgendamentoRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedAgendamentoRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedAgendamentoRequest'
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -529,37 +379,34 @@ paths:
           description: ''
     delete:
       operationId: agendamentos_destroy
-      description: Cancela/exclui um agendamento.
       summary: Cancelar agendamento
+      description: Cancela/exclui um agendamento.
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this agendamento.
         required: true
       tags:
       - Agendamentos
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '204':
           description: No response body
   /api/prontuarios/:
     get:
       operationId: prontuarios_list
+      summary: Listar prontuários
       description: |-
         Lista prontuários médicos conforme permissão do usuário:
         - **Clientes**: Apenas prontuários dos seus pets
         - **Funcionários/Admins**: Todos os prontuários
         - **Veterinários**: Podem criar e ver todos os prontuários
-      summary: Listar prontuários
       tags:
       - Prontuários
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -571,8 +418,8 @@ paths:
           description: ''
     post:
       operationId: prontuarios_create
-      description: Cria um novo prontuário médico (apenas veterinários e admins).
       summary: Criar prontuário
+      description: Cria um novo prontuário médico (apenas veterinários e admins).
       tags:
       - Prontuários
       requestBody:
@@ -580,16 +427,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ProntuarioRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/ProntuarioRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/ProntuarioRequest'
         required: true
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '201':
           content:
@@ -600,20 +440,18 @@ paths:
   /api/prontuarios/{id}/:
     get:
       operationId: prontuarios_retrieve
-      description: Obtém os detalhes completos de um prontuário médico.
       summary: Detalhes do prontuário
+      description: Obtém os detalhes completos de um prontuário médico.
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this Prontuário.
         required: true
       tags:
       - Prontuários
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -623,14 +461,13 @@ paths:
           description: ''
     patch:
       operationId: prontuarios_partial_update
-      description: Atualiza parcialmente um prontuário médico.
       summary: Atualizar prontuário
+      description: Atualiza parcialmente um prontuário médico.
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this Prontuário.
         required: true
       tags:
       - Prontuários
@@ -639,15 +476,8 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchedProntuarioRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedProntuarioRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedProntuarioRequest'
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -657,33 +487,30 @@ paths:
           description: ''
     delete:
       operationId: prontuarios_destroy
-      description: Exclui um prontuário médico (apenas admins).
       summary: Excluir prontuário
+      description: Exclui um prontuário médico (apenas admins).
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this Prontuário.
         required: true
       tags:
       - Prontuários
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '204':
           description: No response body
   /api/me/:
     get:
       operationId: me_retrieve
-      description: Retorna informações do perfil do usuário logado.
       summary: Meu perfil
+      description: Retorna informações do perfil do usuário logado.
       tags:
       - Usuários
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -694,9 +521,9 @@ paths:
   /api/funcionario/create-user/:
     post:
       operationId: funcionario_create_user_create
+      summary: Criar usuário (Funcionário)
       description: 'Endpoint para funcionários criarem usuários dos tipos: Cliente,
         Funcionário ou Veterinário.'
-      summary: Criar usuário (Funcionário)
       tags:
       - Usuários
       requestBody:
@@ -704,16 +531,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserFuncionarioCreateRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UserFuncionarioCreateRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/UserFuncionarioCreateRequest'
         required: true
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '201':
           content:
@@ -724,8 +544,8 @@ paths:
   /api/admin/create-user/:
     post:
       operationId: admin_create_user_create
-      description: Endpoint para administradores criarem usuários de qualquer tipo.
       summary: Criar usuário (Admin)
+      description: Endpoint para administradores criarem usuários de qualquer tipo.
       tags:
       - Usuários
       requestBody:
@@ -733,16 +553,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserAdminCreateRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UserAdminCreateRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/UserAdminCreateRequest'
         required: true
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '201':
           content:
@@ -753,13 +566,12 @@ paths:
   /api/admin/users/:
     get:
       operationId: admin_users_list
+      summary: Listar todos os usuários (Admin)
       description: Lista todos os usuários do sistema. Apenas administradores.
-      summary: Listar usuários (Admin)
       tags:
       - Usuários
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -771,8 +583,8 @@ paths:
           description: ''
     post:
       operationId: admin_users_create
-      description: Cria um novo usuário via administrador.
-      summary: Criar usuário (Admin)
+      summary: Criar usuário (Admin - Alternativo)
+      description: Cria um novo usuário via administrador (rota alternativa).
       tags:
       - Usuários
       requestBody:
@@ -780,16 +592,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserAdminRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UserAdminRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/UserAdminRequest'
         required: true
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '201':
           content:
@@ -800,20 +605,18 @@ paths:
   /api/admin/users/{id}/:
     get:
       operationId: admin_users_retrieve
-      description: Retorna detalhes de um usuário específico.
       summary: Detalhes do usuário (Admin)
+      description: Retorna detalhes de um usuário específico.
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this user.
         required: true
       tags:
       - Usuários
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -823,15 +626,14 @@ paths:
           description: ''
     patch:
       operationId: admin_users_partial_update
+      summary: Atualizar usuário (Admin)
       description: Atualiza parcialmente um usuário. Apenas os campos enviados serão
         alterados.
-      summary: Atualizar usuário (Admin)
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this user.
         required: true
       tags:
       - Usuários
@@ -840,15 +642,8 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchedUserAdminRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedUserAdminRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedUserAdminRequest'
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -858,33 +653,30 @@ paths:
           description: ''
     delete:
       operationId: admin_users_destroy
-      description: Remove um usuário do sistema.
       summary: Deletar usuário (Admin)
+      description: Remove um usuário do sistema.
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this user.
         required: true
       tags:
       - Usuários
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '204':
           description: No response body
   /api/funcionario/users/:
     get:
       operationId: funcionario_users_list
-      description: Funcionários podem listar apenas usuários do tipo CLIENTE.
       summary: Listar clientes (Funcionário)
+      description: Funcionários podem listar apenas usuários do tipo CLIENTE.
       tags:
       - Usuários
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -896,17 +688,8 @@ paths:
           description: ''
     post:
       operationId: funcionario_users_create
-      description: |-
-        ViewSet para funcionários gerenciarem usuários clientes.
-
-        Funcionalidades:
-        - Listar apenas clientes
-        - Ver detalhes de clientes
-        - Editar dados de clientes
-        - Excluir clientes
-        - Criar novos clientes
-        - Apenas para funcionários e admins
       summary: Criar cliente (Funcionário)
+      description: ViewSet para funcionários gerenciarem usuários clientes.
       tags:
       - Usuários
       requestBody:
@@ -914,16 +697,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserFuncionarioCreateRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UserFuncionarioCreateRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/UserFuncionarioCreateRequest'
         required: true
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '201':
           content:
@@ -934,20 +710,18 @@ paths:
   /api/funcionario/users/{id}/:
     get:
       operationId: funcionario_users_retrieve
-      description: Funcionários podem ver detalhes apenas de clientes.
       summary: Detalhes do cliente (Funcionário)
+      description: Funcionários podem ver detalhes apenas de clientes.
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this user.
         required: true
       tags:
       - Usuários
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -957,14 +731,13 @@ paths:
           description: ''
     patch:
       operationId: funcionario_users_partial_update
-      description: Funcionários podem atualizar parcialmente dados de clientes.
       summary: Atualizar cliente (Funcionário)
+      description: Funcionários podem atualizar parcialmente dados de clientes.
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this user.
         required: true
       tags:
       - Usuários
@@ -973,15 +746,8 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchedUserAdminRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedUserAdminRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedUserAdminRequest'
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -991,33 +757,30 @@ paths:
           description: ''
     delete:
       operationId: funcionario_users_destroy
-      description: Funcionários podem excluir usuários clientes.
       summary: Excluir cliente (Funcionário)
+      description: Funcionários podem excluir usuários clientes.
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this user.
         required: true
       tags:
       - Usuários
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '204':
           description: No response body
   /api/logs/:
     get:
       operationId: logs_retrieve
+      summary: Visualizar logs do sistema (Admin)
       description: Retorna as últimas 100 linhas do log de debug. Apenas administradores.
-      summary: Visualizar logs do sistema
       tags:
       - Usuários
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -1028,14 +791,13 @@ paths:
   /api/admin/users/{id}/toggle_active/:
     post:
       operationId: admin_users_toggle_active_create
-      description: Ativa ou desativa um usuário. Apenas administradores.
       summary: Ativar/Desativar usuário (Admin)
+      description: Ativa ou desativa um usuário. Apenas administradores.
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this user.
         required: true
       tags:
       - Usuários
@@ -1044,16 +806,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserAdminRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UserAdminRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/UserAdminRequest'
         required: true
       security:
       - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -1065,35 +820,6 @@ components:
   schemas:
     Agendamento:
       type: object
-      description: |-
-        Serializer para criação e gerenciamento de agendamentos de serviços para pets.
-
-        📋 **Estrutura do Endpoint:**
-        - **Campos obrigatórios**: pet_id, servico_id, data_hora
-        - **Campos opcionais**: observacoes, status
-        - **Campos automáticos**: id (gerado automaticamente)
-        - **Campos de leitura**: pet (dados completos), servico (dados completos)
-
-        ⚠️ **Validações importantes:**
-        - Pet deve existir e estar ativo
-        - Serviço deve estar disponível
-        - Data/hora deve ser futura
-        - Não pode haver conflito de horários
-
-        💡 **Exemplo de uso para criação:**
-        ```json
-        {
-            "pet_id": 1,
-            "servico_id": 2,
-            "data_hora": "2024-01-15T14:30:00",
-            "observacoes": "Pet tem medo de barulho, favor usar equipamentos silenciosos"
-        }
-        ```
-
-        📊 **Status disponíveis:**
-        - AGENDADO: Agendamento confirmado (padrão)
-        - CONCLUIDO: Serviço realizado
-        - CANCELADO: Agendamento cancelado
       properties:
         id:
           type: integer
@@ -1101,28 +827,15 @@ components:
         data_hora:
           type: string
           format: date-time
-          description: 'Data e hora do agendamento (formato: YYYY-MM-DDTHH:MM:SS)'
         status:
-          allOf:
-          - $ref: '#/components/schemas/StatusEnum'
-          default: AGENDADO
-          description: |-
-            Status atual do agendamento
-
-            * `AGENDADO` - Agendado
-            * `CONCLUIDO` - Concluído
-            * `CANCELADO` - Cancelado
+          $ref: '#/components/schemas/StatusEnum'
         observacoes:
           type: string
-          description: Informações adicionais sobre o agendamento, cuidados especiais
-            ou observações importantes
         pet:
-          allOf:
-          - $ref: '#/components/schemas/Pet'
+          $ref: '#/components/schemas/Pet'
           readOnly: true
         servico:
-          allOf:
-          - $ref: '#/components/schemas/Servico'
+          $ref: '#/components/schemas/Servico'
           readOnly: true
       required:
       - data_hora
@@ -1131,62 +844,18 @@ components:
       - servico
     AgendamentoRequest:
       type: object
-      description: |-
-        Serializer para criação e gerenciamento de agendamentos de serviços para pets.
-
-        📋 **Estrutura do Endpoint:**
-        - **Campos obrigatórios**: pet_id, servico_id, data_hora
-        - **Campos opcionais**: observacoes, status
-        - **Campos automáticos**: id (gerado automaticamente)
-        - **Campos de leitura**: pet (dados completos), servico (dados completos)
-
-        ⚠️ **Validações importantes:**
-        - Pet deve existir e estar ativo
-        - Serviço deve estar disponível
-        - Data/hora deve ser futura
-        - Não pode haver conflito de horários
-
-        💡 **Exemplo de uso para criação:**
-        ```json
-        {
-            "pet_id": 1,
-            "servico_id": 2,
-            "data_hora": "2024-01-15T14:30:00",
-            "observacoes": "Pet tem medo de barulho, favor usar equipamentos silenciosos"
-        }
-        ```
-
-        📊 **Status disponíveis:**
-        - AGENDADO: Agendamento confirmado (padrão)
-        - CONCLUIDO: Serviço realizado
-        - CANCELADO: Agendamento cancelado
       properties:
+        pet_id:
+          type: integer
+        servico_id:
+          type: integer
         data_hora:
           type: string
           format: date-time
-          description: 'Data e hora do agendamento (formato: YYYY-MM-DDTHH:MM:SS)'
         status:
-          allOf:
-          - $ref: '#/components/schemas/StatusEnum'
-          default: AGENDADO
-          description: |-
-            Status atual do agendamento
-
-            * `AGENDADO` - Agendado
-            * `CONCLUIDO` - Concluído
-            * `CANCELADO` - Cancelado
+          $ref: '#/components/schemas/StatusEnum'
         observacoes:
           type: string
-          description: Informações adicionais sobre o agendamento, cuidados especiais
-            ou observações importantes
-        pet_id:
-          type: integer
-          writeOnly: true
-          description: ID do pet que receberá o serviço
-        servico_id:
-          type: integer
-          writeOnly: true
-          description: ID do serviço a ser agendado (apenas serviços disponíveis)
       required:
       - data_hora
       - pet_id
@@ -1204,299 +873,116 @@ components:
       properties:
         username:
           type: string
-          writeOnly: true
           minLength: 1
         password:
           type: string
-          writeOnly: true
           minLength: 1
       required:
       - password
       - username
     LogResponse:
       type: object
-      description: Serializer para resposta dos logs
       properties:
         content:
           type: string
-          description: Conteúdo do arquivo de log
       required:
       - content
     PatchedAgendamentoRequest:
       type: object
-      description: |-
-        Serializer para criação e gerenciamento de agendamentos de serviços para pets.
-
-        📋 **Estrutura do Endpoint:**
-        - **Campos obrigatórios**: pet_id, servico_id, data_hora
-        - **Campos opcionais**: observacoes, status
-        - **Campos automáticos**: id (gerado automaticamente)
-        - **Campos de leitura**: pet (dados completos), servico (dados completos)
-
-        ⚠️ **Validações importantes:**
-        - Pet deve existir e estar ativo
-        - Serviço deve estar disponível
-        - Data/hora deve ser futura
-        - Não pode haver conflito de horários
-
-        💡 **Exemplo de uso para criação:**
-        ```json
-        {
-            "pet_id": 1,
-            "servico_id": 2,
-            "data_hora": "2024-01-15T14:30:00",
-            "observacoes": "Pet tem medo de barulho, favor usar equipamentos silenciosos"
-        }
-        ```
-
-        📊 **Status disponíveis:**
-        - AGENDADO: Agendamento confirmado (padrão)
-        - CONCLUIDO: Serviço realizado
-        - CANCELADO: Agendamento cancelado
       properties:
+        pet_id:
+          type: integer
+        servico_id:
+          type: integer
         data_hora:
           type: string
           format: date-time
-          description: 'Data e hora do agendamento (formato: YYYY-MM-DDTHH:MM:SS)'
         status:
-          allOf:
-          - $ref: '#/components/schemas/StatusEnum'
-          default: AGENDADO
-          description: |-
-            Status atual do agendamento
-
-            * `AGENDADO` - Agendado
-            * `CONCLUIDO` - Concluído
-            * `CANCELADO` - Cancelado
+          $ref: '#/components/schemas/StatusEnum'
         observacoes:
           type: string
-          description: Informações adicionais sobre o agendamento, cuidados especiais
-            ou observações importantes
-        pet_id:
-          type: integer
-          writeOnly: true
-          description: ID do pet que receberá o serviço
-        servico_id:
-          type: integer
-          writeOnly: true
-          description: ID do serviço a ser agendado (apenas serviços disponíveis)
     PatchedPetRequest:
       type: object
-      description: |-
-        Serializer para criação e atualização de pets.
-
-        Exemplo de uso:
-        {
-            "nome": "Rex",
-            "especie": "Cão",
-            "raca": "Golden Retriever",
-            "data_de_nascimento": "2020-05-15",
-            "sexo": "MACHO",
-            "observacoes": "Pet muito dócil e brincalhão"
-        }
       properties:
         nome:
           type: string
-          minLength: 1
-          description: Nome do pet
           maxLength: 100
         especie:
           type: string
-          minLength: 1
-          description: 'Espécie do pet (ex: Cão, Gato, Pássaro)'
           maxLength: 50
         raca:
           type: string
-          description: Raça do pet (opcional)
           maxLength: 50
         data_de_nascimento:
           type: string
           format: date
           nullable: true
-          description: 'Data de nascimento do pet (formato: YYYY-MM-DD)'
         sexo:
-          allOf:
-          - $ref: '#/components/schemas/SexoEnum'
-          default: DESCONHECIDO
-          description: |-
-            Sexo do pet
-
-            * `MACHO` - Macho
-            * `FEMEA` - Fêmea
-            * `DESCONHECIDO` - Desconhecido
+          $ref: '#/components/schemas/SexoEnum'
         foto:
           type: string
           format: binary
-          description: Upload de foto do pet (JPG, JPEG ou PNG)
-          pattern: (?:jpg|jpeg|png)$
         observacoes:
           type: string
-          description: Observações adicionais sobre o pet
         tutor:
           type: integer
-          writeOnly: true
-          description: ID do usuário que será o tutor do pet (opcional para clientes)
     PatchedProntuarioRequest:
       type: object
-      description: |-
-        Serializer para criação e gerenciamento de prontuários médicos dos pets.
-
-        📋 **Estrutura do Endpoint:**
-        - **Campos obrigatórios**: pet, veterinario, motivo_consulta
-        - **Campos opcionais**: data_consulta, tipo_consulta, peso, temperatura, exame_fisico, diagnostico, tratamento, medicamentos, observacoes, proxima_consulta
-        - **Campos automáticos**: id, created_at, updated_at, idade_pet (calculados automaticamente)
-        - **Campos de leitura**: pet_nome, veterinario_nome, tipo_consulta_display (para exibição)
-
-        ⚠️ **Validações importantes:**
-        - Pet deve existir e estar ativo
-        - Veterinário deve ser um usuário válido
-        - Peso deve ser positivo (se informado)
-        - Temperatura deve estar entre 35°C e 45°C (se informada)
-        - Data da consulta não pode ser muito no futuro
-
-        💡 **Exemplo de uso para criação:**
-        ```json
-        {
-            "pet": 1,
-            "veterinario": 3,
-            "data_consulta": "2024-01-15T10:30:00",
-            "tipo_consulta": "ROTINA",
-            "peso": "5.2",
-            "temperatura": "38.5",
-            "motivo_consulta": "Consulta de rotina e aplicação de vacina anual",
-            "exame_fisico": "Animal alerta, responsivo. Mucosas rosadas. Ausculta cardiopulmonar normal.",
-            "diagnostico": "Animal saudável",
-            "tratamento": "Aplicação de vacina V10",
-            "medicamentos": "Vacina V10 - 1ml subcutânea",
-            "observacoes": "Próxima vacina em 12 meses",
-            "proxima_consulta": "2025-01-15T10:30:00"
-        }
-        ```
-
-        🏥 **Tipos de consulta disponíveis:**
-        - ROTINA: Consulta de Rotina (padrão)
-        - EMERGENCIA: Emergência
-        - RETORNO: Retorno
-        - EXAME: Exame
-        - CIRURGIA: Cirurgia
-        - VACINA: Vacinação
       properties:
         pet:
           type: integer
-          description: ID do pet que está sendo atendido
         veterinario:
           type: integer
-          description: ID do veterinário responsável pelo atendimento
         data_consulta:
           type: string
           format: date-time
-          description: 'Data e hora da consulta (formato: YYYY-MM-DDTHH:MM:SS). Se
-            não informado, usa data/hora atual'
         tipo_consulta:
-          allOf:
-          - $ref: '#/components/schemas/TipoConsultaEnum'
-          default: ROTINA
-          description: |-
-            Tipo de consulta realizada
-
-            * `ROTINA` - Consulta de Rotina
-            * `EMERGENCIA` - Emergência
-            * `RETORNO` - Retorno
-            * `EXAME` - Exame
-            * `CIRURGIA` - Cirurgia
-            * `VACINA` - Vacinação
+          $ref: '#/components/schemas/TipoConsultaEnum'
         peso:
           type: string
           format: decimal
-          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
           nullable: true
-          description: 'Peso atual do pet em quilogramas (ex: 5.20)'
         temperatura:
           type: string
           format: decimal
-          pattern: ^-?\d{0,3}(?:\.\d{0,1})?$
           nullable: true
-          description: 'Temperatura corporal em graus Celsius, entre 35°C e 45°C (ex:
-            38.5)'
         motivo_consulta:
           type: string
-          minLength: 1
-          description: Descreva o motivo principal da consulta, sintomas relatados
-            pelo tutor ou observações iniciais
         exame_fisico:
           type: string
-          description: 'Descrição detalhada do exame físico realizado: inspeção, palpação,
-            ausculta, etc.'
         diagnostico:
           type: string
-          description: Diagnóstico médico com base nos achados clínicos e exames complementares
         tratamento:
           type: string
-          description: 'Descrição do tratamento prescrito: procedimentos realizados,
-            orientações ao tutor'
         medicamentos:
           type: string
-          description: 'Lista detalhada dos medicamentos prescritos: nome, dosagem,
-            frequência, duração'
         observacoes:
           type: string
-          description: Observações adicionais, recomendações especiais ou informações
-            relevantes
         proxima_consulta:
           type: string
           format: date-time
           nullable: true
-          description: Data e hora da próxima consulta agendada (se aplicável)
     PatchedServicoRequest:
       type: object
-      description: |-
-        Serializer para criação e listagem de serviços oferecidos pelo pet shop.
-
-        📋 **Estrutura do Endpoint:**
-        - **Campos obrigatórios**: nome, preco
-        - **Campos opcionais**: descricao, duracao, disponivel
-        - **Validações especiais**: nome único, preço positivo
-
-        💡 **Exemplo de uso:**
-        ```json
-        {
-            "nome": "Banho e Tosa Completa",
-            "descricao": "Banho com produtos especializados, tosa higiênica e corte de unhas",
-            "duracao": "01:30:00",
-            "preco": "45.00",
-            "disponivel": true
-        }
-        ```
       properties:
         nome:
           type: string
-          minLength: 1
-          description: 'Nome do serviço oferecido (ex: Banho e Tosa, Consulta Veterinária)'
           maxLength: 100
         descricao:
           type: string
-          description: Descrição detalhada do serviço incluindo o que está incluído
         duracao:
           type: string
-          description: 'Duração estimada do serviço no formato HH:MM:SS (ex: 01:30:00
-            para 1h30min)'
         preco:
           type: string
           format: decimal
-          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
-          description: 'Valor do serviço em reais (ex: 45.00)'
         disponivel:
           type: boolean
-          default: true
-          description: Marque se o serviço está sendo oferecido atualmente
     PatchedUserAdminRequest:
       type: object
-      description: Serializer para operações administrativas de usuários
       properties:
         email:
           type: string
           format: email
-          title: Email address
           maxLength: 254
         first_name:
           type: string
@@ -1506,82 +992,48 @@ components:
           maxLength: 150
         is_active:
           type: boolean
-          title: Active
-          description: Designates whether this user should be treated as active. Unselect
-            this instead of deleting accounts.
         profile:
           $ref: '#/components/schemas/ProfileRequest'
     Pet:
       type: object
-      description: |-
-        Serializer para criação e atualização de pets.
-
-        Exemplo de uso:
-        {
-            "nome": "Rex",
-            "especie": "Cão",
-            "raca": "Golden Retriever",
-            "data_de_nascimento": "2020-05-15",
-            "sexo": "MACHO",
-            "observacoes": "Pet muito dócil e brincalhão"
-        }
       properties:
+        id:
+          type: integer
+          readOnly: true
         nome:
           type: string
-          description: Nome do pet
           maxLength: 100
         especie:
           type: string
-          description: 'Espécie do pet (ex: Cão, Gato, Pássaro)'
           maxLength: 50
         raca:
           type: string
-          description: Raça do pet (opcional)
           maxLength: 50
         data_de_nascimento:
           type: string
           format: date
           nullable: true
-          description: 'Data de nascimento do pet (formato: YYYY-MM-DD)'
         sexo:
-          allOf:
-          - $ref: '#/components/schemas/SexoEnum'
-          default: DESCONHECIDO
-          description: |-
-            Sexo do pet
-
-            * `MACHO` - Macho
-            * `FEMEA` - Fêmea
-            * `DESCONHECIDO` - Desconhecido
+          $ref: '#/components/schemas/SexoEnum'
         foto:
           type: string
           format: uri
-          description: Upload de foto do pet (JPG, JPEG ou PNG)
-          pattern: (?:jpg|jpeg|png)$
         observacoes:
           type: string
-          description: Observações adicionais sobre o pet
-        id:
-          type: integer
-          readOnly: true
         idade:
-          type: integer
-          nullable: true
+          type: string
           readOnly: true
         tutor_detail:
-          allOf:
-          - $ref: '#/components/schemas/User'
+          $ref: '#/components/schemas/User'
           readOnly: true
         created_at:
           type: string
           format: date-time
           readOnly: true
-          title: Criado Em
         updated_at:
           type: string
           format: date-time
           readOnly: true
-          title: Última Atualização
       required:
       - created_at
       - especie
@@ -1592,66 +1044,36 @@ components:
       - updated_at
     PetRequest:
       type: object
-      description: |-
-        Serializer para criação e atualização de pets.
-
-        Exemplo de uso:
-        {
-            "nome": "Rex",
-            "especie": "Cão",
-            "raca": "Golden Retriever",
-            "data_de_nascimento": "2020-05-15",
-            "sexo": "MACHO",
-            "observacoes": "Pet muito dócil e brincalhão"
-        }
       properties:
         nome:
           type: string
-          minLength: 1
-          description: Nome do pet
           maxLength: 100
+          minLength: 1
         especie:
           type: string
-          minLength: 1
-          description: 'Espécie do pet (ex: Cão, Gato, Pássaro)'
           maxLength: 50
+          minLength: 1
         raca:
           type: string
-          description: Raça do pet (opcional)
           maxLength: 50
         data_de_nascimento:
           type: string
           format: date
           nullable: true
-          description: 'Data de nascimento do pet (formato: YYYY-MM-DD)'
         sexo:
-          allOf:
-          - $ref: '#/components/schemas/SexoEnum'
-          default: DESCONHECIDO
-          description: |-
-            Sexo do pet
-
-            * `MACHO` - Macho
-            * `FEMEA` - Fêmea
-            * `DESCONHECIDO` - Desconhecido
+          $ref: '#/components/schemas/SexoEnum'
         foto:
           type: string
           format: binary
-          description: Upload de foto do pet (JPG, JPEG ou PNG)
-          pattern: (?:jpg|jpeg|png)$
         observacoes:
           type: string
-          description: Observações adicionais sobre o pet
         tutor:
           type: integer
-          writeOnly: true
-          description: ID do usuário que será o tutor do pet (opcional para clientes)
       required:
       - especie
       - nome
     Profile:
       type: object
-      description: Serializer para o perfil do usuário
       properties:
         role:
           $ref: '#/components/schemas/Role821Enum'
@@ -1660,166 +1082,89 @@ components:
           readOnly: true
         telefone:
           type: string
-          nullable: true
           maxLength: 20
+          nullable: true
         endereco:
           type: string
           nullable: true
-          title: Endereço
         crmv:
           type: string
-          nullable: true
           maxLength: 20
+          nullable: true
         especialidade:
           type: string
-          nullable: true
           maxLength: 100
+          nullable: true
       required:
       - role_display
     ProfileRequest:
       type: object
-      description: Serializer para o perfil do usuário
       properties:
         role:
           $ref: '#/components/schemas/Role821Enum'
         telefone:
           type: string
-          nullable: true
           maxLength: 20
+          nullable: true
         endereco:
           type: string
           nullable: true
-          title: Endereço
         crmv:
           type: string
-          nullable: true
           maxLength: 20
+          nullable: true
         especialidade:
           type: string
-          nullable: true
           maxLength: 100
+          nullable: true
     Prontuario:
       type: object
-      description: |-
-        Serializer para criação e gerenciamento de prontuários médicos dos pets.
-
-        📋 **Estrutura do Endpoint:**
-        - **Campos obrigatórios**: pet, veterinario, motivo_consulta
-        - **Campos opcionais**: data_consulta, tipo_consulta, peso, temperatura, exame_fisico, diagnostico, tratamento, medicamentos, observacoes, proxima_consulta
-        - **Campos automáticos**: id, created_at, updated_at, idade_pet (calculados automaticamente)
-        - **Campos de leitura**: pet_nome, veterinario_nome, tipo_consulta_display (para exibição)
-
-        ⚠️ **Validações importantes:**
-        - Pet deve existir e estar ativo
-        - Veterinário deve ser um usuário válido
-        - Peso deve ser positivo (se informado)
-        - Temperatura deve estar entre 35°C e 45°C (se informada)
-        - Data da consulta não pode ser muito no futuro
-
-        💡 **Exemplo de uso para criação:**
-        ```json
-        {
-            "pet": 1,
-            "veterinario": 3,
-            "data_consulta": "2024-01-15T10:30:00",
-            "tipo_consulta": "ROTINA",
-            "peso": "5.2",
-            "temperatura": "38.5",
-            "motivo_consulta": "Consulta de rotina e aplicação de vacina anual",
-            "exame_fisico": "Animal alerta, responsivo. Mucosas rosadas. Ausculta cardiopulmonar normal.",
-            "diagnostico": "Animal saudável",
-            "tratamento": "Aplicação de vacina V10",
-            "medicamentos": "Vacina V10 - 1ml subcutânea",
-            "observacoes": "Próxima vacina em 12 meses",
-            "proxima_consulta": "2025-01-15T10:30:00"
-        }
-        ```
-
-        🏥 **Tipos de consulta disponíveis:**
-        - ROTINA: Consulta de Rotina (padrão)
-        - EMERGENCIA: Emergência
-        - RETORNO: Retorno
-        - EXAME: Exame
-        - CIRURGIA: Cirurgia
-        - VACINA: Vacinação
       properties:
         id:
           type: integer
           readOnly: true
         pet:
           type: integer
-          description: ID do pet que está sendo atendido
         pet_nome:
           type: string
           readOnly: true
         veterinario:
           type: integer
-          description: ID do veterinário responsável pelo atendimento
         veterinario_nome:
           type: string
           readOnly: true
         data_consulta:
           type: string
           format: date-time
-          description: 'Data e hora da consulta (formato: YYYY-MM-DDTHH:MM:SS). Se
-            não informado, usa data/hora atual'
         tipo_consulta:
-          allOf:
-          - $ref: '#/components/schemas/TipoConsultaEnum'
-          default: ROTINA
-          description: |-
-            Tipo de consulta realizada
-
-            * `ROTINA` - Consulta de Rotina
-            * `EMERGENCIA` - Emergência
-            * `RETORNO` - Retorno
-            * `EXAME` - Exame
-            * `CIRURGIA` - Cirurgia
-            * `VACINA` - Vacinação
+          $ref: '#/components/schemas/TipoConsultaEnum'
         tipo_consulta_display:
           type: string
           readOnly: true
         peso:
           type: string
           format: decimal
-          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
           nullable: true
-          description: 'Peso atual do pet em quilogramas (ex: 5.20)'
         temperatura:
           type: string
           format: decimal
-          pattern: ^-?\d{0,3}(?:\.\d{0,1})?$
           nullable: true
-          description: 'Temperatura corporal em graus Celsius, entre 35°C e 45°C (ex:
-            38.5)'
         motivo_consulta:
           type: string
-          description: Descreva o motivo principal da consulta, sintomas relatados
-            pelo tutor ou observações iniciais
         exame_fisico:
           type: string
-          description: 'Descrição detalhada do exame físico realizado: inspeção, palpação,
-            ausculta, etc.'
         diagnostico:
           type: string
-          description: Diagnóstico médico com base nos achados clínicos e exames complementares
         tratamento:
           type: string
-          description: 'Descrição do tratamento prescrito: procedimentos realizados,
-            orientações ao tutor'
         medicamentos:
           type: string
-          description: 'Lista detalhada dos medicamentos prescritos: nome, dosagem,
-            frequência, duração'
         observacoes:
           type: string
-          description: Observações adicionais, recomendações especiais ou informações
-            relevantes
         proxima_consulta:
           type: string
           format: date-time
           nullable: true
-          description: Data e hora da próxima consulta agendada (se aplicável)
         idade_pet:
           type: integer
           nullable: true
@@ -1828,12 +1173,10 @@ components:
           type: string
           format: date-time
           readOnly: true
-          title: Criado em
         updated_at:
           type: string
           format: date-time
           readOnly: true
-          title: Atualizado em
       required:
       - created_at
       - id
@@ -1847,115 +1190,41 @@ components:
       - veterinario_nome
     ProntuarioRequest:
       type: object
-      description: |-
-        Serializer para criação e gerenciamento de prontuários médicos dos pets.
-
-        📋 **Estrutura do Endpoint:**
-        - **Campos obrigatórios**: pet, veterinario, motivo_consulta
-        - **Campos opcionais**: data_consulta, tipo_consulta, peso, temperatura, exame_fisico, diagnostico, tratamento, medicamentos, observacoes, proxima_consulta
-        - **Campos automáticos**: id, created_at, updated_at, idade_pet (calculados automaticamente)
-        - **Campos de leitura**: pet_nome, veterinario_nome, tipo_consulta_display (para exibição)
-
-        ⚠️ **Validações importantes:**
-        - Pet deve existir e estar ativo
-        - Veterinário deve ser um usuário válido
-        - Peso deve ser positivo (se informado)
-        - Temperatura deve estar entre 35°C e 45°C (se informada)
-        - Data da consulta não pode ser muito no futuro
-
-        💡 **Exemplo de uso para criação:**
-        ```json
-        {
-            "pet": 1,
-            "veterinario": 3,
-            "data_consulta": "2024-01-15T10:30:00",
-            "tipo_consulta": "ROTINA",
-            "peso": "5.2",
-            "temperatura": "38.5",
-            "motivo_consulta": "Consulta de rotina e aplicação de vacina anual",
-            "exame_fisico": "Animal alerta, responsivo. Mucosas rosadas. Ausculta cardiopulmonar normal.",
-            "diagnostico": "Animal saudável",
-            "tratamento": "Aplicação de vacina V10",
-            "medicamentos": "Vacina V10 - 1ml subcutânea",
-            "observacoes": "Próxima vacina em 12 meses",
-            "proxima_consulta": "2025-01-15T10:30:00"
-        }
-        ```
-
-        🏥 **Tipos de consulta disponíveis:**
-        - ROTINA: Consulta de Rotina (padrão)
-        - EMERGENCIA: Emergência
-        - RETORNO: Retorno
-        - EXAME: Exame
-        - CIRURGIA: Cirurgia
-        - VACINA: Vacinação
       properties:
         pet:
           type: integer
-          description: ID do pet que está sendo atendido
         veterinario:
           type: integer
-          description: ID do veterinário responsável pelo atendimento
         data_consulta:
           type: string
           format: date-time
-          description: 'Data e hora da consulta (formato: YYYY-MM-DDTHH:MM:SS). Se
-            não informado, usa data/hora atual'
         tipo_consulta:
-          allOf:
-          - $ref: '#/components/schemas/TipoConsultaEnum'
-          default: ROTINA
-          description: |-
-            Tipo de consulta realizada
-
-            * `ROTINA` - Consulta de Rotina
-            * `EMERGENCIA` - Emergência
-            * `RETORNO` - Retorno
-            * `EXAME` - Exame
-            * `CIRURGIA` - Cirurgia
-            * `VACINA` - Vacinação
+          $ref: '#/components/schemas/TipoConsultaEnum'
         peso:
           type: string
           format: decimal
-          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
           nullable: true
-          description: 'Peso atual do pet em quilogramas (ex: 5.20)'
         temperatura:
           type: string
           format: decimal
-          pattern: ^-?\d{0,3}(?:\.\d{0,1})?$
           nullable: true
-          description: 'Temperatura corporal em graus Celsius, entre 35°C e 45°C (ex:
-            38.5)'
         motivo_consulta:
           type: string
           minLength: 1
-          description: Descreva o motivo principal da consulta, sintomas relatados
-            pelo tutor ou observações iniciais
         exame_fisico:
           type: string
-          description: 'Descrição detalhada do exame físico realizado: inspeção, palpação,
-            ausculta, etc.'
         diagnostico:
           type: string
-          description: Diagnóstico médico com base nos achados clínicos e exames complementares
         tratamento:
           type: string
-          description: 'Descrição do tratamento prescrito: procedimentos realizados,
-            orientações ao tutor'
         medicamentos:
           type: string
-          description: 'Lista detalhada dos medicamentos prescritos: nome, dosagem,
-            frequência, duração'
         observacoes:
           type: string
-          description: Observações adicionais, recomendações especiais ou informações
-            relevantes
         proxima_consulta:
           type: string
           format: date-time
           nullable: true
-          description: Data e hora da próxima consulta agendada (se aplicável)
       required:
       - motivo_consulta
       - pet
@@ -1967,101 +1236,45 @@ components:
       - VETERINARIO
       - CLIENTE
       type: string
-      description: |-
-        * `ADMIN` - Admin
-        * `FUNCIONARIO` - Funcionário
-        * `VETERINARIO` - Veterinário
-        * `CLIENTE` - Cliente
     Servico:
       type: object
-      description: |-
-        Serializer para criação e listagem de serviços oferecidos pelo pet shop.
-
-        📋 **Estrutura do Endpoint:**
-        - **Campos obrigatórios**: nome, preco
-        - **Campos opcionais**: descricao, duracao, disponivel
-        - **Validações especiais**: nome único, preço positivo
-
-        💡 **Exemplo de uso:**
-        ```json
-        {
-            "nome": "Banho e Tosa Completa",
-            "descricao": "Banho com produtos especializados, tosa higiênica e corte de unhas",
-            "duracao": "01:30:00",
-            "preco": "45.00",
-            "disponivel": true
-        }
-        ```
       properties:
         id:
           type: integer
           readOnly: true
         nome:
           type: string
-          description: 'Nome do serviço oferecido (ex: Banho e Tosa, Consulta Veterinária)'
           maxLength: 100
         descricao:
           type: string
-          description: Descrição detalhada do serviço incluindo o que está incluído
         duracao:
           type: string
-          description: 'Duração estimada do serviço no formato HH:MM:SS (ex: 01:30:00
-            para 1h30min)'
         preco:
           type: string
           format: decimal
-          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
-          description: 'Valor do serviço em reais (ex: 45.00)'
         disponivel:
           type: boolean
-          default: true
-          description: Marque se o serviço está sendo oferecido atualmente
       required:
       - id
       - nome
       - preco
     ServicoRequest:
       type: object
-      description: |-
-        Serializer para criação e listagem de serviços oferecidos pelo pet shop.
-
-        📋 **Estrutura do Endpoint:**
-        - **Campos obrigatórios**: nome, preco
-        - **Campos opcionais**: descricao, duracao, disponivel
-        - **Validações especiais**: nome único, preço positivo
-
-        💡 **Exemplo de uso:**
-        ```json
-        {
-            "nome": "Banho e Tosa Completa",
-            "descricao": "Banho com produtos especializados, tosa higiênica e corte de unhas",
-            "duracao": "01:30:00",
-            "preco": "45.00",
-            "disponivel": true
-        }
-        ```
       properties:
         nome:
           type: string
-          minLength: 1
-          description: 'Nome do serviço oferecido (ex: Banho e Tosa, Consulta Veterinária)'
           maxLength: 100
+          minLength: 1
         descricao:
           type: string
-          description: Descrição detalhada do serviço incluindo o que está incluído
         duracao:
           type: string
-          description: 'Duração estimada do serviço no formato HH:MM:SS (ex: 01:30:00
-            para 1h30min)'
         preco:
           type: string
           format: decimal
-          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
-          description: 'Valor do serviço em reais (ex: 45.00)'
+          minLength: 1
         disponivel:
           type: boolean
-          default: true
-          description: Marque se o serviço está sendo oferecido atualmente
       required:
       - nome
       - preco
@@ -2071,20 +1284,12 @@ components:
       - FEMEA
       - DESCONHECIDO
       type: string
-      description: |-
-        * `MACHO` - Macho
-        * `FEMEA` - Fêmea
-        * `DESCONHECIDO` - Desconhecido
     StatusEnum:
       enum:
       - AGENDADO
       - CONCLUIDO
       - CANCELADO
       type: string
-      description: |-
-        * `AGENDADO` - Agendado
-        * `CONCLUIDO` - Concluído
-        * `CANCELADO` - Cancelado
     TipoConsultaEnum:
       enum:
       - ROTINA
@@ -2094,13 +1299,6 @@ components:
       - CIRURGIA
       - VACINA
       type: string
-      description: |-
-        * `ROTINA` - Consulta de Rotina
-        * `EMERGENCIA` - Emergência
-        * `RETORNO` - Retorno
-        * `EXAME` - Exame
-        * `CIRURGIA` - Cirurgia
-        * `VACINA` - Vacinação
     User:
       type: object
       properties:
@@ -2109,8 +1307,6 @@ components:
           readOnly: true
         username:
           type: string
-          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
-            only.
           pattern: ^[\w.@+-]+$
           maxLength: 150
       required:
@@ -2118,7 +1314,6 @@ components:
       - username
     UserAdmin:
       type: object
-      description: Serializer para operações administrativas de usuários
       properties:
         id:
           type: integer
@@ -2126,12 +1321,9 @@ components:
         username:
           type: string
           readOnly: true
-          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
-            only.
         email:
           type: string
           format: email
-          title: Email address
           maxLength: 254
         first_name:
           type: string
@@ -2141,9 +1333,6 @@ components:
           maxLength: 150
         is_active:
           type: boolean
-          title: Active
-          description: Designates whether this user should be treated as active. Unselect
-            this instead of deleting accounts.
         date_joined:
           type: string
           format: date-time
@@ -2157,91 +1346,48 @@ components:
       - username
     UserAdminCreateRequest:
       type: object
-      description: |-
-        🌟 SERIALIZER PARA CRIAÇÃO DE USUÁRIOS POR ADMINISTRADORES
-
-        Administradores podem criar usuários de QUALQUER tipo no sistema:
-        CLIENTE, FUNCIONARIO, VETERINARIO ou ADMIN
-
-        📋 EXEMPLO DE USO:
-        {
-            "username": "ATEJhFGqAim",
-            "password": "minhasenha123",
-            "confirm_password": "minhasenha123",
-            "email": "user@example.com",
-            "first_name": "João",
-            "last_name": "Silva",
-            "role": "VETERINARIO",
-            "telefone": "(11) 99999-9999",
-            "endereco": "Rua das Flores, 123, São Paulo",
-            "crmv": "SP-12345",
-            "especialidade": "Clínica Geral"
-        }
-
-        🔑 PRIVILÉGIOS: Admins têm acesso total - podem criar inclusive outros admins!
       properties:
         username:
           type: string
-          minLength: 1
-          description: '🔴 OBRIGATÓRIO: Nome de usuário único no sistema para login'
           maxLength: 150
+          minLength: 1
         password:
           type: string
           writeOnly: true
           minLength: 8
-          description: '🔴 OBRIGATÓRIO: Senha segura com no mínimo 8 caracteres'
         confirm_password:
           type: string
           writeOnly: true
           minLength: 1
-          description: '🔴 OBRIGATÓRIO: Confirme a senha digitada acima para validação'
         email:
           type: string
           format: email
           minLength: 1
-          description: '🔴 OBRIGATÓRIO: Email válido para contato e recuperação de
-            conta'
         first_name:
           type: string
-          minLength: 1
-          description: '🔴 OBRIGATÓRIO: Primeiro nome do usuário'
           maxLength: 150
+          minLength: 1
         last_name:
           type: string
-          minLength: 1
-          description: '🔴 OBRIGATÓRIO: Sobrenome do usuário'
           maxLength: 150
+          minLength: 1
         role:
-          allOf:
-          - $ref: '#/components/schemas/Role821Enum'
-          default: CLIENTE
-          description: |-
-            🟡 ESCOLHA: Tipo de usuário no sistema. Admins podem criar qualquer tipo, inclusive outros admins.
-
-            * `ADMIN` - Admin
-            * `FUNCIONARIO` - Funcionário
-            * `VETERINARIO` - Veterinário
-            * `CLIENTE` - Cliente
+          $ref: '#/components/schemas/Role821Enum'
         telefone:
           type: string
-          nullable: true
-          description: '⚪ OPCIONAL: Telefone de contato. Inclua DDD para melhor comunicação.'
           maxLength: 20
+          nullable: true
         endereco:
           type: string
           nullable: true
-          description: '⚪ OPCIONAL: Endereço residencial ou comercial completo'
         crmv:
           type: string
-          nullable: true
-          description: '🔵 VETERINÁRIO: OBRIGATÓRIO apenas para veterinários. Número
-            do CRMV com estado.'
           maxLength: 20
+          nullable: true
         especialidade:
           type: string
-          nullable: true
-          description: '🔵 VETERINÁRIO: Especialidade médica veterinária (opcional)'
           maxLength: 100
+          nullable: true
       required:
       - confirm_password
       - email
@@ -2251,12 +1397,10 @@ components:
       - username
     UserAdminRequest:
       type: object
-      description: Serializer para operações administrativas de usuários
       properties:
         email:
           type: string
           format: email
-          title: Email address
           maxLength: 254
         first_name:
           type: string
@@ -2266,16 +1410,12 @@ components:
           maxLength: 150
         is_active:
           type: boolean
-          title: Active
-          description: Designates whether this user should be treated as active. Unselect
-            this instead of deleting accounts.
         profile:
           $ref: '#/components/schemas/ProfileRequest'
       required:
       - profile
     UserDetail:
       type: object
-      description: Serializer para visualização completa do usuário
       properties:
         id:
           type: integer
@@ -2283,12 +1423,9 @@ components:
         username:
           type: string
           readOnly: true
-          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
-            only.
         email:
           type: string
           format: email
-          title: Email address
           maxLength: 254
         first_name:
           type: string
@@ -2298,16 +1435,12 @@ components:
           maxLength: 150
         is_active:
           type: boolean
-          title: Active
-          description: Designates whether this user should be treated as active. Unselect
-            this instead of deleting accounts.
         date_joined:
           type: string
           format: date-time
           readOnly: true
         profile:
-          allOf:
-          - $ref: '#/components/schemas/Profile'
+          $ref: '#/components/schemas/Profile'
           readOnly: true
       required:
       - date_joined
@@ -2316,76 +1449,36 @@ components:
       - username
     UserFuncionarioCreate:
       type: object
-      description: |-
-        🌟 SERIALIZER PARA CRIAÇÃO DE USUÁRIOS POR FUNCIONÁRIOS
-
-        Permite que funcionários do sistema criem novos usuários dos tipos:
-        CLIENTE, FUNCIONARIO ou VETERINARIO
-
-        📋 EXEMPLO DE USO:
-        {
-            "username": "novousuario",
-            "password": "minhasenha123",
-            "confirm_password": "minhasenha123",
-            "email": "user@example.com",
-            "first_name": "Maria",
-            "last_name": "Santos",
-            "role": "CLIENTE",
-            "telefone": "(11) 88888-8888",
-            "endereco": "Av. Principal, 456, São Paulo",
-            "crmv": "SP-12345",
-            "especialidade": "Clínica Geral"
-        }
-
-        💡 DICA: Para veterinários, o campo CRMV é obrigatório!
       properties:
         username:
           type: string
-          description: '🔴 OBRIGATÓRIO: Nome de usuário único no sistema para login'
           maxLength: 150
         email:
           type: string
           format: email
-          description: '🔴 OBRIGATÓRIO: Email válido para contato profissional'
         first_name:
           type: string
-          description: '🔴 OBRIGATÓRIO: Primeiro nome do usuário'
           maxLength: 150
         last_name:
           type: string
-          description: '🔴 OBRIGATÓRIO: Sobrenome do usuário'
           maxLength: 150
         role:
-          allOf:
-          - $ref: '#/components/schemas/UserFuncionarioCreateRoleEnum'
-          default: CLIENTE
-          description: |-
-            🟡 ESCOLHA: Tipo de usuário que será criado. Define as permissões no sistema.
-
-            * `CLIENTE` - Cliente - Dono de pet
-            * `FUNCIONARIO` - Funcionário - Atendente/Recepção
-            * `VETERINARIO` - Veterinário - Profissional médico
+          $ref: '#/components/schemas/UserFuncionarioCreateRoleEnum'
         telefone:
           type: string
-          nullable: true
-          description: '⚪ OPCIONAL: Telefone de contato. Recomendado para funcionários
-            e veterinários.'
           maxLength: 20
+          nullable: true
         endereco:
           type: string
           nullable: true
-          description: '⚪ OPCIONAL: Endereço residencial ou comercial completo'
         crmv:
           type: string
-          nullable: true
-          description: '🔵 VETERINÁRIO: OBRIGATÓRIO para veterinários. Número do CRMV
-            com estado (ex: SP-12345)'
           maxLength: 20
+          nullable: true
         especialidade:
           type: string
-          nullable: true
-          description: '🔵 VETERINÁRIO: Especialidade médica (opcional)'
           maxLength: 100
+          nullable: true
       required:
       - email
       - first_name
@@ -2393,90 +1486,48 @@ components:
       - username
     UserFuncionarioCreateRequest:
       type: object
-      description: |-
-        🌟 SERIALIZER PARA CRIAÇÃO DE USUÁRIOS POR FUNCIONÁRIOS
-
-        Permite que funcionários do sistema criem novos usuários dos tipos:
-        CLIENTE, FUNCIONARIO ou VETERINARIO
-
-        📋 EXEMPLO DE USO:
-        {
-            "username": "novousuario",
-            "password": "minhasenha123",
-            "confirm_password": "minhasenha123",
-            "email": "user@example.com",
-            "first_name": "Maria",
-            "last_name": "Santos",
-            "role": "CLIENTE",
-            "telefone": "(11) 88888-8888",
-            "endereco": "Av. Principal, 456, São Paulo",
-            "crmv": "SP-12345",
-            "especialidade": "Clínica Geral"
-        }
-
-        💡 DICA: Para veterinários, o campo CRMV é obrigatório!
       properties:
         username:
           type: string
-          minLength: 1
-          description: '🔴 OBRIGATÓRIO: Nome de usuário único no sistema para login'
           maxLength: 150
+          minLength: 1
         password:
           type: string
           writeOnly: true
           minLength: 8
-          description: '🔴 OBRIGATÓRIO: Senha segura com no mínimo 8 caracteres'
         confirm_password:
           type: string
           writeOnly: true
           minLength: 1
-          description: '🔴 OBRIGATÓRIO: Confirme a senha digitada acima'
         email:
           type: string
           format: email
           minLength: 1
-          description: '🔴 OBRIGATÓRIO: Email válido para contato profissional'
         first_name:
           type: string
-          minLength: 1
-          description: '🔴 OBRIGATÓRIO: Primeiro nome do usuário'
           maxLength: 150
+          minLength: 1
         last_name:
           type: string
-          minLength: 1
-          description: '🔴 OBRIGATÓRIO: Sobrenome do usuário'
           maxLength: 150
+          minLength: 1
         role:
-          allOf:
-          - $ref: '#/components/schemas/UserFuncionarioCreateRoleEnum'
-          default: CLIENTE
-          description: |-
-            🟡 ESCOLHA: Tipo de usuário que será criado. Define as permissões no sistema.
-
-            * `CLIENTE` - Cliente - Dono de pet
-            * `FUNCIONARIO` - Funcionário - Atendente/Recepção
-            * `VETERINARIO` - Veterinário - Profissional médico
+          $ref: '#/components/schemas/UserFuncionarioCreateRoleEnum'
         telefone:
           type: string
-          nullable: true
-          description: '⚪ OPCIONAL: Telefone de contato. Recomendado para funcionários
-            e veterinários.'
           maxLength: 20
+          nullable: true
         endereco:
           type: string
           nullable: true
-          description: '⚪ OPCIONAL: Endereço residencial ou comercial completo'
         crmv:
           type: string
-          nullable: true
-          description: '🔵 VETERINÁRIO: OBRIGATÓRIO para veterinários. Número do CRMV
-            com estado (ex: SP-12345)'
           maxLength: 20
+          nullable: true
         especialidade:
           type: string
-          nullable: true
-          description: '🔵 VETERINÁRIO: Especialidade médica (opcional)'
           maxLength: 100
+          nullable: true
       required:
       - confirm_password
       - email
@@ -2490,90 +1541,40 @@ components:
       - FUNCIONARIO
       - VETERINARIO
       type: string
-      description: |-
-        * `CLIENTE` - Cliente - Dono de pet
-        * `FUNCIONARIO` - Funcionário - Atendente/Recepção
-        * `VETERINARIO` - Veterinário - Profissional médico
-    UserRequest:
-      type: object
-      properties:
-        username:
-          type: string
-          minLength: 1
-          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
-            only.
-          pattern: ^[\w.@+-]+$
-          maxLength: 150
-      required:
-      - username
     UserSelfRegisterRequest:
       type: object
-      description: |-
-        🌟 SERIALIZER PARA AUTO-CADASTRO DE USUÁRIOS (PÚBLICO) - APENAS CLIENTE
-
-        Este endpoint permite que novos usuários se cadastrem no sistema como CLIENTE.
-        Perfeito para donos de pets que querem agendar consultas.
-
-        📋 EXEMPLO DE USO:
-        {
-            "username": "maria_silva",
-            "password": "minhasenha123",
-            "confirm_password": "minhasenha123",
-            "email": "maria@email.com",
-            "first_name": "Maria",
-            "last_name": "Silva",
-            "telefone": "(11) 99999-9999",
-            "endereco": "Rua das Flores, 123, São Paulo - SP"
-        }
-
-        🎯 RESULTADO: Usuário criado automaticamente como CLIENTE, pronto para usar o sistema.
       properties:
         username:
           type: string
-          minLength: 1
-          description: '🔴 OBRIGATÓRIO: Nome de usuário único no sistema. Será usado
-            para fazer login.'
           maxLength: 150
+          minLength: 1
         password:
           type: string
           writeOnly: true
           minLength: 8
-          description: '🔴 OBRIGATÓRIO: Senha segura com no mínimo 8 caracteres. Use
-            letras, números e símbolos.'
         confirm_password:
           type: string
           writeOnly: true
           minLength: 1
-          description: '🔴 OBRIGATÓRIO: Digite a mesma senha para confirmar. Deve ser
-            idêntica à senha acima.'
         email:
           type: string
           format: email
           minLength: 1
-          description: '🔴 OBRIGATÓRIO: Email válido para contato e recuperação de
-            senha. Exemplo: nome@provedor.com'
         first_name:
           type: string
-          minLength: 1
-          description: '🔴 OBRIGATÓRIO: Primeiro nome do usuário. Como você gostaria
-            de ser chamado(a).'
           maxLength: 150
+          minLength: 1
         last_name:
           type: string
-          minLength: 1
-          description: '🔴 OBRIGATÓRIO: Sobrenome do usuário. Seu nome de família.'
           maxLength: 150
+          minLength: 1
         telefone:
           type: string
-          nullable: true
-          description: '⚪ OPCIONAL: Telefone para contato (pode ficar em branco).
-            Inclua DDD.'
           maxLength: 20
+          nullable: true
         endereco:
           type: string
           nullable: true
-          description: '⚪ OPCIONAL: Endereço residencial completo (pode ficar em branco).
-            Rua, número, bairro, cidade.'
       required:
       - confirm_password
       - email
