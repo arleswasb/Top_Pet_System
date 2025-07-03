@@ -12,18 +12,19 @@ from drf_spectacular.views import (
 )
 
 urlpatterns = [
-    # 1. Rotas de Administração e Autenticação
+    # 1. Rotas de Administração
     path('admin/', admin.site.urls),
-    # Convenção comum para endpoints de token é usar /api/token/
-    path('api/token/', CustomAuthTokenView.as_view(), name='api_token_auth'),
 
-    # 2. Rotas da API para cada aplicativo (sem redundância)
+    # 2. Rotas de Autenticação (agrupadas)
+    path('api/auth/token/', CustomAuthTokenView.as_view(), name='api_token_auth'),
+    path('api/auth/password-reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
+
+    # 3. Rotas da API para cada aplicativo
     path('api/pets/', include('pets.urls')),
     path('api/users/', include('users.urls')),
     path('api/configuracao/', include('configuracao.urls')),
     path('api/agendamentos/', include('agendamentos.urls')),
     path('api/prontuarios/', include('prontuarios.urls')),
-    # Descomente as linhas abaixo quando os respectivos apps tiverem seus arquivos urls.py
 
     # 4. Rotas de Documentação da API (Swagger/OpenAPI)
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

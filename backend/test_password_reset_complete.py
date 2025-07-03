@@ -32,7 +32,7 @@ def test_complete_password_reset_flow():
     
     # 2. Solicitar reset de senha
     print("\n2. Solicitando reset de senha...")
-    response = client.post('/api/users/auth/password-reset/', {
+    response = client.post('/api/auth/password-reset/', {
         'email': 'test@example.com'
     })
     print(f"Status: {response.status_code}")
@@ -48,7 +48,7 @@ def test_complete_password_reset_flow():
             
             # 4. Testar validação do token
             print("\n4. Validando token...")
-            validate_response = client.post('/api/users/auth/password-reset/validate_token/', {
+            validate_response = client.post('/api/auth/password-reset/validate_token/', {
                 'token': token.key
             })
             print(f"Validação - Status: {validate_response.status_code}")
@@ -57,7 +57,7 @@ def test_complete_password_reset_flow():
             
             # 5. Confirmar reset com nova senha
             print("\n5. Confirmando reset com nova senha...")
-            confirm_response = client.post('/api/users/auth/password-reset/confirm/', {
+            confirm_response = client.post('/api/auth/password-reset/confirm/', {
                 'token': token.key,
                 'password': 'newpassword123'
             })
@@ -93,7 +93,7 @@ def test_invalid_scenarios():
     
     # Email inexistente
     print("\n1. Testando email inexistente...")
-    response = client.post('/api/users/auth/password-reset/', {
+    response = client.post('/api/auth/password-reset/', {
         'email': 'nonexistent@example.com'
     })
     print(f"Status: {response.status_code}")
@@ -101,7 +101,7 @@ def test_invalid_scenarios():
     
     # Token inválido
     print("\n2. Testando token inválido...")
-    response = client.post('/api/users/auth/password-reset/validate_token/', {
+    response = client.post('/api/auth/password-reset/validate_token/', {
         'token': 'invalid_token'
     })
     print(f"Status: {response.status_code}")
@@ -109,7 +109,7 @@ def test_invalid_scenarios():
     
     # Confirmação com token inválido
     print("\n3. Testando confirmação com token inválido...")
-    response = client.post('/api/users/auth/password-reset/confirm/', {
+    response = client.post('/api/auth/password-reset/confirm/', {
         'token': 'invalid_token',
         'password': 'newpassword123'
     })
