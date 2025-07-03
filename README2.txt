@@ -107,7 +107,7 @@ python manage.py runserver
 5. Clique em **"Close"**
 
 ### 🔑 Método 2: Obter Token via API
-1. Vá para o endpoint **POST /api-token-auth/**
+1. Vá para o endpoint **POST /api/auth/token/**
 2. Clique em **"Try it out"**
 3. No campo **Request body**, insira:
    ```json
@@ -145,8 +145,11 @@ python manage.py runserver
 - `GET /api/logs/` - Visualizar logs (admin)
 
 #### 🔐 **AUTENTICAÇÃO** - Login e Registro
-- `POST /api/register/` - Auto-cadastro como cliente
-- `POST /api-token-auth/` - Obter token de autenticação
+- `POST /api/users/register/` - Auto-cadastro como cliente
+- `POST /api/auth/token/` - Obter token de autenticação
+- `POST /api/auth/password-reset/` - Solicitar reset de senha
+- `POST /api/auth/password-reset/confirm/` - Confirmar reset de senha
+- `POST /api/auth/password-reset/validate_token/` - Validar token de reset
 
 ### 📅 **AGENDAMENTOS** - Sistema de Agendamentos
 - `GET /api/agendamentos/` - Listar agendamentos
@@ -610,7 +613,7 @@ Admin tem controle total → Pode criar qualquer tipo → Pode ativar/desativar 
 
 ### 🔄 Fluxo Completo: Do Registro ao Pet
 1. **Registrar Cliente**: POST /api/register/
-2. **Fazer Login**: POST /api-token-auth/
+2. **Fazer Login**: POST /api/auth/token/
 3. **Autorizar no Swagger**: Botão "Authorize"
 4. **Ver Perfil**: GET /api/me/
 5. **Criar Pet**: POST /api/pets/
@@ -796,7 +799,7 @@ $loginBody = @{
     password = "admin123"
 } | ConvertTo-Json
 
-$token = (Invoke-RestMethod -Uri "http://127.0.0.1:8000/api-token-auth/" -Method POST -Body $loginBody -ContentType "application/json").token
+$token = (Invoke-RestMethod -Uri "http://127.0.0.1:8000/api/auth/token/" -Method POST -Body $loginBody -ContentType "application/json").token
 
 # Usar token em requisição
 $headers = @{ Authorization = "Token $token" }

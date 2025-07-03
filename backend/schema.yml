@@ -57,9 +57,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserDetail'
           description: ''
-  /api-token-auth/:
+  /api/auth/token/:
     post:
-      operationId: api_token_auth_create
+      operationId: auth_token_create
       summary: Login e obter token
       description: Envie `username` e `password` para receber um token de autenticação.
       tags:

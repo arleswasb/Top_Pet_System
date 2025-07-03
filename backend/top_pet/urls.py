@@ -17,7 +17,7 @@ urlpatterns = [
 
     # 2. Rotas de Autenticação (agrupadas)
     path('api/auth/token/', CustomAuthTokenView.as_view(), name='api_token_auth'),
-    path('api/auth/password-reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
+    path('api/auth/password-reset/', include('users.password_reset_urls')),
 
     # 3. Rotas da API para cada aplicativo
     path('api/pets/', include('pets.urls')),

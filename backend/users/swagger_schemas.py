@@ -88,3 +88,70 @@ SELF_REGISTER_SCHEMA = {
     'tags': ['Autenticação'],
     'examples': USER_SELF_REGISTER_EXAMPLES
 }
+
+# Schemas para os endpoints de reset de senha
+PASSWORD_RESET_REQUEST_SCHEMA = {
+    'summary': 'Solicitar reset de senha',
+    'description': """
+    **📧 Endpoint público para solicitar reset de senha.**
+    
+    **Como funciona:**
+    1. 📤 Envie o email do usuário
+    2. 📬 Um token será enviado por email
+    3. 🔐 Use o token nos próximos endpoints para definir nova senha
+    
+    **✅ CAMPO OBRIGATÓRIO:**
+    - `email`: Email do usuário cadastrado no sistema
+    
+    **ℹ️ Observações importantes:**
+    - ✅ Não requer autenticação (endpoint público)
+    - 📧 Email deve estar cadastrado no sistema
+    - ⏰ Token tem validade limitada
+    - 🔒 Apenas um token ativo por vez por usuário
+    """,
+    'tags': ['Autenticação']
+}
+
+PASSWORD_RESET_CONFIRM_SCHEMA = {
+    'summary': 'Confirmar reset de senha',
+    'description': """
+    **🔐 Confirma o reset de senha com o token recebido por email.**
+    
+    **Como usar:**
+    1. 📧 Use o token recebido por email
+    2. 🔑 Defina a nova senha
+    3. ✅ Senha será alterada imediatamente
+    
+    **✅ CAMPOS OBRIGATÓRIOS:**
+    - `token`: Token recebido por email
+    - `password`: Nova senha (mínimo 8 caracteres)
+    
+    **ℹ️ Observações importantes:**
+    - ✅ Não requer autenticação (endpoint público) 
+    - 🔐 Token deve ser válido e não expirado
+    - 🔑 Nova senha deve atender aos critérios de segurança
+    - ⚡ Token é consumido após uso (não pode ser reutilizado)
+    """,
+    'tags': ['Autenticação']
+}
+
+PASSWORD_RESET_VALIDATE_SCHEMA = {
+    'summary': 'Validar token de reset',
+    'description': """
+    **✅ Valida se um token de reset de senha é válido.**
+    
+    **Uso recomendado:**
+    - 🔍 Verificar se token é válido antes de mostrar tela de nova senha
+    - ⏰ Verificar se token não expirou
+    - 🛡️ Validação de segurança adicional
+    
+    **✅ CAMPO OBRIGATÓRIO:**
+    - `token`: Token a ser validado
+    
+    **ℹ️ Observações importantes:**
+    - ✅ Não requer autenticação (endpoint público)
+    - 🔍 Apenas valida, não consome o token
+    - ⏰ Retorna informações sobre validade
+    """,
+    'tags': ['Autenticação']
+}

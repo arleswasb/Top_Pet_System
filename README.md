@@ -160,8 +160,11 @@ docker-compose exec web python manage.py test prontuarios
 ### 📂 Grupos de Endpoints no Swagger UI:
 
 #### 🔐 **Autenticação** - Login e Registro
-- `POST /api/register/` - Auto-cadastro como cliente
-- `POST /api-token-auth/` - Obter token de autenticação
+- `POST /api/users/register/` - Auto-cadastro como cliente
+- `POST /api/auth/token/` - Obter token de autenticação
+- `POST /api/auth/password-reset/` - Solicitar reset de senha
+- `POST /api/auth/password-reset/confirm/` - Confirmar reset de senha
+- `POST /api/auth/password-reset/validate_token/` - Validar token de reset
 
 #### 👥 **Usuários** - Gestão de Usuários
 - `GET /api/me/` - Ver próprio perfil
@@ -370,7 +373,7 @@ $loginBody = @{
     password = "admin123"
 } | ConvertTo-Json
 
-$token = (Invoke-RestMethod -Uri "http://127.0.0.1:8000/api-token-auth/" -Method POST -Body $loginBody -ContentType "application/json").token
+$token = (Invoke-RestMethod -Uri "http://127.0.0.1:8000/api/auth/token/" -Method POST -Body $loginBody -ContentType "application/json").token
 
 # Usar token em requisição
 $headers = @{ Authorization = "Token $token" }
