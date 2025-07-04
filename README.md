@@ -81,6 +81,7 @@ python manage.py migrate
 # Criar superusuário
 python manage.py createsuperuser
 
+
 # Executar servidor
 python manage.py runserver
 ```
