@@ -47,7 +47,7 @@ O **Top Pet System** é uma API REST completa para gerenciamento de clínicas ve
 cd \\GitHub\Top_Pet_System
 
 ### Inicie os containers
-docker-compose up -d
+docker-compose up -d -- build
 
 ### Aguarde a inicialização (30-60 segundos)
 docker-compose ps
