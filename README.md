@@ -38,13 +38,13 @@ O **Top Pet System** é uma API REST completa para gerenciamento de clínicas ve
 
 ### 📋 Pré-requisitos
 - **Docker** e **Docker Compose** instalados
-- Projeto clonado em: `f:\GitHub\Top_Pet_System`
+- Projeto clonado em: `[https://github.com/arleswasb/Top_Pet_System.git]`
 
 ### 🐳 Iniciando com Docker (Recomendado)
 
 ```bash
 ### Navegue até o projeto
-cd f:\GitHub\Top_Pet_System
+cd \\GitHub\Top_Pet_System
 
 ### Inicie os containers
 docker-compose up -d
