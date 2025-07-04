@@ -77,7 +77,7 @@ cd \GitHub\Top_Pet_System\
 
 ### Configure ambiente virtual (opcional)
 python -m venv venv
-venv\Scripts\activate  # Windows
+venv\Scripts\activate.ps1  # Windows
 
 ### Navegue até o backend
 cd f:\GitHub\Top_Pet_System\backend
