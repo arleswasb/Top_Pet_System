@@ -72,12 +72,15 @@ docker-compose exec web python manage.py createsuperuser
 ### 🛠️ Desenvolvimento Local (Opcional)
 
 ```bash
-### Navegue até o backend
-cd f:\GitHub\Top_Pet_System\backend
+### Navegue até o Projeto
+cd \GitHub\Top_Pet_System\
 
 ### Configure ambiente virtual (opcional)
 python -m venv venv
 venv\Scripts\activate  # Windows
+
+### Navegue até o backend
+cd f:\GitHub\Top_Pet_System\backend
 
 ### Instale dependências
 pip install -r requirements.txt
