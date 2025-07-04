@@ -64,10 +64,10 @@ docker-compose exec web python manage.py createsuperuser
 ```
 
 ### 🌐 URLs Principais
-- **🔖 Swagger UI**: http://127.0.0.1:8000/api/docs/
-- **📖 ReDoc**: http://127.0.0.1:8000/api/redoc/
-- **📄 Schema OpenAPI**: http://127.0.0.1:8000/api/schema/
-- **⚙️ Admin Django**: http://127.0.0.1:8000/admin/
+- **🔖 Swagger UI**: http://127.0.0.1:8001/api/docs/
+- **📖 ReDoc**: http://127.0.0.1:8001/api/redoc/
+- **📄 Schema OpenAPI**: http://127.0.0.1:8001/api/schema/
+- **⚙️ Admin Django**: http://127.0.0.1:8001/admin/
 
 ### 🛠️ Desenvolvimento Local (Opcional)
 
@@ -77,7 +77,7 @@ cd \GitHub\Top_Pet_System\
 
 ### Configure ambiente virtual (opcional)
 python -m venv venv
-venv\Scripts\activate  # Windows
+venv\Scripts\activate.ps1  # Windows
 
 ### Navegue até o backend
 cd f:\GitHub\Top_Pet_System\backend
@@ -101,7 +101,7 @@ python manage.py runserver
 ### Em Role Settings/Role > Selecione "Admin" > SAVE
 ```
 ### ✅ Verificação
-1. Acesse http://127.0.0.1:8000/api/docs/
+1. Acesse http://127.0.0.1:8001/api/docs/
 2. A interface do Swagger UI deve carregar
 3. Se houver erro: `docker-compose logs web`
 
