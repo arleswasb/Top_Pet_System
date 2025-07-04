@@ -1,6 +1,7 @@
 #settings.py
 import os
 from pathlib import Path
+from decouple import config, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -10,12 +11,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-etva7+wfjug1hjg$5mb4fzq***=o&w0$rllq%!czw!xmj)y8xa'
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-etva7+wfjug1hjg$5mb4fzq***=o&w0$rllq%!czw!xmj)y8xa')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv()) + ['testserver']
 
 
 # Application definition
@@ -153,29 +154,35 @@ WSGI_APPLICATION = 'top_pet.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 # Database configuration
-# Use PostgreSQL if DATABASE_URL is set (for CI/production), otherwise use SQLite
-if os.environ.get('DATABASE_URL'):
+# PostgreSQL como banco principal
+# MySQL para testes
+if config('DATABASE_URL', default=None):
     import dj_database_url
     DATABASES = {
-        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
-    }
-elif os.environ.get('POSTGRES_NAME'):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('POSTGRES_NAME'),
-            'USER': os.environ.get('POSTGRES_USER'),
-            'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-            'HOST': os.environ.get('POSTGRES_HOST'),
-            'PORT': '5432',
-        }
+        'default': dj_database_url.parse(config('DATABASE_URL'))
     }
 else:
-    # Use SQLite for development and testing
+    # Configuração principal - PostgreSQL
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'ENGINE': config('DB_ENGINE', default='django.db.backends.postgresql'),
+            'NAME': config('POSTGRES_NAME', default='top_pet_db'),
+            'USER': config('POSTGRES_USER', default='user'),
+            'PASSWORD': config('POSTGRES_PASSWORD', default='password'),
+            'HOST': config('POSTGRES_HOST', default='db'),
+            'PORT': config('DB_PORT', default='5432'),
+        },
+        # Banco para testes - MySQL
+        'test_mysql': {
+            'ENGINE': config('TEST_DB_ENGINE', default='django.db.backends.mysql'),
+            'NAME': config('TEST_MYSQL_NAME', default='top_pet_test_db'),
+            'USER': config('TEST_MYSQL_USER', default='test_user'),
+            'PASSWORD': config('TEST_MYSQL_PASSWORD', default='test_password'),
+            'HOST': config('TEST_MYSQL_HOST', default='localhost'),
+            'PORT': config('TEST_MYSQL_PORT', default='3306'),
+            'TEST': {
+                'NAME': config('TEST_MYSQL_NAME', default='top_pet_test_db'),
+            },
         }
     }
 
@@ -221,14 +228,13 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Media files (uploads)
-import os
 import tempfile
 
 # Configuração do MEDIA_ROOT baseada no ambiente
-if 'DOCKER_ENV' in os.environ:
+if config('DOCKER_ENV', default=False, cast=bool):
     # Em ambiente Docker/produção
     MEDIA_ROOT = '/app/media'
-elif 'CI' in os.environ or 'GITHUB_ACTIONS' in os.environ:
+elif config('CI', default=False, cast=bool) or config('GITHUB_ACTIONS', default=False, cast=bool):
     # Em ambiente de CI/Testes
     MEDIA_ROOT = os.path.join(tempfile.gettempdir(), 'test_media')
 else:
@@ -280,6 +286,25 @@ LOGGING = {
 # Configurações específicas para testes
 import sys
 if 'test' in sys.argv or 'pytest' in sys.modules or 'unittest' in sys.modules:
+    # Durante os testes, usar MySQL como banco principal
+    DATABASES['default'] = DATABASES.get('test_mysql', {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'top_pet_test_db',
+        'USER': 'test_user',
+        'PASSWORD': 'test_password',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'charset': 'utf8mb4',
+        },
+        'TEST': {
+            'NAME': 'test_top_pet_test_db',
+            'CHARSET': 'utf8mb4',
+            'COLLATION': 'utf8mb4_unicode_ci',
+        },
+    })
+    
     # Durante os testes, usar um diretório temporário para mídia
     import tempfile
     MEDIA_ROOT = os.path.join(tempfile.gettempdir(), 'test_media_pets')
@@ -287,16 +312,10 @@ if 'test' in sys.argv or 'pytest' in sys.modules or 'unittest' in sys.modules:
     # Criar o diretório se não existir
     os.makedirs(MEDIA_ROOT, exist_ok=True)
     
-    # Configuração de banco de dados mais rápida para testes
-    DATABASES['default']['OPTIONS'] = {
-        'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-    } if DATABASES['default']['ENGINE'].endswith('mysql') else {}
-    
     # Desabilitar logs durante testes para performance
     LOGGING['loggers']['django']['level'] = 'ERROR'
 
-    # Configuração de Email para Desenvolvimento
-    # Imprime os e-mails no console em vez de enviá-los de verdade.
+    # Configuração de Email para testes (console)
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # ======================================

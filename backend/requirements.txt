@@ -15,5 +15,6 @@ pylint-django>=2.5.0
 pytest>=7.0.0
 pytest-cov>=4.0.0
 pytest-django>=4.5.0
+python-decouple>=3.8
 # Opcional: para suporte a CORS se necessário no futuro
 # django-cors-headers>=4.0.0

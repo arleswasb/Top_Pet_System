@@ -4,10 +4,17 @@ FROM python:3.9-slim-buster
 # Defina o diretório de trabalho dentro do contêiner
 WORKDIR /app
 
+# Instalar dependências do sistema necessárias para PostgreSQL
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copie os arquivos de dependência
 COPY requirements.txt /app/
 
-# Instale as dependências
+# Instale as dependências Python
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 # Copie o código fonte do projeto (o conteúdo de 'backend' vai para '/app'
