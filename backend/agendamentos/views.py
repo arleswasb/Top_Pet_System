@@ -15,7 +15,11 @@ from .permissions import IsTutorOrAdminOrFuncionario
 from users.models import Profile
 
 @extend_schema_view(
-    # ... (seu código do extend_schema_view para ServicoViewSet não foi alterado) ...
+    list=extend_schema(summary="Listar serviços", tags=["Serviços"]),
+    create=extend_schema(summary="Criar serviço", tags=["Serviços"]),
+    retrieve=extend_schema(summary="Detalhes do serviço", tags=["Serviços"]),
+    partial_update=extend_schema(summary="Atualizar serviço", tags=["Serviços"]),
+    destroy=extend_schema(summary="Deletar serviço", tags=["Serviços"])
 )
 class ServicoViewSet(viewsets.ModelViewSet):
     """
@@ -35,7 +39,11 @@ class ServicoViewSet(viewsets.ModelViewSet):
 
 
 @extend_schema_view(
-    # ... (seu código do extend_schema_view para AgendamentoViewSet não foi alterado) ...
+    list=extend_schema(summary="Listar agendamentos", tags=["Agendamentos"]),
+    create=extend_schema(summary="Criar agendamento", tags=["Agendamentos"]),
+    retrieve=extend_schema(summary="Detalhes do agendamento", tags=["Agendamentos"]),
+    partial_update=extend_schema(summary="Atualizar agendamento", tags=["Agendamentos"]),
+    destroy=extend_schema(summary="Cancelar agendamento", tags=["Agendamentos"])
 )
 class AgendamentoViewSet(viewsets.ModelViewSet):
     """
@@ -75,7 +83,7 @@ class AgendamentoViewSet(viewsets.ModelViewSet):
 @extend_schema(
     summary="Listar horários disponíveis",
     description="Retorna uma lista de horários disponíveis para agendamento em um dia específico.",
-    tags=["Agendamentos"],
+    tags=["Horários"],
     parameters=[
         OpenApiParameter(
             name='data',

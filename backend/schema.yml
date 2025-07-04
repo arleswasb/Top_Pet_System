@@ -10,6 +10,49 @@ info:
   license:
     name: MIT License
 paths:
+  /api/:
+    get:
+      operationId: root_retrieve
+      description: Endpoint raiz da API com links de navegação.
+      summary: Página inicial da API
+      tags:
+      - Sistema
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: Links de navegação da API
+  /api/status/:
+    get:
+      operationId: status_retrieve
+      description: Retorna informações básicas sobre o status e versão da API Top
+        Pet System.
+      summary: Status da API
+      tags:
+      - Sistema
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: Informações do sistema
+  /api/info/:
+    get:
+      operationId: info_retrieve
+      description: Retorna informações detalhadas sobre a API e suas funcionalidades.
+      summary: Informações da API
+      tags:
+      - Sistema
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: Informações detalhadas da API
   /api/auth/token/:
     post:
       operationId: auth_token_create
@@ -213,25 +256,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Pet'
           description: ''
-    delete:
-      operationId: pets_destroy
-      description: Remove um pet do sistema. Apenas o dono ou admin pode deletar.
-      summary: Deletar pet
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Pet.
-        required: true
-      tags:
-      - Pets
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
     patch:
       operationId: pets_partial_update
       description: Atualiza parcialmente um pet. Apenas os campos enviados serão alterados,
@@ -267,6 +291,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/Pet'
           description: ''
+    delete:
+      operationId: pets_destroy
+      description: Remove um pet do sistema. Apenas o dono ou admin pode deletar.
+      summary: Deletar pet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Pet.
+        required: true
+      tags:
+      - Pets
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/users/logs/:
     get:
       operationId: users_logs_retrieve
@@ -490,25 +533,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserAdmin'
           description: ''
-    delete:
-      operationId: users_admin_users_destroy
-      description: ViewSet para gestão completa de todos os usuários por administradores.
-      summary: Deletar usuário (Admin)
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this user.
-        required: true
-      tags:
-      - Usuários
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
     patch:
       operationId: users_admin_users_partial_update
       description: ViewSet para gestão completa de todos os usuários por administradores.
@@ -543,6 +567,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserAdmin'
           description: ''
+    delete:
+      operationId: users_admin_users_destroy
+      description: ViewSet para gestão completa de todos os usuários por administradores.
+      summary: Deletar usuário (Admin)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - Usuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/users/admin/users/{id}/toggle-active/:
     post:
       operationId: users_admin_users_toggle_active_create
@@ -650,25 +693,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserDetail'
           description: ''
-    delete:
-      operationId: users_funcionario_users_destroy
-      description: ViewSet para funcionários gerenciarem usuários do tipo CLIENTE.
-      summary: Excluir cliente (Funcionário)
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this user.
-        required: true
-      tags:
-      - Usuários
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
     patch:
       operationId: users_funcionario_users_partial_update
       description: ViewSet para funcionários gerenciarem usuários do tipo CLIENTE.
@@ -703,6 +727,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserAdmin'
           description: ''
+    delete:
+      operationId: users_funcionario_users_destroy
+      description: ViewSet para funcionários gerenciarem usuários do tipo CLIENTE.
+      summary: Excluir cliente (Funcionário)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - Usuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/configuracao/horarios-funcionamento/:
     get:
       operationId: configuracao_horarios_funcionamento_list
@@ -774,25 +817,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/HorarioFuncionamento'
           description: ''
-    delete:
-      operationId: configuracao_horarios_funcionamento_destroy
-      description: ViewSet para gerenciar horários de funcionamento da clínica
-      summary: Deletar horário
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Horário de Funcionamento.
-        required: true
-      tags:
-      - Configuração
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
     patch:
       operationId: configuracao_horarios_funcionamento_partial_update
       description: ViewSet para gerenciar horários de funcionamento da clínica
@@ -862,6 +886,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/HorarioFuncionamento'
           description: ''
+    delete:
+      operationId: configuracao_horarios_funcionamento_destroy
+      description: ViewSet para gerenciar horários de funcionamento da clínica
+      summary: Deletar horário
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Horário de Funcionamento.
+        required: true
+      tags:
+      - Configuração
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/configuracao/feriados/:
     get:
       operationId: configuracao_feriados_list
@@ -933,25 +976,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Feriado'
           description: ''
-    delete:
-      operationId: configuracao_feriados_destroy
-      description: ViewSet para gerenciar feriados da clínica
-      summary: Deletar feriado
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Feriado.
-        required: true
-      tags:
-      - Configuração
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
     patch:
       operationId: configuracao_feriados_partial_update
       description: ViewSet para gerenciar feriados da clínica
@@ -1021,6 +1045,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/Feriado'
           description: ''
+    delete:
+      operationId: configuracao_feriados_destroy
+      description: ViewSet para gerenciar feriados da clínica
+      summary: Deletar feriado
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Feriado.
+        required: true
+      tags:
+      - Configuração
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/agendamentos/servicos/:
     get:
       operationId: agendamentos_servicos_list
@@ -1028,8 +1071,9 @@ paths:
         Endpoint que permite gerenciar os Serviços da clínica veterinária.
         - **Listar/Ver**: Qualquer usuário autenticado
         - **Criar/Editar/Excluir**: Apenas administradores
+      summary: Listar serviços
       tags:
-      - Agendamentos
+      - Serviços
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1048,8 +1092,9 @@ paths:
         Endpoint que permite gerenciar os Serviços da clínica veterinária.
         - **Listar/Ver**: Qualquer usuário autenticado
         - **Criar/Editar/Excluir**: Apenas administradores
+      summary: Criar serviço
       tags:
-      - Agendamentos
+      - Serviços
       requestBody:
         content:
           application/json:
@@ -1079,6 +1124,7 @@ paths:
         Endpoint que permite gerenciar os Serviços da clínica veterinária.
         - **Listar/Ver**: Qualquer usuário autenticado
         - **Criar/Editar/Excluir**: Apenas administradores
+      summary: Detalhes do serviço
       parameters:
       - in: path
         name: id
@@ -1087,7 +1133,7 @@ paths:
         description: A unique integer value identifying this servico.
         required: true
       tags:
-      - Agendamentos
+      - Serviços
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1098,33 +1144,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Servico'
           description: ''
-    delete:
-      operationId: agendamentos_servicos_destroy
-      description: |-
-        Endpoint que permite gerenciar os Serviços da clínica veterinária.
-        - **Listar/Ver**: Qualquer usuário autenticado
-        - **Criar/Editar/Excluir**: Apenas administradores
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this servico.
-        required: true
-      tags:
-      - Agendamentos
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
     patch:
       operationId: agendamentos_servicos_partial_update
       description: |-
         Endpoint que permite gerenciar os Serviços da clínica veterinária.
         - **Listar/Ver**: Qualquer usuário autenticado
         - **Criar/Editar/Excluir**: Apenas administradores
+      summary: Atualizar serviço
       parameters:
       - in: path
         name: id
@@ -1133,7 +1159,7 @@ paths:
         description: A unique integer value identifying this servico.
         required: true
       tags:
-      - Agendamentos
+      - Serviços
       requestBody:
         content:
           application/json:
@@ -1155,6 +1181,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/Servico'
           description: ''
+    delete:
+      operationId: agendamentos_servicos_destroy
+      description: |-
+        Endpoint que permite gerenciar os Serviços da clínica veterinária.
+        - **Listar/Ver**: Qualquer usuário autenticado
+        - **Criar/Editar/Excluir**: Apenas administradores
+      summary: Deletar serviço
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this servico.
+        required: true
+      tags:
+      - Serviços
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/agendamentos/agendamentos/:
     get:
       operationId: agendamentos_agendamentos_list
@@ -1164,6 +1212,7 @@ paths:
         - **Clientes**: Podem criar agendamentos para seus pets e ver apenas os próprios
         - **Funcionários/Veterinários**: Podem ver e gerenciar todos os agendamentos
         - **Admins**: Acesso completo a todos os agendamentos
+      summary: Listar agendamentos
       tags:
       - Agendamentos
       security:
@@ -1186,6 +1235,7 @@ paths:
         - **Clientes**: Podem criar agendamentos para seus pets e ver apenas os próprios
         - **Funcionários/Veterinários**: Podem ver e gerenciar todos os agendamentos
         - **Admins**: Acesso completo a todos os agendamentos
+      summary: Criar agendamento
       tags:
       - Agendamentos
       requestBody:
@@ -1219,6 +1269,7 @@ paths:
         - **Clientes**: Podem criar agendamentos para seus pets e ver apenas os próprios
         - **Funcionários/Veterinários**: Podem ver e gerenciar todos os agendamentos
         - **Admins**: Acesso completo a todos os agendamentos
+      summary: Detalhes do agendamento
       parameters:
       - in: path
         name: id
@@ -1238,29 +1289,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Agendamento'
           description: ''
-    delete:
-      operationId: agendamentos_agendamentos_destroy
-      description: |-
-        Endpoint para gerenciar agendamentos de consultas e serviços.
-        **Permissões:**
-        - **Clientes**: Podem criar agendamentos para seus pets e ver apenas os próprios
-        - **Funcionários/Veterinários**: Podem ver e gerenciar todos os agendamentos
-        - **Admins**: Acesso completo a todos os agendamentos
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this agendamento.
-        required: true
-      tags:
-      - Agendamentos
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
     patch:
       operationId: agendamentos_agendamentos_partial_update
       description: |-
@@ -1269,6 +1297,7 @@ paths:
         - **Clientes**: Podem criar agendamentos para seus pets e ver apenas os próprios
         - **Funcionários/Veterinários**: Podem ver e gerenciar todos os agendamentos
         - **Admins**: Acesso completo a todos os agendamentos
+      summary: Atualizar agendamento
       parameters:
       - in: path
         name: id
@@ -1299,6 +1328,30 @@ paths:
               schema:
                 $ref: '#/components/schemas/Agendamento'
           description: ''
+    delete:
+      operationId: agendamentos_agendamentos_destroy
+      description: |-
+        Endpoint para gerenciar agendamentos de consultas e serviços.
+        **Permissões:**
+        - **Clientes**: Podem criar agendamentos para seus pets e ver apenas os próprios
+        - **Funcionários/Veterinários**: Podem ver e gerenciar todos os agendamentos
+        - **Admins**: Acesso completo a todos os agendamentos
+      summary: Cancelar agendamento
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this agendamento.
+        required: true
+      tags:
+      - Agendamentos
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/agendamentos/horarios-disponiveis/:
     get:
       operationId: agendamentos_horarios_disponiveis_retrieve
@@ -1314,7 +1367,7 @@ paths:
         description: Data para consulta no formato YYYY-MM-DD.
         required: true
       tags:
-      - Agendamentos
+      - Horários
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1396,25 +1449,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Prontuario'
           description: ''
-    delete:
-      operationId: prontuarios_destroy
-      description: Exclui um prontuário médico (apenas admins).
-      summary: Excluir prontuário
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Prontuário.
-        required: true
-      tags:
-      - Prontuários
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
     patch:
       operationId: prontuarios_partial_update
       description: Atualiza parcialmente um prontuário médico.
@@ -1449,6 +1483,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/Prontuario'
           description: ''
+    delete:
+      operationId: prontuarios_destroy
+      description: Exclui um prontuário médico (apenas admins).
+      summary: Excluir prontuário
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Prontuário.
+        required: true
+      tags:
+      - Prontuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
 components:
   schemas:
     Agendamento:
@@ -1684,8 +1737,8 @@ components:
         dia_semana:
           allOf:
           - $ref: '#/components/schemas/DiaSemanaEnum'
-          minimum: -9223372036854775808
-          maximum: 9223372036854775807
+          minimum: -2147483648
+          maximum: 2147483647
         dia_semana_display:
           type: string
           readOnly: true
@@ -1709,8 +1762,8 @@ components:
         dia_semana:
           allOf:
           - $ref: '#/components/schemas/DiaSemanaEnum'
-          minimum: -9223372036854775808
-          maximum: 9223372036854775807
+          minimum: -2147483648
+          maximum: 2147483647
         hora_abertura:
           type: string
           format: time
@@ -1833,8 +1886,8 @@ components:
         dia_semana:
           allOf:
           - $ref: '#/components/schemas/DiaSemanaEnum'
-          minimum: -9223372036854775808
-          maximum: 9223372036854775807
+          minimum: -2147483648
+          maximum: 2147483647
         hora_abertura:
           type: string
           format: time
@@ -3253,6 +3306,8 @@ components:
       name: Authorization
       description: Token-based authentication with required prefix "Token"
 tags:
+- name: Sistema
+  description: Informações gerais do sistema, status e links de navegação
 - name: Autenticação
   description: Endpoints de login, registro e reset de senha
 - name: Usuários
@@ -3263,7 +3318,9 @@ tags:
   description: Catálogo de serviços veterinários disponíveis
 - name: Agendamentos
   description: Sistema de agendamento de consultas e serviços
+- name: Horários
+  description: Consulta de horários disponíveis para agendamento
 - name: Prontuários
   description: Prontuários médicos e histórico de atendimentos
 - name: Configuração
-  description: Configurações de horarios de funcionamento e feriados do sistema
+  description: Configurações de horários de funcionamento e feriados do sistema

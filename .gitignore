@@ -7,11 +7,6 @@ __pychache__/
 db.sqlite3
 .DS_Store
 
-#ignorar pastas de ambiente virtual Python
-
-venv/
-env/
-.venv/
 
 # ignorar logs e arquivos temporarios
 
