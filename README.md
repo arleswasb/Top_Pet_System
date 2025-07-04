@@ -1,329 +1,1003 @@
-# 🐾 Top Pet System
+📚 GUIA COMPLETO: SWAGGER UI - TOP PET SYSTEM
+📋 ÍNDICE RÁPIDO
+🎯 Visão Geral - Introdução e funcionalidades
 
-Sistema de gestão veterinária moderno e completo para clínicas e hospitais veterinários.
+🚀 Passo 1: Acessando Swagger - Como iniciar
 
-## 🚀 Características Principais
+🔐 Passo 2: Autenticação - Login e tokens
 
-- **Gestão de Pets**: Cadastro completo com fotos, histórico médico e dados do tutor
-- **Agendamentos**: Sistema inteligente de agendamento de consultas e procedimentos
-- **Prontuários Eletrônicos**: Registros médicos digitais seguros e organizados
-- **Gestão de Usuários**: Sistema de permissões para veterinários, atendentes e tutores
-- **API REST**: Interface moderna para integração com outros sistemas
-- **Interface Swagger**: Documentação interativa completa da API
+📋 Passo 3: Navegando Endpoints - Estrutura da API
 
-## 🛠️ Tecnologias Utilizadas
+🎯 Passo 3.5: Regras de Negócio - Permissões e validações completas
 
-- **Backend**: Django 4.2 + Django REST Framework
-- **Banco de Dados**: PostgreSQL (produção) / SQLite (desenvolvimento)
-- **Autenticação**: Token-based authentication
-- **Documentação**: Swagger/OpenAPI com drf-spectacular
-- **Testes**: Django TestCase + Coverage.py (85%+ cobertura)
-- **CI/CD**: GitHub Actions com Pylint
-- **Containerização**: Docker + Docker Compose
+🧪 Passo 4: Testando Endpoints - Exemplos práticos
 
-## 📊 Status dos Testes
+🎨 Passo 5: Interface - Como usar a interface
 
-![Tests](https://github.com/seu-usuario/Top_Pet_System/workflows/CI%20Pipeline%20-%20Lint%20e%20Testes/badge.svg)
-![Coverage](https://img.shields.io/badge/coverage-85%25-brightgreen)
-![Python](https://img.shields.io/badge/python-3.11-blue)
-![Django](https://img.shields.io/badge/django-4.2-green)
+🚨 Passo 6: Troubleshooting - Resolver problemas
 
-**83 testes automatizados** executados a cada commit ✅
+🎯 Passo 7: Casos de Uso - Fluxos completos
 
-## 🎭 Tipos de Usuário e Permissões
+💡 Dicas e Melhores Práticas - Produtividade
 
-| Tipo de Usuário | Permissões | Funcionalidades |
-|------------------|------------|----------------|
-| **👑 Admin** | Acesso total ao sistema | Gerenciar todos os usuários, logs, configurações |
-| **👨‍💼 Funcionário** | Gerenciar pets de clientes, agendamentos | Criar pets para clientes, visualizar todos os pets |
-| **👨‍⚕️ Veterinário** | Gerenciar pets, prontuários, consultas | Criar/editar prontuários, consultas, CRMV obrigatório |
-| **👤 Cliente** | Visualizar dados dos próprios pets | Ver pets, agendamentos próprios, auto-cadastro |
+🛠️ Comandos Úteis - Docker, Django, PowerShell
 
-## 🚀 Instalação e Uso
+📚 Recursos Adicionais - Links e próximos passos
 
-### Pré-requisitos
-- Python 3.11+
-- PostgreSQL (opcional para desenvolvimento)
-- Docker e Docker Compose (recomendado)
+🎯 VISÃO GERAL
+Este guia ensina como usar o Swagger UI para interagir com a API do Top Pet System.
+O Swagger UI fornece uma interface visual e interativa para testar todos os endpoints da API.
 
-### 🐳 Usando Docker-Compose (Recomendado)
+🌟 Principais Funcionalidades:
+Interface web interativa para testar APIs
 
-```bash
-# Clone o repositório
-git clone https://github.com/seu-usuario/Top_Pet_System.git
-cd Top_Pet_System
+Documentação automática dos endpoints
 
-# Construir e executar com Docker Compose
-docker-compose up -d --build
+Autenticação integrada (Token-based)
 
-# Criar o super usuário
+Exemplos de requisições e respostas
+
+Validação em tempo real
+
+Suporte a diferentes tipos de usuário e permissões
+
+🎭 Tipos de Usuário no Sistema:
+CLIENTE 👤: Dono de pet (auto-cadastro permitido)
+
+FUNCIONARIO 👨‍💼: Funcionário da clínica
+
+VETERINARIO 👨‍⚕️: Profissional veterinário (requer CRMV)
+
+ADMIN 👑: Administrador do sistema (acesso total)
+
+🚀 PASSO 1: ACESSANDO O SWAGGER UI
+📋 Pré-requisitos:
+Docker e Docker Compose instalados
+
+Projeto clonado em: f:\GitHub\Top_Pet_System
+
+Containers em execução
+
+🐳 Iniciando com Docker (Recomendado):
+# Navegue até o projeto
+cd f:\GitHub\Top_Pet_System
+
+# Inicie os containers
+docker-compose up -d
+
+# Aguarde a inicialização (30-60 segundos)
+# Verifique se está funcionando
+docker-compose ps
+
+Criar o super usuário
 docker-compose exec web python manage.py createsuperuser
+Ex: username > admin; Password > admin123
 
-# Acessar em http://localhost:8000
-```
+Acesse a pagina de administração do Django
+http://127.0.0.1:8000/admin/
 
-### 💻 Instalação Local
+Faça o logon como o usuario root criado anteriormente
+Acesse a opção USERS/profiles
+Marque o usuario root
+Em Role Settings/Role, selecione a opção Admin
+execute SAVE
 
-```bash
-# Criar ambiente virtual
-python -m venv venv
-source venv/bin/activate  # Linux/macOS
-# ou
-venv\Scripts\activate     # Windows
+agora seu usuario root tambem tem o perfil de administrador no sistema top pet
+URLs Disponíveis:
+Swagger UI (Interface Principal): http://127.0.0.1:8000/api/docs/
 
-# Instalar dependências
-cd backend
+ReDoc (Documentação Alternativa): http://127.0.0.1:8000/api/redoc/
+
+Schema OpenAPI (JSON): http://127.0.0.1:8000/api/schema/
+
+Admin Django: http://127.0.0.1:8000/admin/
+
+🛠️ Iniciando Localmente (Desenvolvimento):
+# Navegue até o backend
+cd f:\GitHub\Top_Pet_System\backend
+
+# Ative o ambiente virtual (se houver)
+# Windows: venv\Scripts\activate
+# Linux/Mac: source venv/bin/activate
+
+# Instale dependências
 pip install -r requirements.txt
 
-# Configurar banco de dados
+# Execute migrações
 python manage.py migrate
 
-# Criar superusuário
+# Criar o super usuário
 python manage.py createsuperuser
+Ex: username > admin; Password > admin123
 
-# Executar servidor
+# Inicie o servidor
 python manage.py runserver
-```
 
-## 🧪 Executar Testes
+# Acesse a pagina de administração do Django
+http://127.0.0.1:8000/admin/
+# Faça o logon como o usuario root criado anteriormente
+# Acesse a opção USERS/profiles
+# Marque o usuario root
+# Em Role Settings/Role, selecione a opção Admin
+execute SAVE
+# agora seu usuario root tambem tem o perfil de administrador no sistema top pet
 
-### Testes Locais
 
-```bash
-cd backend
+✅ Verificando se está funcionando:
+Acesse: http://127.0.0.1:8000/api/docs/
 
-# Todos os testes
-python manage.py test
+Deve aparecer a interface do Swagger UI
 
-# Testes por app
-python manage.py test pets
-python manage.py test users
-python manage.py test agendamentos
-python manage.py test prontuarios
+Se houver erro, verifique os logs: docker-compose logs web
 
-# Testes com cobertura
-coverage run --source='.' manage.py test
-coverage report
-coverage html  # Gera relatório HTML em htmlcov/
-```
+🔐 PASSO 2: AUTENTICAÇÃO
+🎫 Credenciais de Teste Disponíveis:
+👑 ADMINISTRADOR:
 
-### Testes no Docker
+Username: admin
 
-```bash
-# Todos os testes com cobertura
-docker-compose exec web coverage run --source='.' manage.py test
-docker-compose exec web coverage report
+Password: admin123
 
-# Testes individuais
-docker-compose exec web python manage.py test pets
-docker-compose exec web python manage.py test users
-docker-compose exec web python manage.py test agendamentos
-docker-compose exec web python manage.py test prontuarios
-```
+🔑 Método 1: Auto-cadastro de cliente
+🔓 Endpoint público para auto-cadastro de novos usuários como CLIENTE.
 
-### Scripts de Teste
+crie um usuario CLIENTE
 
-#### Windows PowerShell:
-```powershell
-.\run_tests.ps1 -TestType all        # Todos os testes
-.\run_tests.ps1 -TestType coverage   # Com cobertura
-.\run_tests.ps1 -TestType pets       # Apenas pets
-```
+Username: cliente
 
-#### Linux/macOS:
-```bash
-./run_tests.sh --all                 # Todos os testes
-./run_tests.sh --coverage            # Com cobertura
-./run_tests.sh --app pets           # Apenas pets
-```
+Password: cliente123
 
-## 📚 Documentação da API
+Autentique o cliente solicitando token
+Envie username e password para receber um token de autenticação.
 
-### 🌐 URLs Disponíveis:
-- **🔥 Swagger UI (Interface Principal)**: http://127.0.0.1:8000/api/docs/
-- **📖 ReDoc (Documentação Alternativa)**: http://127.0.0.1:8000/api/redoc/
-- **🔧 Schema OpenAPI (JSON)**: http://127.0.0.1:8000/api/schema/
-- **⚙️ Django Admin**: http://127.0.0.1:8000/admin/
+No popup que abrir, encontre o campo "login e obter token"
 
-### 🎫 Credenciais de Teste:
+🔑 Método 2: Autenticação por Token Direto
+No Swagger UI, clique no botão "Authorize" (ícone de cadeado 🔒) no topo
 
-**👑 ADMINISTRADOR:**
-- Username: `admin`
-- Password: `admin123`
-- Token: `297af8e30d64f2cee360713bfecb6e8703ca5232`
+No popup que abrir, encontre o campo "TokenAuthentication"
 
-**👤 CLIENTE:**
-- Username: `testuser`
-- Password: `testpass123`
-- Token: `0e012c51b22276f49cbb08701af45911cf39f35d`
+Digite EXATAMENTE (com espaço após "Token"):
 
-### 📂 Grupos de Endpoints no Swagger UI:
+Token 297af8e30d64f2cee360713bfecb6e8703ca5232 ####exemplo
 
-#### 🔐 **Autenticação** - Login e Registro
-- `POST /api/users/register/` - Auto-cadastro como cliente
-- `POST /api/auth/token/` - Obter token de autenticação
-- `POST /api/auth/password-reset/` - Solicitar reset de senha
-- `POST /api/auth/password-reset/confirm/` - Confirmar reset de senha
-- `POST /api/auth/password-reset/validate_token/` - Validar token de reset
+Clique em "Authorize"
 
-#### 👥 **Usuários** - Gestão de Usuários
-- `GET /api/me/` - Ver próprio perfil
-- `GET /api/admin/users/` - Listar usuários (admin)
-- `GET /api/funcionario/users/` - Listar clientes (funcionário)
-- `POST /api/funcionario/create-user/` - Funcionário criar usuário
-- `POST /api/admin/create-user/` - Admin criar usuário
-- `GET /api/logs/` - Visualizar logs (admin)
+Clique em "Close"
 
-#### 🐕 **Pets** - Gerenciamento de Animais
-- `GET /api/pets/` - Listar todos os pets
-- `POST /api/pets/` - Criar novo pet
-- `GET /api/pets/{id}/` - Detalhes de um pet específico
-- `PATCH /api/pets/{id}/` - Atualização parcial
-- `DELETE /api/pets/{id}/` - Remover pet
+🔑 Método 2: Obter Token via API
+Vá para o endpoint POST /api/auth/token/
 
-#### 📅 **Agendamentos** - Sistema de Agendamentos
-- `GET /api/agendamentos/` - Listar agendamentos
-- `POST /api/agendamentos/` - Criar agendamento
-- `GET /api/agendamentos/{id}/` - Detalhes do agendamento
-- `PATCH /api/agendamentos/{id}/` - Atualização parcial
-- `DELETE /api/agendamentos/{id}/` - Cancelar agendamento
+Clique em "Try it out"
 
-#### 📋 **Prontuários** - Prontuários Médicos
-- `GET /api/prontuarios/` - Listar prontuários
-- `POST /api/prontuarios/` - Criar prontuário
-- `GET /api/prontuarios/{id}/` - Detalhes do prontuário
-- `PATCH /api/prontuarios/{id}/` - Atualização parcial
-- `DELETE /api/prontuarios/{id}/` - Remover prontuário
+No campo Request body, insira:
 
-## 🔐 Regras de Negócio e Segurança
-
-### 🛡️ Validações Implementadas
-- **Email único**: Não pode haver emails duplicados
-- **Username único**: Não pode haver usernames duplicados
-- **CRMV obrigatório**: Para veterinários, o CRMV deve ser informado
-- **Senha forte**: Deve atender aos critérios do Django
-- **Token único**: Cada usuário tem um token único para API
-
-### 🚫 Restrições de Segurança
-- Auto-cadastro público só permite criação de CLIENTES
-- Funcionários não podem criar administradores
-- Usuários só acessam dados próprios (exceto staff)
-- Validação de permissões em cada endpoint
-- Tokens obrigatórios para maioria dos endpoints
-
-### 🔄 Fluxos de Trabalho
-
-#### Cliente:
-```
-Auto-cadastro → Perfil CLIENTE → Gerenciar próprios pets → Fazer agendamentos
-```
-
-#### Funcionário:
-```
-Admin cria funcionário → Pode criar clientes/veterinários → Gerenciar sistema
-```
-
-#### Administrador:
-```
-Controle total → Criar qualquer tipo → Ativar/desativar → Ver logs
-```
-
-## 📁 Estrutura do Projeto
-
-```
-Top_Pet_System/
-├── backend/
-│   ├── pets/              # App de gestão de pets
-│   │   ├── models.py      # Modelos de dados
-│   │   ├── serializers.py # Serializers da API
-│   │   ├── views.py       # Views da API
-│   │   ├── permissions.py # Permissões customizadas
-│   │   └── tests/         # Testes unitários e integração
-│   ├── agendamentos/      # App de agendamentos
-│   ├── prontuarios/       # App de prontuários
-│   ├── users/             # App de usuários e perfis
-│   ├── top_pet/           # Configurações Django
-│   │   ├── settings.py    # Configurações principais
-│   │   ├── urls.py        # URLs principais
-│   │   └── wsgi.py        # WSGI para deployment
-│   ├── requirements.txt   # Dependências Python
-│   └── manage.py
-├── .github/workflows/     # CI/CD GitHub Actions
-│   └── ci-pylint.yml      # Pipeline de testes e lint
-├── docs/                  # Documentação
-│   ├── PYLINT.md         # Configurações do Pylint
-│   └── API.md            # Documentação da API
-├── docker-compose.yml     # Configuração Docker
-├── Dockerfile            # Imagem Docker do backend
-└── README.md
-```
-
-## ⚙️ Configuração de Desenvolvimento
-
-### Variáveis de Ambiente
-
-Crie um arquivo `.env` no diretório `backend/`:
-
-```env
-DEBUG=True
-SECRET_KEY=sua-chave-secreta-aqui
-DATABASE_URL=postgresql://user:password@localhost:5432/top_pet_db
-ALLOWED_HOSTS=localhost,127.0.0.1
-```
-
-### Configuração do Banco de Dados
-
-#### PostgreSQL (Recomendado para produção)
-```bash
-# Instalar PostgreSQL
-# Criar banco de dados
-createdb top_pet_db
-
-# Configurar no settings.py ou .env
-DATABASE_URL=postgresql://user:password@localhost:5432/top_pet_db
-```
-
-#### SQLite (Padrão para desenvolvimento)
-```python
-# settings.py - Configuração padrão
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+{
+  "username": "admin",
+  "password": "admin123"
 }
-```
 
-## 🎨 Qualidade de Código
+Clique em "Execute"
 
-### Pylint
-O projeto usa Pylint configurado para reportar apenas erros críticos:
+Copie o token da resposta
 
-```bash
-cd backend
-pylint --errors-only pets/
-```
+Use o token no botão "Authorize" e preencha o segundo campo com
+Token(espaço) + "token que voce recebeu"
 
-### Coverage
-Meta de cobertura de testes: **80%**
+📋 PASSO 3: NAVEGANDO PELOS ENDPOINTS
+🏷️ Seções Organizadas por Tags:
+🐕 PETS - Gerenciamento de Animais
+GET /api/pets/ - Listar todos os pets
 
-```bash
-coverage run --source='.' manage.py test
-coverage report --fail-under=80
-```
+POST /api/pets/ - Criar novo pet
 
-### Pre-commit Hooks
-```bash
-pip install pre-commit
-pre-commit install
-```
+GET /api/pets/{id}/ - Detalhes de um pet específico
 
-## 🛠️ Comandos Úteis
+PATCH /api/pets/{id}/ - Atualização parcial
 
-### 🐳 Docker Commands:
-```bash
+DELETE /api/pets/{id}/ - Remover pet
+
+👥 USUÁRIOS - Gestão de Usuários
+GET /api/me/ - Ver próprio perfil
+
+GET /api/admin/users/ - Listar usuários (admin)
+
+GET /api/funcionario/users/ - Listar clientes (funcionário)
+
+GET /api/funcionario/users/{id}/ - Detalhes do cliente (funcionário)
+
+PATCH /api/funcionario/users/{id}/ - Atualização parcial cliente (funcionário)
+
+DELETE /api/funcionario/users/{id}/ - Excluir cliente (funcionário)
+
+POST /api/funcionario/create-user/ - Funcionário criar usuário
+
+POST /api/admin/create-user/ - Admin criar usuário
+
+GET /api/admin/users/{id}/ - Detalhes do usuário (admin)
+
+PATCH /api/admin/users/{id}/ - Atualizar usuário (admin)
+
+DELETE /api/admin/users/{id}/ - Excluir usuário (admin)
+
+POST /api/admin/users/{id}/toggle_active/ - Ativar/desativar usuário (admin)
+
+GET /api/logs/ - Visualizar logs (admin)
+
+🔐 AUTENTICAÇÃO - Login e Registro
+POST /api/register/ - Auto-cadastro como cliente
+
+POST /api/auth/token/ - Obter token de autenticação
+
+POST /api/auth/password-reset/ - Solicitar reset de senha (sera utilizado no front end)
+
+POST /api/auth/password-reset/confirm/ - Confirmar reset de senha  (sera utilizado no front end)
+
+POST /api/auth/password-reset/validate_token/ - Validar token de reset  (sera utilizado no front end)
+
+⚠️ NOTA IMPORTANTE: A funcionalidade de troca de senha com uso do email está em fase de desenvolvimento e apenas foi testada localmente (não envia email real em produção).
+
+📅 AGENDAMENTOS - Sistema de Agendamentos
+GET /api/agendamentos/ - Listar agendamentos
+
+POST /api/agendamentos/ - Criar agendamento
+
+GET /api/agendamentos/{id}/ - Detalhes do agendamento
+
+PATCH /api/agendamentos/{id}/ - Atualização parcial
+
+DELETE /api/agendamentos/{id}/ - Cancelar agendamento
+
+🩺 SERVIÇOS - Catálogo de Serviços Veterinários
+GET /api/servicos/ - Listar serviços disponíveis
+
+POST /api/servicos/ - Criar novo serviço
+
+GET /api/servicos/{id}/ - Detalhes do serviço
+
+PATCH /api/servicos/{id}/ - Atualização parcial
+
+DELETE /api/servicos/{id}/ - Remover serviço
+
+📋 PRONTUÁRIOS - Prontuários Médicos
+GET /api/prontuarios/ - Listar prontuários
+
+POST /api/prontuarios/ - Criar prontuário
+
+GET /api/prontuarios/{id}/ - Detalhes do prontuário
+
+PATCH /api/prontuarios/{id}/ - Atualização parcial
+
+DELETE /api/prontuarios/{id}/ - Remover prontuário
+
+🔐 PASSO 3.5: REGRAS DE NEGÓCIO E PERMISSÕES
+🎭 TIPOS DE USUÁRIO E HIERARQUIA
+📋 Tipos Disponíveis:
+CLIENTE 👤 - Dono de pet
+
+FUNCIONARIO 👨‍💼 - Funcionário da clínica
+
+VETERINARIO 👨‍⚕️ - Profissional veterinário
+
+ADMIN 👑 - Administrador do sistema
+
+🔐 REGRAS DE CADASTRO E CRIAÇÃO DE USUÁRIOS
+1. Auto-cadastro Público (Endpoint: /api/register/)
+✅ Permitido: Apenas criação de usuários do tipo CLIENTE
+
+❌ Bloqueado: Criação de FUNCIONARIO, VETERINARIO ou ADMIN
+
+🔓 Acesso: Endpoint público (sem autenticação)
+
+📝 Campos obrigatórios: username, email, password, first_name, last_name
+
+2. Criação por Funcionários (Endpoint: /api/funcionario/create-user/)
+✅ Permitido: Funcionários podem criar usuários dos tipos:
+
+CLIENTE
+
+FUNCIONARIO
+
+VETERINARIO
+
+❌ Bloqueado: Funcionários não podem criar ADMIN
+
+🔐 Acesso: Funcionários autenticados + Admins
+
+📝 Campos extras: Para veterinários, pode incluir CRMV e especialidade
+
+3. Criação por Administradores (Endpoint: /api/admin/create-user/)
+✅ Permitido: Admins podem criar usuários de qualquer tipo
+
+CLIENTE
+
+FUNCIONARIO
+
+VETERINARIO
+
+ADMIN
+
+🔐 Acesso: Apenas administradores
+
+📝 Controle total: Pode definir qualquer campo e permissão
+
+👥 REGRAS DE PERMISSÕES E ACESSO
+1. Visualização de Perfis
+Próprio perfil: Todos os usuários podem ver seu próprio perfil
+
+Perfis de outros: Apenas funcionários e admins podem ver perfis de outros usuários
+
+2. Gestão de Usuários - Listar usuários:
+Admins: Podem listar todos os usuários
+
+Funcionários: Podem listar apenas usuários CLIENTES
+
+Editar usuários:
+
+Admins: Podem editar qualquer usuário
+
+Funcionários: Podem editar apenas usuários CLIENTES
+
+Deletar usuários:
+
+Admins: Podem deletar qualquer usuário
+
+Funcionários: Podem deletar apenas usuários CLIENTES
+
+Ativar/Desativar usuários: Apenas admins (endpoint toggle_active)
+
+3. Gestão de Pets
+Listar pets:
+
+Clientes: Veem apenas seus próprios pets
+
+Funcionários/Admins: Veem todos os pets
+
+Criar/Editar pets:
+
+Clientes: Apenas seus próprios pets
+
+Funcionários: Podem criar/editar pets de qualquer cliente
+
+Admins: Podem criar/editar qualquer pet
+
+Deletar pets:
+
+Clientes: Apenas seus próprios pets
+
+Funcionários: Podem deletar apenas pets de CLIENTES
+
+Admins: Podem deletar qualquer pet
+
+4. Logs do Sistema
+Visualizar logs: Apenas administradores
+
+Endpoint: /api/logs/
+
+🛡️ REGRAS DE VALIDAÇÃO E SEGURANÇA
+1. Validação de Dados
+Email único: Não pode haver emails duplicados
+
+Username único: Não pode haver usernames duplicados
+
+CRMV obrigatório: Para veterinários, o CRMV deve ser informado
+
+Senha forte: Deve atender aos critérios do Django
+
+2. Prevenção de Duplicação
+Profile único: Cada usuário pode ter apenas um Profile
+
+Sinal desabilitado: Criação automática de Profile foi desabilitada
+
+Criação manual: Profiles são criados explicitamente nos serializers
+
+3. Tokens de Autenticação
+Token único: Cada usuário tem um token único para API
+
+Autenticação obrigatória: Maioria dos endpoints requer autenticação
+
+Formato: Authorization: Token <seu_token_aqui>
+
+📋 REGRAS DE NEGÓCIO ESPECÍFICAS
+1. Campo role no Profile
+Obrigatório: Todo usuário deve ter um role definido
+
+Imutável por auto-cadastro: Clientes que se auto-cadastram sempre ficam como CLIENTE
+
+Controlado: Apenas funcionários/admins podem definir roles específicos
+
+2. Status do Usuário (is_active)
+Padrão: Usuários criados ficam ativos por padrão
+
+Toggle: Admins podem ativar/desativar usuários sem deletá-los
+
+Efeito: Usuários inativos não conseguem fazer login
+
+3. Campos Específicos por Tipo
+VETERINARIO:
+
+CRMV (obrigatório)
+
+Especialidade (opcional)
+
+FUNCIONARIO:
+
+Endereço (opcional)
+
+Telefone (opcional)
+
+CLIENTE:
+
+Campos básicos apenas
+
+🚫 RESTRIÇÕES IMPLEMENTADAS
+1. Não é possível:
+Auto-promover-se a funcionário/admin
+
+Usuário comum criar outros usuários
+
+Funcionário criar administradores
+
+Acessar dados de outros usuários (exceto staff)
+
+Ter múltiplos profiles por usuário
+
+2. Controles de Segurança:
+Validação de permissões em cada endpoint
+
+Serializers diferentes para cada tipo de criação
+
+Permissões customizadas (IsAdminRole, IsFuncionarioOrAdmin)
+
+🔄 FLUXOS DE TRABALHO
+1. Fluxo de Cliente:
+Cliente se auto-cadastra → Perfil CLIENTE criado → Pode gerenciar próprios pets → Pode fazer agendamentos
+
+2. Fluxo de Funcionário:
+Admin cria funcionário → Funcionário pode criar clientes/veterinários → Pode gerenciar sistema
+
+3. Fluxo de Administrador:
+Admin tem controle total → Pode criar qualquer tipo → Pode ativar/desativar → Pode ver logs
+
+💡 Estas regras garantem uma hierarquia clara, segurança adequada e controle granular sobre as permissões no sistema!
+
+🧪 PASSO 4: TESTANDO ENDPOINTS
+📝 Exemplo 1: Criar um Pet
+Autentique-se primeiro (Passo 2)
+
+Vá para POST /api/pets/
+
+Clique em "Try it out"
+
+No campo Request body, insira:
+
+{
+  "nome": "Rex",
+  "especie": "Cachorro",
+  "raca": "Golden Retriever", 
+  "data_de_nascimento": "2020-05-15",
+  "sexo": "MACHO",
+  "observacoes": "Pet muito carinhoso",
+  "tutor": 1
+}
+
+Clique em "Execute"
+
+Verifique a resposta (deve retornar status 201)
+
+📊 Exemplo 2: Listar Pets
+Vá para GET /api/pets/
+
+Clique em "Try it out"
+
+Clique em "Execute"
+
+Veja a lista de pets na resposta
+
+👤 Exemplo 3: Ver Próprio Perfil
+Autentique-se primeiro
+
+Vá para GET /api/me/
+
+Clique em "Try it out"
+
+Clique em "Execute"
+
+Veja seus dados de perfil
+
+🆕 Exemplo 4: Registrar Novo Cliente (Público)
+Vá para POST /api/register/ (não precisa autenticação)
+
+Clique em "Try it out"
+
+Insira APENAS estes campos (NÃO incluir role ou crmv):
+
+{
+  "username": "novocliente",
+  "password": "minhasenha123",
+  "confirm_password": "minhasenha123",
+  "email": "cliente@email.com",
+  "first_name": "João",
+  "last_name": "Silva",
+  "telefone": "(11) 99999-9999",
+  "endereco": "Rua das Flores, 123"
+}
+
+Clique em "Execute"
+
+Resultado: Usuário criado automaticamente como CLIENTE
+
+📅 Exemplo 5: Criar Agendamento
+Autentique-se como cliente ou funcionário
+
+Vá para POST /api/agendamentos/
+
+Clique em "Try it out"
+
+Insira os dados:
+
+{
+  "pet": 1,
+  "data_hora": "2024-12-01T14:30:00Z",
+  "tipo_servico": "Consulta",
+  "observacoes": "Checkup de rotina"
+}
+
+Clique em "Execute"
+
+🩺 Exemplo 6: Criar Serviço (Funcionário/Admin)
+Autentique-se como funcionário ou admin
+
+Vá para POST /api/servicos/
+
+Clique em "Try it out"
+
+Insira os dados:
+
+{
+  "nome": "Consulta Veterinária",
+  "descricao": "Consulta geral para avaliação da saúde do pet",
+  "preco": "80.00",
+  "duracao_estimada": "30 minutos",
+  "categoria": "Consulta"
+}
+
+Clique em "Execute"
+
+🏥 Exemplo 7: Criar Prontuário (Veterinário/Admin)
+Autentique-se como veterinário ou admin
+
+Vá para POST /api/prontuarios/
+
+Clique em "Try it out"
+
+Insira os dados:
+
+{
+  "pet": 1,
+  "veterinario": 2,
+  "data_consulta": "2024-12-01T14:30:00Z",
+  "diagnostico": "Pet saudável",
+  "tratamento": "Vacinação atualizada",
+  "observacoes": "Retorno em 6 meses"
+}
+
+Clique em "Execute"
+
+👨‍💼 Exemplo 8: Funcionário Criando Usuários
+Autentique-se como funcionário ou admin
+
+Vá para POST /api/funcionario/create-user/
+
+Clique em "Try it out"
+
+Para criar CLIENTE (incluir confirm_password):
+
+{
+  "username": "cliente_func",
+  "password": "cliente123",
+  "confirm_password": "cliente123",
+  "email": "cliente.func@toppet.com",
+  "first_name": "Maria",
+  "last_name": "Cliente",
+  "telefone": "(11) 88888-8888",
+  "endereco": "Rua do Cliente, 100",
+  "role": "CLIENTE"
+}
+
+Para criar FUNCIONARIO (incluir confirm_password):
+
+{
+  "username": "func_novo",
+  "password": "funcionario123",
+  "confirm_password": "funcionario123",
+  "email": "func.novo@toppet.com",
+  "first_name": "Carlos",
+  "last_name": "Funcionário",
+  "telefone": "(11) 77777-7777",
+  "endereco": "Rua do Funcionário, 200",
+  "role": "FUNCIONARIO"
+}
+
+Para criar VETERINARIO (incluir confirm_password e crmv):
+
+{
+  "username": "dr_silva",
+  "password": "veterinario123",
+  "confirm_password": "veterinario123",
+  "email": "dr.silva@toppet.com",
+  "first_name": "Dr. Carlos",
+  "last_name": "Silva",
+  "telefone": "(11) 66666-6666",
+  "endereco": "Av. Veterinária, 200",
+  "role": "VETERINARIO",
+  "crmv": "12345-SP"
+}
+
+Clique em "Execute"
+
+👑 Exemplo 9: Admin Criando Usuários
+Autentique-se como admin
+
+Vá para POST /api/admin/create-user/
+
+Clique em "Try it out"
+
+Para criar ADMIN (incluir confirm_password):
+
+{
+  "username": "admin2",
+  "password": "admin456",
+  "confirm_password": "admin456",
+  "email": "admin2@toppet.com",
+  "first_name": "Admin",
+  "last_name": "Secundário",
+  "telefone": "(11) 77777-7777",
+  "endereco": "Sede Principal",
+  "role": "ADMIN"
+}
+
+Para criar VETERINARIO (incluir confirm_password e crmv):
+
+{
+  "username": "dr_admin",
+  "password": "vet456",
+  "confirm_password": "vet456",
+  "email": "dr.admin@toppet.com",
+  "first_name": "Dra. Ana",
+  "last_name": "Veterinária",
+  "telefone": "(11) 55555-5555",
+  "endereco": "Clínica Principal",
+  "role": "VETERINARIO",
+  "crmv": "67890-RJ"
+}
+
+Clique em "Execute"
+
+🔐 Exemplo 10: Reset de Senha (Desenvolvimento)
+⚠️ Funcionalidade em desenvolvimento - apenas para teste local
+
+Passo 1 - Solicitar reset:
+
+Vá para POST /api/auth/password-reset/ (não precisa autenticação)
+
+Clique em "Try it out"
+
+Insira:
+
+{
+  "email": "admin@example.com"
+}
+
+Clique em "Execute"
+
+Em desenvolvimento: Token aparece no console do servidor
+
+Passo 2 - Validar token (opcional):
+
+Vá para POST /api/auth/password-reset/validate_token/
+
+Insira o token recebido:
+
+{
+  "token": "seu_token_aqui"
+}
+
+Passo 3 - Confirmar nova senha:
+
+Vá para POST /api/auth/password-reset/confirm/
+
+Insira:
+
+{
+  "token": "seu_token_aqui",
+  "password": "nova_senha_123"
+}
+
+Clique em "Execute"
+
+🎨 PASSO 5: ENTENDENDO A INTERFACE
+🔍 Elementos da Interface:
+Códigos de Status Coloridos:
+
+🟢 Verde (200-299): Sucesso
+
+🔵 Azul (201): Criado
+
+🟡 Amarelo (400): Erro do cliente
+
+🔴 Vermelho (500): Erro do servidor
+
+Schemas Expandíveis: Clique para ver estrutura completa dos dados
+
+Exemplos Automáticos: Request/Response samples
+
+Botão "Try it out": Ativa o modo de teste
+
+Campo "Execute": Executa a requisição real
+
+🛠️ Funcionalidades Avançadas:
+Download da Resposta: Botão para baixar JSON
+
+Copy as cURL: Copiar comando curl
+
+Validação em Tempo Real: Valida dados antes de enviar
+
+🚨 PASSO 6: RESOLUÇÃO DE PROBLEMAS
+❌ Erro 401 Unauthorized:
+Problema: "Authentication credentials were not provided"
+Solução:
+
+Verifique se está autenticado
+
+Token deve estar no formato: Token SEU_TOKEN_AQUI
+
+Certifique-se que há um espaço após "Token"
+
+❌ Erro 403 Forbidden:
+Problema: Usuário sem permissão
+Solução:
+
+Use conta com privilégios adequados
+
+Admin: acesso total
+
+Funcionário: criar clientes, funcionários, veterinários
+
+Cliente: apenas suas próprias informações
+
+❌ Erro 400 Bad Request:
+Problema: Dados inválidos
+Solução:
+
+Verifique formato do JSON
+
+Confira campos obrigatórios
+
+Valide tipos de dados (string, number, etc.)
+
+❌ "Unable to log in with provided credentials":
+Problema: Credenciais incorretas
+Solução: Use as credenciais testadas:
+
+admin / admin123
+
+testuser / testpass123
+
+❌ Erros Específicos de Cadastro de Usuários:
+"This field is required: crmv"
+Problema: Tentando criar VETERINARIO sem o campo crmv
+Solução:
+
+Para role: "VETERINARIO", SEMPRE incluir: "crmv": "12345-SP"
+
+Exemplo válido:
+
+{
+  "username": "dr_test",
+  "role": "VETERINARIO",
+  "crmv": "12345-SP",
+  // ... outros campos obrigatórios
+}
+
+"crmv field not allowed for this role"
+Problema: Enviando campo crmv para roles que não precisam
+Solução:
+
+REMOVER campo crmv para CLIENTE, FUNCIONARIO, ADMIN
+
+Usar crmv APENAS para VETERINARIO
+
+"You don't have permission to create ADMIN users"
+Problema: Funcionário tentando criar usuário ADMIN
+Solução:
+
+Use endpoint /api/admin/create-user/ com credenciais de ADMIN
+
+Ou crie outro role (CLIENTE, FUNCIONARIO, VETERINARIO)
+
+"Password and confirm_password do not match"
+Problema: No auto-cadastro, senhas diferentes
+Solução:
+
+{
+  "password": "minhasenha123",
+  "confirm_password": "minhasenha123"  // Deve ser idêntica
+}
+
+"A user with that username already exists"
+Problema: Username duplicado
+Solução:
+
+Use username único: "username": "usuario_unico_123"
+
+Verifique usuários existentes em GET /api/admin/users/
+
+⚠️ "Role field not being saved correctly" (Bug Conhecido)
+Problema: Usuário é criado mas o campo role no perfil fica vazio
+Status: Bug identificado durante testes
+Impacto:
+
+Usuário é criado com sucesso
+
+Dados básicos são salvos corretamente
+
+Campo role no Profile não é preenchido
+Workaround temporário:
+
+Verificar role via Django Admin: http://127.0.0.1:8000/admin/
+
+Editar manualmente se necessário
+Teste realizado:
+
+✅ Admin pode criar usuários via /api/admin/create-user/
+✅ Admin pode criar usuários via /api/funcionario/create-user/  
+✅ Campos obrigatórios validados corretamente
+✅ confirm_password validação funcionando
+❌ Role não salvo no Profile (bug confirmado)
+
+🎯 PASSO 7: CASOS DE USO PRÁTICOS
+🔄 Fluxo Completo: Do Registro ao Pet
+Registrar Cliente: POST /api/register/
+
+Fazer Login: POST /api/auth/token/
+
+Autorizar no Swagger: Botão "Authorize"
+
+Ver Perfil: GET /api/me/
+
+Criar Pet: POST /api/pets/
+
+Listar Pets: GET /api/pets/
+
+👨‍💼 Fluxo Administrativo:
+Login como Admin: admin / admin123
+
+Autorizar: Token no Swagger
+
+Criar Funcionário: POST /api/admin/create-user/
+
+Listar Usuários: GET /api/admin/users/
+
+Ver Logs: GET /api/logs/
+
+🏥 Fluxo Veterinário:
+Admin cria Veterinário: role = "VETERINARIO", crmv obrigatório
+
+Veterinário faz login
+
+Pode criar: clientes, funcionários, outros veterinários
+
+Gerenciar prontuários: POST /api/prontuarios/
+
+💡 DICAS E MELHORES PRÁTICAS
+✅ Do's (Faça):
+Sempre autentique antes de testar endpoints protegidos
+
+Use exemplos fornecidos como base
+
+Verifique códigos de status das respostas
+
+Teste diferentes cenários (sucesso e erro)
+
+Examine schemas para entender estrutura de dados
+
+❌ Don'ts (Não Faça):
+Não esqueça o espaço em "Token SEU_TOKEN"
+
+Não use senhas fracas em produção
+
+Não compartilhe tokens em logs ou código
+
+Não ignore mensagens de erro
+
+🔧 Produtividade:
+Use Ctrl+F para buscar endpoints específicos
+
+Favorite endpoints mais usados
+
+Copie exemplos e modifique conforme necessário
+
+Use cURL gerado para automação
+
+📊 PASSO 8: MONITORAMENTO E LOGS
+📈 Acompanhar Requisições:
+Status codes nas respostas
+
+Tempo de resposta
+
+Headers retornados
+
+Conteúdo das respostas
+
+🔍 Debug:
+Use logs do sistema: GET /api/logs/ (admin)
+
+Verifique console do navegador
+
+Analise mensagens de erro detalhadas
+
+🏁 CONCLUSÃO
+O Swagger UI do Top Pet System oferece uma interface completa para:
+
+✅ Testar todos os endpoints da API
+
+✅ Entender estrutura de dados
+
+✅ Validar funcionalidades
+
+✅ Documentar casos de uso
+
+✅ Facilitar desenvolvimento e integração
+
+🚀 Próximos Passos:
+
+Pratique com os exemplos fornecidos
+
+Explore diferentes tipos de usuário
+
+Teste cenários de erro
+
+Integre com aplicações frontend
+
+Use para documentação de equipe
+
+📞 Suporte:
+
+Documente bugs encontrados
+
+Relate melhorias necessárias
+
+Compartilhe casos de uso interessantes
+
+📅 Última Atualização: Julho 2025
+🔧 Versão da API: 1.0.0
+👨‍💻 Sistema: Top Pet System API
+🚀 Status: Swagger UI Totalmente Configurado e Funcional
+📋 Documentação por: GitHub Copilot
+
+🎯 RESUMO FINAL:
+✅ Swagger UI configurado e acessível em http://127.0.0.1:8000/api/docs/
+✅ Autenticação por token implementada e testada
+
+✅ Regras de negócio documentadas (CLIENTE, FUNCIONARIO, VETERINARIO, ADMIN)
+✅ Permissões customizadas configuradas por tipo de usuário
+✅ Endpoints completos para pets, usuários, serviços, agendamentos e prontuários
+✅ Reset de senha implementado (fase de desenvolvimento)
+✅ Métodos PUT removidos - apenas GET, POST, PATCH e DELETE
+✅ Exemplos práticos fornecidos para todos os casos de uso
+✅ Comandos úteis para desenvolvimento e manutenção
+✅ Troubleshooting completo para resolução de problemas
+
+🎉 O sistema está pronto para uso em desenvolvimento e produção!
+
+🛠️ COMANDOS ÚTEIS
+🐳 Docker Commands:
 # Iniciar containers
 docker-compose up -d
+
+# Parar containers
+docker-compose down
 
 # Ver logs do backend
 docker-compose logs web
@@ -334,27 +1008,56 @@ docker-compose exec web bash
 # Executar migrações
 docker-compose exec web python manage.py migrate
 
+# Criar superusuário
+docker-compose exec web python manage.py createsuperuser
+
+# Coletar arquivos estáticos
+docker-compose exec web python manage.py collectstatic
+
 # Backup do banco
 docker-compose exec db pg_dump -U postgres postgres > backup.sql
-```
 
-### 🔧 Management Commands:
-```bash
+# Restaurar banco
+docker-compose exec -T db psql -U postgres postgres < backup.sql
+
+🔧 Management Commands:
+# Dentro do container ou ambiente local
+
 # Ver migrações pendentes
 python manage.py showmigrations
 
+# Criar migrações
+python manage.py makemigrations
+
 # Executar shell do Django
 python manage.py shell
+
+# Limpar cache
+python manage.py clearcache
 
 # Executar testes
 python manage.py test
 
 # Verificar sistema
 python manage.py check
-```
 
-### 🔍 Comandos PowerShell para Testes:
-```powershell
+📊 Comandos de Debugging:
+# Ver configurações atuais
+python manage.py diffsettings
+
+# Listar URLs disponíveis
+python manage.py show_urls
+
+# Validar modelos
+python manage.py validate
+
+# Executar servidor em debug
+python manage.py runserver --debug
+
+# Ver SQL gerado
+python manage.py sqlmigrate app_name migration_name
+
+🔍 Comandos PowerShell para Testes:
 # Testar endpoint público (registro)
 $body = @{
     username = "teste_ps"
@@ -378,188 +1081,24 @@ $token = (Invoke-RestMethod -Uri "http://127.0.0.1:8000/api/auth/token/" -Method
 # Usar token em requisição
 $headers = @{ Authorization = "Token $token" }
 Invoke-RestMethod -Uri "http://127.0.0.1:8000/api/me/" -Headers $headers
-```
 
-## 🤝 Contribuindo
+📚 RECURSOS ADICIONAIS
+🔗 Links Úteis:
+Django REST Framework: https://www.django-rest-framework.org/
 
-1. Fork o projeto
-2. Crie sua branch (`git checkout -b feature/AmazingFeature`)
-3. Execute os testes (`python manage.py test`)
-4. Verifique a cobertura (`coverage run --source='.' manage.py test`)
-5. Commit suas mudanças (`git commit -m 'Add: nova funcionalidade'`)
-6. Push para a branch (`git push origin feature/AmazingFeature`)
-7. Abra um Pull Request
+drf-spectacular: https://drf-spectacular.readthedocs.io/
 
-### Padrões de Código
-- Siga PEP 8 para estilo de código
-- Cobertura de testes mínima: 80%
-- Docstrings em funções e classes complexas
-- Type hints quando aplicável
-- Commits semânticos (feat:, fix:, docs:, etc.)
+OpenAPI Specification: https://swagger.io/specification/
 
-## 🚀 Deploy
+PostgreSQL Docs: https://www.postgresql.org/docs/
 
-### Docker em Produção
-```bash
-# Build da imagem
-docker build -t top-pet-system .
+Docker Compose: https://docs.docker.com/compose/
 
-# Run com banco PostgreSQL
-docker-compose -f docker-compose.prod.yml up -d
-```
+📖 Documentação Relacionada:
+README.md - Visão geral do projeto
 
-### Heroku
-```bash
-# Instalar Heroku CLI
-# Login no Heroku
-heroku login
+projeto_documentacao.txt - Documentação técnica detalhada
 
-# Criar aplicação
-heroku create top-pet-system
+backend/requirements.txt - Dependências Python
 
-# Configurar banco PostgreSQL
-heroku addons:create heroku-postgresql:hobby-dev
-
-# Deploy
-git push heroku main
-```
-
-## 📊 Monitoramento
-
-### Métricas de Qualidade
-- **Cobertura de Testes**: 85%+
-- **Testes Automatizados**: 83 testes
-- **Tempo de Build**: < 3 minutos
-- **Pylint Score**: Apenas erros críticos
-
-### Logs
-```bash
-# Logs do Docker
-docker-compose logs -f web
-
-# Logs do Django
-tail -f backend/logs/django.log
-```
-
-## 🎯 Exemplos de Uso da API
-
-### 📝 Criar um Pet
-```json
-POST /api/pets/
-{
-  "nome": "Rex",
-  "especie": "Cachorro",
-  "raca": "Golden Retriever",
-  "data_de_nascimento": "2020-05-15",
-  "sexo": "MACHO",
-  "observacoes": "Pet muito carinhoso"
-}
-```
-
-### 🆕 Registrar Novo Cliente
-```json
-POST /api/register/
-{
-  "username": "novocliente",
-  "password": "minhasenha123",
-  "confirm_password": "minhasenha123",
-  "email": "cliente@email.com",
-  "first_name": "João",
-  "last_name": "Silva",
-  "telefone": "(11) 99999-9999",
-  "endereco": "Rua das Flores, 123"
-}
-```
-
-### 📅 Criar Agendamento
-```json
-POST /api/agendamentos/
-{
-  "pet": 1,
-  "data_hora": "2024-12-01T14:30:00Z",
-  "tipo_servico": "Consulta",
-  "observacoes": "Checkup de rotina"
-}
-```
-
-## 📚 Recursos Adicionais
-
-### 🔗 Links Úteis:
-- **Django REST Framework**: https://www.django-rest-framework.org/
-- **drf-spectacular**: https://drf-spectacular.readthedocs.io/
-- **OpenAPI Specification**: https://swagger.io/specification/
-- **PostgreSQL Docs**: https://www.postgresql.org/docs/
-- **Docker Compose**: https://docs.docker.com/compose/
-
-### 📖 Documentação Relacionada:
-- `docs/PYLINT.md` - Configurações do Pylint e testes com cobertura
-- `README2.txt` - Guia completo do Swagger UI
-- `backend/requirements.txt` - Dependências Python
-- `docker-compose.yml` - Configuração dos containers
-
-### 🎓 Próximos Passos de Aprendizado:
-1. **Explorar Swagger UI**: http://127.0.0.1:8000/api/docs/
-2. **Estudar modelos de dados**: Arquivos `models.py`
-3. **Analisar serializers**: Arquivos `serializers.py`
-4. **Entender views**: Arquivos `views.py`
-5. **Revisar permissões**: Arquivos `permissions.py`
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para detalhes.
-
-## 📞 Contato
-
-- **Desenvolvedor**: Seu Nome
-- **Email**: seu.email@exemplo.com
-- **LinkedIn**: [seu-perfil](https://linkedin.com/in/seu-perfil)
-- **GitHub**: [seu-usuario](https://github.com/seu-usuario)
-
-## 📈 Roadmap
-
-### Próximas Versões
-- [ ] **v2.0**: Interface web (React/Vue.js)
-- [ ] **v2.1**: Sistema de notificações em tempo real
-- [ ] **v2.2**: Relatórios avançados e dashboards
-- [ ] **v2.3**: Integração com laboratórios externos
-- [ ] **v3.0**: App mobile (React Native/Flutter)
-- [ ] **v3.1**: Sistema de pagamentos e faturas
-- [ ] **v3.2**: IA para diagnósticos assistidos
-
-### Funcionalidades em Desenvolvimento
-- [ ] Autenticação OAuth2
-- [ ] Sistema de backup automático
-- [ ] API versioning
-- [ ] Cache Redis
-- [ ] Monitoramento com Sentry
-
----
-
-## ✅ ATUALIZAÇÃO - SWAGGER UI TOTALMENTE CONFIGURADO! (30/06/2025)
-
-### 🎯 O QUE FOI IMPLEMENTADO:
-✅ **Swagger UI configurado** e acessível em http://127.0.0.1:8000/api/docs/
-✅ **Autenticação por token** implementada e testada
-✅ **Agrupamento por Tags**: Endpoints organizados logicamente
-✅ **Regras de negócio** documentadas (CLIENTE, FUNCIONARIO, VETERINARIO, ADMIN)
-✅ **Permissões customizadas** configuradas por tipo de usuário
-✅ **Endpoints completos** para pets, agendamentos, prontuários e usuários
-✅ **Exemplos práticos** fornecidos para todos os casos de uso
-✅ **Troubleshooting** completo para resolução de problemas
-✅ **Comandos úteis** para desenvolvimento e manutenção
-
-### 📂 GRUPOS NO SWAGGER UI:
-1. **🔐 Autenticação** - Login, registro de clientes
-2. **👥 Usuários** - Gestão de perfis e permissões
-3. **🐕 Pets** - Cadastro e gestão de animais
-4. **🩺 Serviços** - Catálogo de serviços veterinários
-5. **📅 Agendamentos** - Sistema de consultas e serviços
-6. **📋 Prontuários** - Histórico médico dos pets
-
-**🎉 O sistema está pronto para uso em desenvolvimento e produção!**
-
----
-
-⭐ **Se este projeto foi útil para você, considere dar uma estrela!**
-
-[![GitHub stars](https://img.shields.io/github/stars/seu-usuario/Top_Pet_System.svg?style=social&label=Star)](https://github.com/seu-usuario/Top_Pet_System)
+docker-compose.yml - Configuração dos containers

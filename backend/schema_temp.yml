@@ -184,25 +184,6 @@ paths:
                 $ref: '#/components/schemas/ResetToken'
           description: ''
   /api/pets/:
-    get:
-      operationId: pets_list
-      description: Retorna lista de pets. Clientes veem apenas seus pets, funcionários/admins
-        veem todos.
-      summary: Listar pets
-      tags:
-      - Pets
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'
-          description: ''
     post:
       operationId: pets_create
       description: Cria um novo pet. Para clientes, o tutor é definido automaticamente.
@@ -231,6 +212,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pet'
+          description: ''
+    get:
+      operationId: pets_list
+      description: Retorna lista de pets. Clientes veem apenas seus pets, funcionários/admins
+        veem todos.
+      summary: Listar pets
+      tags:
+      - Pets
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'
           description: ''
   /api/pets/{id}/:
     patch:
@@ -463,24 +463,6 @@ paths:
                 $ref: '#/components/schemas/UserDetail'
           description: ''
   /api/users/admin/users/:
-    get:
-      operationId: users_admin_users_list
-      description: ViewSet para gestão completa de todos os usuários por administradores.
-      summary: Listar todos os usuários (Admin)
-      tags:
-      - Usuários
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserAdmin'
-          description: ''
     post:
       operationId: users_admin_users_create
       description: ViewSet para gestão completa de todos os usuários por administradores.
@@ -508,6 +490,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserAdminCreate'
+          description: ''
+    get:
+      operationId: users_admin_users_list
+      description: ViewSet para gestão completa de todos os usuários por administradores.
+      summary: Listar todos os usuários (Admin)
+      tags:
+      - Usuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserAdmin'
           description: ''
   /api/users/admin/users/{id}/:
     patch:
@@ -623,24 +623,6 @@ paths:
                 $ref: '#/components/schemas/UserAdmin'
           description: ''
   /api/users/funcionario/users/:
-    get:
-      operationId: users_funcionario_users_list
-      description: ViewSet para funcionários gerenciarem usuários do tipo CLIENTE.
-      summary: Listar clientes (Funcionário)
-      tags:
-      - Usuários
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserDetail'
-          description: ''
     post:
       operationId: users_funcionario_users_create
       description: ViewSet para funcionários gerenciarem usuários do tipo CLIENTE.
@@ -668,6 +650,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserFuncionarioCreate'
+          description: ''
+    get:
+      operationId: users_funcionario_users_list
+      description: ViewSet para funcionários gerenciarem usuários do tipo CLIENTE.
+      summary: Listar clientes (Funcionário)
+      tags:
+      - Usuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDetail'
           description: ''
   /api/users/funcionario/users/{id}/:
     patch:
@@ -747,24 +747,6 @@ paths:
                 $ref: '#/components/schemas/UserDetail'
           description: ''
   /api/configuracao/horarios-funcionamento/:
-    get:
-      operationId: configuracao_horarios_funcionamento_list
-      description: ViewSet para gerenciar horários de funcionamento da clínica
-      summary: Listar horários de funcionamento
-      tags:
-      - Configuração
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/HorarioFuncionamento'
-          description: ''
     post:
       operationId: configuracao_horarios_funcionamento_create
       description: ViewSet para gerenciar horários de funcionamento da clínica
@@ -793,7 +775,59 @@ paths:
               schema:
                 $ref: '#/components/schemas/HorarioFuncionamento'
           description: ''
+    get:
+      operationId: configuracao_horarios_funcionamento_list
+      description: ViewSet para gerenciar horários de funcionamento da clínica
+      summary: Listar horários de funcionamento
+      tags:
+      - Configuração
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HorarioFuncionamento'
+          description: ''
   /api/configuracao/horarios-funcionamento/{id}/:
+    patch:
+      operationId: configuracao_horarios_funcionamento_partial_update
+      description: ViewSet para gerenciar horários de funcionamento da clínica
+      summary: Atualizar horário parcialmente
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Horário de Funcionamento.
+        required: true
+      tags:
+      - Configuração
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedHorarioFuncionamentoRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedHorarioFuncionamentoRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedHorarioFuncionamentoRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HorarioFuncionamento'
+          description: ''
     put:
       operationId: configuracao_horarios_funcionamento_update
       description: ViewSet para gerenciar horários de funcionamento da clínica
@@ -819,40 +853,6 @@ paths:
             schema:
               $ref: '#/components/schemas/HorarioFuncionamentoRequest'
         required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HorarioFuncionamento'
-          description: ''
-    patch:
-      operationId: configuracao_horarios_funcionamento_partial_update
-      description: ViewSet para gerenciar horários de funcionamento da clínica
-      summary: Atualizar horário parcialmente
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Horário de Funcionamento.
-        required: true
-      tags:
-      - Configuração
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedHorarioFuncionamentoRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedHorarioFuncionamentoRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedHorarioFuncionamentoRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -906,24 +906,6 @@ paths:
                 $ref: '#/components/schemas/HorarioFuncionamento'
           description: ''
   /api/configuracao/feriados/:
-    get:
-      operationId: configuracao_feriados_list
-      description: ViewSet para gerenciar feriados da clínica
-      summary: Listar feriados
-      tags:
-      - Configuração
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Feriado'
-          description: ''
     post:
       operationId: configuracao_feriados_create
       description: ViewSet para gerenciar feriados da clínica
@@ -952,7 +934,59 @@ paths:
               schema:
                 $ref: '#/components/schemas/Feriado'
           description: ''
+    get:
+      operationId: configuracao_feriados_list
+      description: ViewSet para gerenciar feriados da clínica
+      summary: Listar feriados
+      tags:
+      - Configuração
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Feriado'
+          description: ''
   /api/configuracao/feriados/{id}/:
+    patch:
+      operationId: configuracao_feriados_partial_update
+      description: ViewSet para gerenciar feriados da clínica
+      summary: Atualizar feriado parcialmente
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Feriado.
+        required: true
+      tags:
+      - Configuração
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedFeriadoRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedFeriadoRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedFeriadoRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feriado'
+          description: ''
     put:
       operationId: configuracao_feriados_update
       description: ViewSet para gerenciar feriados da clínica
@@ -978,40 +1012,6 @@ paths:
             schema:
               $ref: '#/components/schemas/FeriadoRequest'
         required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Feriado'
-          description: ''
-    patch:
-      operationId: configuracao_feriados_partial_update
-      description: ViewSet para gerenciar feriados da clínica
-      summary: Atualizar feriado parcialmente
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Feriado.
-        required: true
-      tags:
-      - Configuração
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedFeriadoRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedFeriadoRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedFeriadoRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1065,26 +1065,6 @@ paths:
                 $ref: '#/components/schemas/Feriado'
           description: ''
   /api/agendamentos/servicos/:
-    get:
-      operationId: agendamentos_servicos_list
-      description: |-
-        Endpoint que permite gerenciar os Serviços da clínica veterinária.
-        - **Listar/Ver**: Qualquer usuário autenticado
-        - **Criar/Editar/Excluir**: Apenas administradores
-      tags:
-      - Agendamentos
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Servico'
-          description: ''
     post:
       operationId: agendamentos_servicos_create
       description: |-
@@ -1092,7 +1072,7 @@ paths:
         - **Listar/Ver**: Qualquer usuário autenticado
         - **Criar/Editar/Excluir**: Apenas administradores
       tags:
-      - Agendamentos
+      - agendamentos
       requestBody:
         content:
           application/json:
@@ -1115,6 +1095,26 @@ paths:
               schema:
                 $ref: '#/components/schemas/Servico'
           description: ''
+    get:
+      operationId: agendamentos_servicos_list
+      description: |-
+        Endpoint que permite gerenciar os Serviços da clínica veterinária.
+        - **Listar/Ver**: Qualquer usuário autenticado
+        - **Criar/Editar/Excluir**: Apenas administradores
+      tags:
+      - agendamentos
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Servico'
+          description: ''
   /api/agendamentos/servicos/{id}/:
     patch:
       operationId: agendamentos_servicos_partial_update
@@ -1130,7 +1130,7 @@ paths:
         description: A unique integer value identifying this servico.
         required: true
       tags:
-      - Agendamentos
+      - agendamentos
       requestBody:
         content:
           application/json:
@@ -1166,7 +1166,7 @@ paths:
         description: A unique integer value identifying this servico.
         required: true
       tags:
-      - Agendamentos
+      - agendamentos
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1187,7 +1187,7 @@ paths:
         description: A unique integer value identifying this servico.
         required: true
       tags:
-      - Agendamentos
+      - agendamentos
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1199,28 +1199,6 @@ paths:
                 $ref: '#/components/schemas/Servico'
           description: ''
   /api/agendamentos/agendamentos/:
-    get:
-      operationId: agendamentos_agendamentos_list
-      description: |-
-        Endpoint para gerenciar agendamentos de consultas e serviços.
-        **Permissões:**
-        - **Clientes**: Podem criar agendamentos para seus pets e ver apenas os próprios
-        - **Funcionários/Veterinários**: Podem ver e gerenciar todos os agendamentos
-        - **Admins**: Acesso completo a todos os agendamentos
-      tags:
-      - Agendamentos
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Agendamento'
-          description: ''
     post:
       operationId: agendamentos_agendamentos_create
       description: |-
@@ -1230,7 +1208,7 @@ paths:
         - **Funcionários/Veterinários**: Podem ver e gerenciar todos os agendamentos
         - **Admins**: Acesso completo a todos os agendamentos
       tags:
-      - Agendamentos
+      - agendamentos
       requestBody:
         content:
           application/json:
@@ -1253,6 +1231,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/Agendamento'
           description: ''
+    get:
+      operationId: agendamentos_agendamentos_list
+      description: |-
+        Endpoint para gerenciar agendamentos de consultas e serviços.
+        **Permissões:**
+        - **Clientes**: Podem criar agendamentos para seus pets e ver apenas os próprios
+        - **Funcionários/Veterinários**: Podem ver e gerenciar todos os agendamentos
+        - **Admins**: Acesso completo a todos os agendamentos
+      tags:
+      - agendamentos
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Agendamento'
+          description: ''
   /api/agendamentos/agendamentos/{id}/:
     patch:
       operationId: agendamentos_agendamentos_partial_update
@@ -1270,7 +1270,7 @@ paths:
         description: A unique integer value identifying this agendamento.
         required: true
       tags:
-      - Agendamentos
+      - agendamentos
       requestBody:
         content:
           application/json:
@@ -1308,7 +1308,7 @@ paths:
         description: A unique integer value identifying this agendamento.
         required: true
       tags:
-      - Agendamentos
+      - agendamentos
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1331,7 +1331,7 @@ paths:
         description: A unique integer value identifying this agendamento.
         required: true
       tags:
-      - Agendamentos
+      - agendamentos
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1365,28 +1365,6 @@ paths:
         '200':
           description: No response body
   /api/prontuarios/:
-    get:
-      operationId: prontuarios_list
-      description: |-
-        Lista prontuários médicos conforme permissão do usuário:
-        - **Clientes**: Apenas prontuários dos seus pets
-        - **Funcionários/Admins**: Todos os prontuários
-        - **Veterinários**: Podem criar e ver todos os prontuários
-      summary: Listar prontuários
-      tags:
-      - Prontuários
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Prontuario'
-          description: ''
     post:
       operationId: prontuarios_create
       description: Cria um novo prontuário médico (apenas veterinários e admins).
@@ -1414,6 +1392,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Prontuario'
+          description: ''
+    get:
+      operationId: prontuarios_list
+      description: |-
+        Lista prontuários médicos conforme permissão do usuário:
+        - **Clientes**: Apenas prontuários dos seus pets
+        - **Funcionários/Admins**: Todos os prontuários
+        - **Veterinários**: Podem criar e ver todos os prontuários
+      summary: Listar prontuários
+      tags:
+      - Prontuários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Prontuario'
           description: ''
   /api/prontuarios/{id}/:
     patch:
