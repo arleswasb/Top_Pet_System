@@ -46,10 +46,10 @@ O **Top Pet System** é uma API REST completa para gerenciamento de clínicas ve
 ### Navegue até o projeto
 cd \\GitHub\Top_Pet_System
 
-### Inicie os containers
+# 1. Iniciar containers PostgreSQL e aplicação
 docker-compose up -d -- build
 
-### Aguarde a inicialização (30-60 segundos)
+# 2. Aguardar containers ficarem prontos
 docker-compose ps
 
 ### Criar superusuário
@@ -61,6 +61,21 @@ docker-compose exec web python manage.py createsuperuser
 ### Login com as credenciais criadas
 ### Vá em USERS/Profiles > Selecione seu usuário
 ### Em Role Settings/Role > Selecione "Admin" > SAVE
+
+docker-compose exec web python manage.py migrate
+
+# 3. Executar migrações no container
+docker-compose exec web python manage.py migrate
+
+# 4. Executar o script de simulação CRUD
+docker-compose exec web python test_api_simulation.py
+
+# 5. Analisar resultados
+docker-compose exec web python analyze_test_report.py
+
+# 6. Ver relatório JSON
+docker-compose exec web cat api_test_report.json
+
 ```
 
 ### 🌐 URLs Principais
@@ -99,6 +114,22 @@ python manage.py runserver
 ### Login com as credenciais criadas
 ### Vá em USERS/Profiles > Selecione seu usuário
 ### Em Role Settings/Role > Selecione "Admin" > SAVE
+
+####1. Execução Automática (Linux/Mac):
+## Dar permissão de execução
+chmod +x run_crud_simulation_docker.sh
+
+## Executar simulação completa
+./run_crud_simulation_docker.sh
+
+####2. Execução Automática (Windows PowerShell):
+
+# Permitir execução de scripts
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# Executar simulação completa
+.\run_crud_simulation_docker.ps1
+
 ```
 ### ✅ Verificação
 1. Acesse http://127.0.0.1:8000/api/docs/
