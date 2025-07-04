@@ -90,13 +90,13 @@ python manage.py createsuperuser
 
 ### Iniciar servidor
 python manage.py runserver
-```
+
 ### Configure o perfil de administrador
 ### Acesse: http://127.0.0.1:8000/admin/
 ### Login com as credenciais criadas
 ### Vá em USERS/Profiles > Selecione seu usuário
 ### Em Role Settings/Role > Selecione "Admin" > SAVE
-
+```
 ### ✅ Verificação
 1. Acesse http://127.0.0.1:8000/api/docs/
 2. A interface do Swagger UI deve carregar
