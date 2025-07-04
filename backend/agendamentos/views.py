@@ -1,95 +1,45 @@
-# agendamentos/views.py
+# agendamento/views.py
+
+# --- Novas importações necessárias ---
+from datetime import date, datetime, time, timedelta
+from rest_framework.decorators import api_view, permission_classes
+# --- Fim das novas importações ---
 
 from rest_framework import viewsets, permissions, serializers, status
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 from .models import Agendamento, Servico
 from .serializers import AgendamentoSerializer, ServicoSerializer
 from .permissions import IsTutorOrAdminOrFuncionario
 from users.models import Profile
 
 @extend_schema_view(
-    list=extend_schema(
-        summary="Listar serviços",
-        description="Lista todos os serviços disponíveis na clínica veterinária.",
-        tags=["Serviços"]
-    ),
-    retrieve=extend_schema(
-        summary="Detalhes do serviço",
-        description="Obtém os detalhes de um serviço específico.",
-        tags=["Serviços"]
-    ),
-    create=extend_schema(
-        summary="Criar serviço",
-        description="Cria um novo serviço (apenas admin).",
-        tags=["Serviços"]
-    ),
-    partial_update=extend_schema(
-        summary="Atualizar serviço",
-        description="Atualiza parcialmente um serviço (apenas admin).",
-        tags=["Serviços"]
-    ),
-    destroy=extend_schema(
-        summary="Excluir serviço",
-        description="Exclui um serviço (apenas admin).",
-        tags=["Serviços"]
-    ),
+    # ... (seu código do extend_schema_view para ServicoViewSet não foi alterado) ...
 )
 class ServicoViewSet(viewsets.ModelViewSet):
     """
     Endpoint que permite gerenciar os Serviços da clínica veterinária.
-    
     - **Listar/Ver**: Qualquer usuário autenticado
     - **Criar/Editar/Excluir**: Apenas administradores
     """
     queryset = Servico.objects.all()
     serializer_class = ServicoSerializer
     permission_classes = [permissions.IsAdminUser]
-
-    # Lista de ações HTTP permitidas (removendo 'put' que é o método PUT)
     http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
 
     def get_permissions(self):
-        # Permite que qualquer usuário autenticado possa listar ou ver detalhes (leitura)
         if self.action in ['list', 'retrieve']:
             return [permissions.IsAuthenticated()]
-        # Para outras ações (create, update, delete), exige que seja admin.
         return super().get_permissions()
 
 
 @extend_schema_view(
-    list=extend_schema(
-        summary="Listar agendamentos",
-        description="Lista agendamentos conforme permissão do usuário:\n"
-                   "- **Clientes**: Apenas seus próprios agendamentos\n"
-                   "- **Funcionários/Veterinários/Admins**: Todos os agendamentos",
-        tags=["Agendamentos"]
-    ),
-    retrieve=extend_schema(
-        summary="Detalhes do agendamento",
-        description="Obtém os detalhes de um agendamento específico.",
-        tags=["Agendamentos"]
-    ),
-    create=extend_schema(
-        summary="Criar agendamento",
-        description="Cria um novo agendamento para um pet.",
-        tags=["Agendamentos"]
-    ),
-    partial_update=extend_schema(
-        summary="Atualizar agendamento",
-        description="Atualiza parcialmente um agendamento (ex: alterar status).",
-        tags=["Agendamentos"]
-    ),
-    destroy=extend_schema(
-        summary="Cancelar agendamento",
-        description="Cancela/exclui um agendamento.",
-        tags=["Agendamentos"]
-    ),
+    # ... (seu código do extend_schema_view para AgendamentoViewSet não foi alterado) ...
 )
 class AgendamentoViewSet(viewsets.ModelViewSet):
     """
     Endpoint para gerenciar agendamentos de consultas e serviços.
-    
     **Permissões:**
     - **Clientes**: Podem criar agendamentos para seus pets e ver apenas os próprios
     - **Funcionários/Veterinários**: Podem ver e gerenciar todos os agendamentos
@@ -98,32 +48,94 @@ class AgendamentoViewSet(viewsets.ModelViewSet):
     queryset = Agendamento.objects.all()
     serializer_class = AgendamentoSerializer
     permission_classes = [permissions.IsAuthenticated, IsTutorOrAdminOrFuncionario]
-
-    # Lista de ações HTTP permitidas (removendo 'put' que é o método PUT)
     http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
 
     def get_queryset(self):
         user = self.request.user
-        
-        # Verificar se o usuário tem profile
         if not hasattr(user, 'profile'):
-            # Se não tem profile, assumir que é cliente e só ver seus agendamentos
             return Agendamento.objects.filter(pet__tutor=user)
         
-        # Admins e funcionários veem todos os agendamentos
         if user.profile.role in [Profile.Role.ADMIN, Profile.Role.FUNCIONARIO] or user.is_staff:
             return Agendamento.objects.all()
         
-        # Clientes/tutores veem apenas agendamentos de seus pets
         return Agendamento.objects.filter(pet__tutor=user)
 
     def perform_create(self, serializer):
         pet = serializer.validated_data.get('pet')
         user = self.request.user
         
-        # Verificar se o usuário tem permissão para agendar para este pet
         if hasattr(user, 'profile') and user.profile.role == Profile.Role.CLIENTE:
             if pet.tutor != user:
                 raise serializers.ValidationError({"detail": "Você não tem permissão para agendar para este pet."})
         
         serializer.save()
+
+# --- NOVA VIEW ADICIONADA ---
+
+@extend_schema(
+    summary="Listar horários disponíveis",
+    description="Retorna uma lista de horários disponíveis para agendamento em um dia específico.",
+    tags=["Agendamentos"],
+    parameters=[
+        OpenApiParameter(
+            name='data',
+            description='Data para consulta no formato YYYY-MM-DD.',
+            required=True,
+            type=OpenApiTypes.DATE
+        )
+    ]
+)
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def horarios_disponiveis(request):
+    """
+    Endpoint para listar os horários disponíveis para agendamento em um dia específico.
+    Espera um parâmetro 'data' na query string no formato YYYY-MM-DD.
+    """
+    # 1. Obter e validar a data da requisição
+    data_str = request.query_params.get('data')
+    if not data_str:
+        return Response(
+            {"detail": "O parâmetro 'data' é obrigatório."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    try:
+        data_selecionada = date.fromisoformat(data_str)
+    except ValueError:
+        return Response(
+            {"detail": "Formato de data inválido. Use YYYY-MM-DD."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if data_selecionada < date.today():
+        return Response(
+            {"detail": "Não é possível consultar horários para datas passadas."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # 2. Definir regras de negócio para os horários
+    HORA_INICIO_EXPEDIENTE = time(8, 0)
+    HORA_FIM_EXPEDIENTE = time(18, 0)
+    DURACAO_SERVICO_MINUTOS = 60  # Duração de 1 hora
+
+    # 3. Gerar todos os horários possíveis para o dia
+    horarios_possiveis = []
+    horario_atual = datetime.combine(data_selecionada, HORA_INICIO_EXPEDIENTE)
+    fim_expediente = datetime.combine(data_selecionada, HORA_FIM_EXPEDIENTE)
+
+    while horario_atual < fim_expediente:
+        horarios_possiveis.append(horario_atual.time())
+        horario_atual += timedelta(minutes=DURACAO_SERVICO_MINUTOS)
+
+    # 4. Obter todos os agendamentos já existentes para a data selecionada
+    agendamentos_no_dia = Agendamento.objects.filter(data_hora__date=data_selecionada)
+    horarios_ocupados = {ag.data_hora.time() for ag in agendamentos_no_dia}
+
+    # 5. Filtrar e retornar apenas os horários disponíveis
+    horarios_disponiveis_formatados = [
+        horario.strftime('%H:%M') for horario in horarios_possiveis
+        if horario not in horarios_ocupados
+    ]
+
+    return Response(horarios_disponiveis_formatados, status=status.HTTP_200_OK)

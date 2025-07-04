@@ -5,7 +5,22 @@
 2. [🚀 Passo 1: Acessando Swagger](#-passo-1-acessando-o-swagger-ui) - Como iniciar
 3. [🔐 Passo 2: Autenticação](#-passo-2-autenticação) - Login e tokens
 4. [📋 Passo 3: Navegando Endpoints](#-passo-3-navegando-pelos-endpoints) - Estrutura da API
-5. [🎯 Passo 3.5: Regras de Negócio](#-passo-35-regras-de-negócio-e-permissões) - Permissões e validações completas
+5. [🎯 Passo 3.5: Regras de Negócio](#-passo-35-regra### 📅 Exemplo 6: Criar Agendamento
+1. **Autentique-se** como cliente ou funcionário
+2. Vá para **POST /api/agendamentos/**
+3. Clique em **"Try it out"**
+4. Insira os dados:
+   ```json
+   {
+     "pet_id": 1,
+     "servico_id": 1,
+     "data_hora": "2025-07-10T14:00:00Z",
+     "observacoes": "Checkup de rotina"
+   }
+   ```
+5. Clique em **"Execute"**
+
+### 🩺 Exemplo 7: Criar Serviço (Funcionário/Admin)ermissões) - Permissões e validações completas
 6. [🧪 Passo 4: Testando Endpoints](#-passo-4-testando-endpoints) - Exemplos práticos
 7. [🎨 Passo 5: Interface](#-passo-5-entendendo-a-interface) - Como usar a interface
 8. [🚨 Passo 6: Troubleshooting](#-passo-6-resolução-de-problemas) - Resolver problemas
@@ -53,6 +68,18 @@ docker-compose up -d
 # Verifique se está funcionando
 docker-compose ps
 ```
+# Criar o super usuário
+docker-compose exec web python manage.py createsuperuser
+Ex: username > admin; Password > admin123
+
+# Acesse a pagina de administração do Django
+http://127.0.0.1:8000/admin/
+# Faça o logon como o usuario root criado anteriormente
+# Acesse a opção USERS/profiles
+# Marque o usuario root
+# Em Role Settings/Role, selecione a opção Admin
+execute SAVE
+# agora seu usuario root tambem tem o perfil de administrador no sistema top pet
 
 ### URLs Disponíveis:
 - **Swagger UI (Interface Principal)**: http://127.0.0.1:8000/api/docs/
@@ -75,8 +102,22 @@ pip install -r requirements.txt
 # Execute migrações
 python manage.py migrate
 
+# Criar o super usuário
+python manage.py createsuperuser
+Ex: username > admin; Password > admin123
+
 # Inicie o servidor
 python manage.py runserver
+
+# Acesse a pagina de administração do Django
+http://127.0.0.1:8000/admin/
+# Faça o logon como o usuario root criado anteriormente
+# Acesse a opção USERS/profiles
+# Marque o usuario root
+# Em Role Settings/Role, selecione a opção Admin
+execute SAVE
+# agora seu usuario root tambem tem o perfil de administrador no sistema top pet
+
 ```
 
 ### ✅ Verificando se está funcionando:
@@ -92,11 +133,18 @@ python manage.py runserver
 - Username: admin
 - Password: admin123
 
-**👤 CLIENTE:**
-- Username: testuser
-- Password: testpass123
+### 🔑 Método 1: Auto-cadastro de cliente
+**🔓 Endpoint público para auto-cadastro** de novos usuários como CLIENTE.
 
-### 🔑 Método 1: Autenticação por Token Direto
+1. crie um usuario CLIENTE
+    - Username: cliente
+    - Password: cliente123
+
+2. Autentique o cliente solicitando token
+Envie username e password para receber um token de autenticação.
+1.  No popup que abrir, encontre o campo **"login e obter token"**
+
+### 🔑 Método 2: Autenticação por Token Direto
 1. No Swagger UI, clique no botão **"Authorize"** (ícone de cadeado 🔒) no topo
 2. No popup que abrir, encontre o campo **"TokenAuthentication"**
 3. Digite EXATAMENTE (com espaço após "Token"):
@@ -118,7 +166,8 @@ python manage.py runserver
    ```
 4. Clique em **"Execute"**
 5. Copie o token da resposta
-6. Use o token no botão **"Authorize"** conforme Método 1
+6. Use o token no botão **"Authorize"** e preencha o segundo campo com
+  Token(espaço) + "token que voce recebeu"
 
 ## 📋 PASSO 3: NAVEGANDO PELOS ENDPOINTS
 
@@ -128,7 +177,6 @@ python manage.py runserver
 - `GET /api/pets/` - Listar todos os pets
 - `POST /api/pets/` - Criar novo pet
 - `GET /api/pets/{id}/` - Detalhes de um pet específico
-- `PUT /api/pets/{id}/` - Atualizar pet completo
 - `PATCH /api/pets/{id}/` - Atualização parcial
 - `DELETE /api/pets/{id}/` - Remover pet
 
@@ -137,35 +185,53 @@ python manage.py runserver
 - `GET /api/admin/users/` - Listar usuários (admin)
 - `GET /api/funcionario/users/` - Listar clientes (funcionário)
 - `GET /api/funcionario/users/{id}/` - Detalhes do cliente (funcionário)
-- `PUT /api/funcionario/users/{id}/` - Atualizar cliente (funcionário)
 - `PATCH /api/funcionario/users/{id}/` - Atualização parcial cliente (funcionário)
 - `DELETE /api/funcionario/users/{id}/` - Excluir cliente (funcionário)
 - `POST /api/funcionario/create-user/` - Funcionário criar usuário
 - `POST /api/admin/create-user/` - Admin criar usuário
+- `GET /api/admin/users/{id}/` - Detalhes do usuário (admin)
+- `PATCH /api/admin/users/{id}/` - Atualizar usuário (admin)
+- `DELETE /api/admin/users/{id}/` - Excluir usuário (admin)
+- `POST /api/admin/users/{id}/toggle_active/` - Ativar/desativar usuário (admin)
 - `GET /api/logs/` - Visualizar logs (admin)
 
 #### 🔐 **AUTENTICAÇÃO** - Login e Registro
-- `POST /api/users/register/` - Auto-cadastro como cliente
+- `POST /api/register/` - Auto-cadastro como cliente
 - `POST /api/auth/token/` - Obter token de autenticação
-- `POST /api/auth/password-reset/` - Solicitar reset de senha
-- `POST /api/auth/password-reset/confirm/` - Confirmar reset de senha
-- `POST /api/auth/password-reset/validate_token/` - Validar token de reset
+- `POST /api/auth/password-reset/` - Solicitar reset de senha (sera utilizado no front end)
+- `POST /api/auth/password-reset/confirm/` - Confirmar reset de senha  (sera utilizado no front end)
+- `POST /api/auth/password-reset/validate_token/` - Validar token de reset  (sera utilizado no front end)
+
+> ⚠️ **NOTA IMPORTANTE**: A funcionalidade de troca de senha com uso do email está em fase de desenvolvimento e apenas foi testada localmente (não envia email real em produção).
 
 ### 📅 **AGENDAMENTOS** - Sistema de Agendamentos
 - `GET /api/agendamentos/` - Listar agendamentos
 - `POST /api/agendamentos/` - Criar agendamento
 - `GET /api/agendamentos/{id}/` - Detalhes do agendamento
-- `PUT /api/agendamentos/{id}/` - Atualizar agendamento
 - `PATCH /api/agendamentos/{id}/` - Atualização parcial
 - `DELETE /api/agendamentos/{id}/` - Cancelar agendamento
+- `GET /api/agendamentos/horarios-disponiveis/` - Consultar horários disponíveis
+
+#### 🩺 **SERVIÇOS** - Catálogo de Serviços Veterinários
+- `GET /api/servicos/` - Listar serviços disponíveis
+- `POST /api/servicos/` - Criar novo serviço
+- `GET /api/servicos/{id}/` - Detalhes do serviço
+- `PATCH /api/servicos/{id}/` - Atualização parcial
+- `DELETE /api/servicos/{id}/` - Remover serviço
 
 #### 📋 **PRONTUÁRIOS** - Prontuários Médicos
 - `GET /api/prontuarios/` - Listar prontuários
 - `POST /api/prontuarios/` - Criar prontuário
 - `GET /api/prontuarios/{id}/` - Detalhes do prontuário
-- `PUT /api/prontuarios/{id}/` - Atualizar prontuário
 - `PATCH /api/prontuarios/{id}/` - Atualização parcial
 - `DELETE /api/prontuarios/{id}/` - Remover prontuário
+
+#### 🔧 **SISTEMA** - Views Utilitárias
+- `GET /api/` - Página inicial da API com links de navegação
+- `GET /api/status/` - Status e informações do sistema
+- `GET /api/info/` - Informações detalhadas da API e funcionalidades
+
+> 💡 **DICA**: Estes endpoints são públicos e úteis para monitoramento e descoberta da API.
 
 ## 🔐 PASSO 3.5: REGRAS DE NEGÓCIO E PERMISSÕES
 
@@ -187,7 +253,7 @@ python manage.py runserver
 - 🔓 **Acesso**: Endpoint público (sem autenticação)
 - 📝 **Campos obrigatórios**: username, email, password, first_name, last_name
 
-#### 2. **Criação por Funcionários** (Endpoint: `/api/funcionario/users/create/`)
+#### 2. **Criação por Funcionários** (Endpoint: `/api/funcionario/create-user/`)
 - ✅ **Permitido**: Funcionários podem criar usuários dos tipos:
   - CLIENTE
   - FUNCIONARIO 
@@ -196,7 +262,7 @@ python manage.py runserver
 - 🔐 **Acesso**: Funcionários autenticados + Admins
 - 📝 **Campos extras**: Para veterinários, pode incluir CRMV e especialidade
 
-#### 3. **Criação por Administradores** (Endpoint: `/api/admin/users/create/`)
+#### 3. **Criação por Administradores** (Endpoint: `/api/admin/create-user/`)
 - ✅ **Permitido**: Admins podem criar usuários de **qualquer tipo**
   - CLIENTE
   - FUNCIONARIO
@@ -376,7 +442,21 @@ Admin tem controle total → Pode criar qualquer tipo → Pode ativar/desativar 
 4. Clique em **"Execute"**
 5. **Resultado**: Usuário criado automaticamente como CLIENTE
 
-### 📅 Exemplo 5: Criar Agendamento
+### 📅 Exemplo 5: Consultar Horários Disponíveis
+1. **Autentique-se** primeiro (qualquer tipo de usuário)
+2. Vá para **GET /api/agendamentos/horarios-disponiveis/**
+3. Clique em **"Try it out"**
+4. No parâmetro **data**, insira uma data futura:
+   ```
+   2025-07-10
+   ```
+5. Clique em **"Execute"**
+6. **Resultado**: Lista de horários disponíveis no formato:
+   ```json
+   ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"]
+   ```
+
+### 📅 Exemplo 6: Criar Agendamento
 1. **Autentique-se** como cliente ou funcionário
 2. Vá para **POST /api/agendamentos/**
 3. Clique em **"Try it out"**
@@ -391,7 +471,23 @@ Admin tem controle total → Pode criar qualquer tipo → Pode ativar/desativar 
    ```
 5. Clique em **"Execute"**
 
-### 🏥 Exemplo 6: Criar Prontuário (Veterinário/Admin)
+### 🩺 Exemplo 7: Criar Serviço (Funcionário/Admin)
+1. **Autentique-se** como funcionário ou admin
+2. Vá para **POST /api/servicos/**
+3. Clique em **"Try it out"**
+4. Insira os dados:
+   ```json
+   {
+     "nome": "Consulta Veterinária",
+     "descricao": "Consulta geral para avaliação da saúde do pet",
+     "preco": "80.00",
+     "duracao_estimada": "30 minutos",
+     "categoria": "Consulta"
+   }
+   ```
+5. Clique em **"Execute"**
+
+### 🏥 Exemplo 8: Criar Prontuário (Veterinário/Admin)
 1. **Autentique-se** como veterinário ou admin
 2. Vá para **POST /api/prontuarios/**
 3. Clique em **"Try it out"**
@@ -408,7 +504,7 @@ Admin tem controle total → Pode criar qualquer tipo → Pode ativar/desativar 
    ```
 5. Clique em **"Execute"**
 
-### 👨‍💼 Exemplo 7: Funcionário Criando Usuários
+### 👨‍💼 Exemplo 9: Funcionário Criando Usuários
 1. **Autentique-se** como funcionário ou admin
 2. Vá para **POST /api/funcionario/create-user/**
 3. Clique em **"Try it out"**
@@ -460,7 +556,7 @@ Admin tem controle total → Pode criar qualquer tipo → Pode ativar/desativar 
 ```
 5. Clique em **"Execute"**
 
-### 👑 Exemplo 8: Admin Criando Usuários
+### 👑 Exemplo 10: Admin Criando Usuários
 1. **Autentique-se** como admin
 2. Vá para **POST /api/admin/create-user/**
 3. Clique em **"Try it out"**
@@ -495,6 +591,41 @@ Admin tem controle total → Pode criar qualquer tipo → Pode ativar/desativar 
   "crmv": "67890-RJ"
 }
 ```
+5. Clique em **"Execute"**
+
+### 🔐 Exemplo 10: Reset de Senha (Desenvolvimento)
+⚠️ **Funcionalidade em desenvolvimento - apenas para teste local**
+
+**Passo 1 - Solicitar reset:**
+1. Vá para **POST /api/auth/password-reset/** (não precisa autenticação)
+2. Clique em **"Try it out"**
+3. Insira:
+   ```json
+   {
+     "email": "admin@example.com"
+   }
+   ```
+4. Clique em **"Execute"**
+5. **Em desenvolvimento**: Token aparece no console do servidor
+
+**Passo 2 - Validar token (opcional):**
+1. Vá para **POST /api/auth/password-reset/validate_token/**
+2. Insira o token recebido:
+   ```json
+   {
+     "token": "seu_token_aqui"
+   }
+   ```
+
+**Passo 3 - Confirmar nova senha:**
+1. Vá para **POST /api/auth/password-reset/confirm/**
+2. Insira:
+   ```json
+   {
+     "token": "seu_token_aqui",
+     "password": "nova_senha_123"
+   }
+   ```
 5. Clique em **"Execute"**
 
 ## 🎨 PASSO 5: ENTENDENDO A INTERFACE
@@ -666,6 +797,38 @@ Admin tem controle total → Pode criar qualquer tipo → Pode ativar/desativar 
 - Verifique console do navegador
 - Analise mensagens de erro detalhadas
 
+## 🆕 ATUALIZAÇÃO - NOVO ENDPOINT: HORÁRIOS DISPONÍVEIS (Julho 2025)
+
+### 🎯 **ENDPOINT IMPLEMENTADO:**
+✅ **GET /api/agendamentos/horarios-disponiveis/** - Consultar horários disponíveis
+
+### 🔧 **FUNCIONALIDADES:**
+- ✅ **Consulta de horários livres** por data específica
+- ✅ **Validação de parâmetros** (data obrigatória, formato YYYY-MM-DD)
+- ✅ **Regras de negócio** (expediente 8h-18h, slots de 1 hora)
+- ✅ **Autenticação obrigatória** (qualquer usuário logado)
+- ✅ **Verificação de conflitos** com agendamentos existentes
+- ✅ **Documentação Swagger** completa
+
+### 📋 **COMO USAR:**
+1. **Autentique-se** no sistema
+2. **Acesse** GET /api/agendamentos/horarios-disponiveis/
+3. **Informe** parâmetro `data` (ex: 2025-07-10)
+4. **Receba** lista de horários livres: ["08:00", "09:00", "10:00"...]
+
+### ✅ **STATUS DA INTEGRAÇÃO:**
+- ✅ Endpoint testado e funcionando
+- ✅ URLs configuradas corretamente
+- ✅ View implementada com validações
+- ✅ Schema OpenAPI atualizado
+- ✅ Documentação atualizada
+- ✅ Todos os testes passando
+
+### 🚀 **PRÓXIMOS PASSOS:**
+- Integrar com frontend para seleção de horários
+- Considerar regras de horário personalizadas por serviço
+- Implementar cache para melhor performance
+
 ## 🏁 CONCLUSÃO
 
 O Swagger UI do Top Pet System oferece uma interface completa para:
@@ -688,7 +851,7 @@ O Swagger UI do Top Pet System oferece uma interface completa para:
 - Compartilhe casos de uso interessantes
 
 ---
-**📅 Última Atualização:** Dezembro 2024
+**📅 Última Atualização:** Julho 2025
 **🔧 Versão da API:** 1.0.0
 **👨‍💻 Sistema:** Top Pet System API
 **🚀 Status:** Swagger UI Totalmente Configurado e Funcional
@@ -696,10 +859,12 @@ O Swagger UI do Top Pet System oferece uma interface completa para:
 
 ### 🎯 RESUMO FINAL:
 ✅ **Swagger UI configurado** e acessível em http://127.0.0.1:8000/api/docs/
-✅ **Autenticação por token** implementada e testada
+✅ **Autenticação por token** implementada e testada  
 ✅ **Regras de negócio** documentadas (CLIENTE, FUNCIONARIO, VETERINARIO, ADMIN)
 ✅ **Permissões customizadas** configuradas por tipo de usuário
-✅ **Endpoints completos** para pets, agendamentos, prontuários e usuários
+✅ **Endpoints completos** para pets, usuários, serviços, agendamentos e prontuários
+✅ **Reset de senha** implementado (fase de desenvolvimento)
+✅ **Métodos PUT removidos** - apenas GET, POST, PATCH e DELETE
 ✅ **Exemplos práticos** fornecidos para todos os casos de uso
 ✅ **Comandos úteis** para desenvolvimento e manutenção
 ✅ **Troubleshooting** completo para resolução de problemas
@@ -820,52 +985,3 @@ Invoke-RestMethod -Uri "http://127.0.0.1:8000/api/me/" -Headers $headers
 - `projeto_documentacao.txt` - Documentação técnica detalhada
 - `backend/requirements.txt` - Dependências Python
 - `docker-compose.yml` - Configuração dos containers
-
-### 🎓 Próximos Passos de Aprendizado:
-1. **Explorar Django Admin**: http://127.0.0.1:8000/admin/
-2. **Estudar modelos de dados**: Arquivos `models.py`
-3. **Analisar serializers**: Arquivos `serializers.py`
-4. **Entender views**: Arquivos `views.py`
-5. **Revisar permissões**: Arquivos `permissions.py`
-
-### 🔧 Customizações Possíveis:
-- **Temas do Swagger**: Modificar `SPECTACULAR_SETTINGS` em `settings.py`
-- **Documentação personalizada**: Usar decorators `@extend_schema`
-- **Exemplos customizados**: Adicionar exemplos nos serializers
-- **Filtros avançados**: Implementar filtros com `django-filter`
-- **Paginação**: Customizar classes de paginação
-- **Throttling**: Configurar rate limiting
-- **Versionamento**: Implementar versionamento da API
-
----
-
-## ✅ ATUALIZAÇÃO - AGRUPAMENTO DE ENDPOINTS CORRIGIDO! (27/06/2025)
-
-### 🎯 O QUE FOI MELHORADO:
-✅ **Agrupamento por Tags**: Os endpoints agora aparecem corretamente organizados no Swagger UI
-✅ **Ordem Lógica**: Tags reorganizadas para melhor experiência (Autenticação → Usuários → Pets → Serviços → Agendamentos → Prontuários)
-✅ **Descrições Detalhadas**: Cada grupo tem uma descrição clara de sua função
-✅ **Schema Atualizado**: Arquivo `schema.yml` regenerado com as novas configurações
-
-### 📂 GRUPOS NO SWAGGER UI:
-1. **🔐 Autenticação** - Login, registro de clientes
-2. **👥 Usuários** - Gestão de perfis e permissões 
-3. **🐕 Pets** - Cadastro e gestão de animais
-4. **🩺 Serviços** - Catálogo de serviços veterinários
-5. **📅 Agendamentos** - Sistema de consultas e serviços
-6. **📋 Prontuários** - Histórico médico dos pets
-
-### 🔧 ALTERAÇÕES TÉCNICAS:
-- `settings.py`: Tags reorganizadas em ordem lógica
-- `schema.yml`: Regenerado para refletir as mudanças
-- Todos os endpoints validados com as tags corretas
-
-### 🚀 COMO VERIFICAR:
-1. Acesse: http://127.0.0.1:8000/api/docs/
-2. Recarregue a página (F5)
-3. Observe os endpoints agora agrupados por seções
-4. Cada seção é expansível e mostra todos os endpoints relacionados
-
----
-
-**🎉 SUCESSO! O agrupamento dos endpoints no Swagger UI está funcionando perfeitamente!**

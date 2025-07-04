@@ -131,7 +131,7 @@ ROOT_URLCONF = 'top_pet.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -296,3 +296,45 @@ if 'test' in sys.argv or 'pytest' in sys.modules or 'unittest' in sys.modules:
     # Configuração de Email para Desenvolvimento
     # Imprime os e-mails no console em vez de enviá-los de verdade.
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# ======================================
+# CONFIGURAÇÃO DE EMAIL PARA PRODUÇÃO
+# ======================================
+# Descomente e configure para usar email real:
+
+# Para Gmail/Google Workspace:
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'seu-email@gmail.com'
+# EMAIL_HOST_PASSWORD = 'sua-senha-de-app'  # Use senha de app, não senha normal
+# DEFAULT_FROM_EMAIL = 'Top Pet System <seu-email@gmail.com>'
+
+# Para outros provedores (exemplo com Outlook):
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp-mail.outlook.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'seu-email@outlook.com'
+# EMAIL_HOST_PASSWORD = 'sua-senha'
+# DEFAULT_FROM_EMAIL = 'Top Pet System <seu-email@outlook.com>'
+
+# Para desenvolvimento local (imprime no console):
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Para salvar emails em arquivos (desenvolvimento):
+# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+# EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'emails')
+
+# Configurações do django-rest-passwordreset
+DJANGO_REST_PASSWORDRESET_TOKEN_CONFIG = {
+    "CLASS": "django_rest_passwordreset.tokens.RandomStringTokenGenerator",
+    "OPTIONS": {
+        "min_length": 20,
+        "max_length": 30
+    }
+}
+
+# Template de email personalizado (opcional)
+# DJANGO_REST_PASSWORDRESET_NO_INFORMATION_LEAKAGE = True
