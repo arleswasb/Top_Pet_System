@@ -1,23 +1,32 @@
 {
-  "total_tests": 25,
-  "passed": 13,
-  "failed": 12,
+  "total_tests": 108,
+  "passed": 85,
+  "failed": 23,
   "routes_tested": [
     {
       "method": "POST",
-      "endpoint": "/api/users/register/",
-      "status_code": 400,
-      "expected": 201,
-      "success": false,
-      "duration": 3.192,
-      "timestamp": "2025-07-05T02:16:46.924785",
+      "endpoint": "/api/auth/token/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 1.998,
+      "timestamp": "2025-07-05T09:59:24.453234",
+      "user_type": "admin",
       "data_sent": {
-        "username": "teste_api",
-        "email": "teste@toppet.com",
-        "password": "senha123",
-        "first_name": "Usuário",
-        "last_name": "Teste"
+        "username": "admin",
+        "password": "admin123"
       }
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/users/me/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.018,
+      "timestamp": "2025-07-05T09:59:24.473496",
+      "user_type": "admin",
+      "data_sent": null
     },
     {
       "method": "POST",
@@ -25,12 +34,74 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.587,
-      "timestamp": "2025-07-05T02:16:47.512261",
+      "duration": 0.948,
+      "timestamp": "2025-07-05T09:59:25.439435",
+      "user_type": "veterinario",
       "data_sent": {
-        "username": "teste_api",
-        "password": "senha123"
+        "username": "veterinario",
+        "password": "vet123"
       }
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/users/me/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.005,
+      "timestamp": "2025-07-05T09:59:25.469219",
+      "user_type": "veterinario",
+      "data_sent": null
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/auth/token/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.792,
+      "timestamp": "2025-07-05T09:59:26.377792",
+      "user_type": "funcionario",
+      "data_sent": {
+        "username": "funcionario",
+        "password": "func123"
+      }
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/users/me/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.012,
+      "timestamp": "2025-07-05T09:59:26.400396",
+      "user_type": "funcionario",
+      "data_sent": null
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/auth/token/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.875,
+      "timestamp": "2025-07-05T09:59:27.290260",
+      "user_type": "cliente",
+      "data_sent": {
+        "username": "cliente",
+        "password": "cliente123"
+      }
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/users/me/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.015,
+      "timestamp": "2025-07-05T09:59:27.314948",
+      "user_type": "cliente",
+      "data_sent": null
     },
     {
       "method": "GET",
@@ -38,8 +109,9 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.014,
-      "timestamp": "2025-07-05T02:16:47.526772",
+      "duration": 0.002,
+      "timestamp": "2025-07-05T09:59:27.366501",
+      "user_type": "anonimo",
       "data_sent": null
     },
     {
@@ -48,8 +120,9 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.29,
-      "timestamp": "2025-07-05T02:16:47.816975",
+      "duration": 0.084,
+      "timestamp": "2025-07-05T09:59:27.457140",
+      "user_type": "anonimo",
       "data_sent": null
     },
     {
@@ -58,8 +131,9 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 1.81,
-      "timestamp": "2025-07-05T02:16:49.627212",
+      "duration": 0.769,
+      "timestamp": "2025-07-05T09:59:28.234671",
+      "user_type": "anonimo",
       "data_sent": null
     },
     {
@@ -69,8 +143,142 @@
       "expected": 200,
       "success": true,
       "duration": 0.007,
-      "timestamp": "2025-07-05T02:16:49.650667",
+      "timestamp": "2025-07-05T09:59:28.315534",
+      "user_type": "admin",
       "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/users/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.004,
+      "timestamp": "2025-07-05T09:59:28.326335",
+      "user_type": "funcionario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/users/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.004,
+      "timestamp": "2025-07-05T09:59:28.336584",
+      "user_type": "cliente",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/users/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.005,
+      "timestamp": "2025-07-05T09:59:28.350731",
+      "user_type": "veterinario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/users/me/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.009,
+      "timestamp": "2025-07-05T09:59:28.364681",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/users/me/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.025,
+      "timestamp": "2025-07-05T09:59:28.394489",
+      "user_type": "admin",
+      "data_sent": {
+        "first_name": "Admin Atualizado",
+        "last_name": "Via API"
+      }
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/users/me/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.006,
+      "timestamp": "2025-07-05T09:59:28.406542",
+      "user_type": "veterinario",
+      "data_sent": null
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/users/me/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.017,
+      "timestamp": "2025-07-05T09:59:28.423980",
+      "user_type": "veterinario",
+      "data_sent": {
+        "first_name": "Veterinario Atualizado",
+        "last_name": "Via API"
+      }
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/users/me/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.004,
+      "timestamp": "2025-07-05T09:59:28.436508",
+      "user_type": "funcionario",
+      "data_sent": null
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/users/me/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.016,
+      "timestamp": "2025-07-05T09:59:28.459730",
+      "user_type": "funcionario",
+      "data_sent": {
+        "first_name": "Funcionario Atualizado",
+        "last_name": "Via API"
+      }
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/users/me/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.004,
+      "timestamp": "2025-07-05T09:59:28.468035",
+      "user_type": "cliente",
+      "data_sent": null
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/users/me/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.018,
+      "timestamp": "2025-07-05T09:59:28.488061",
+      "user_type": "cliente",
+      "data_sent": {
+        "first_name": "Cliente Atualizado",
+        "last_name": "Via API"
+      }
     },
     {
       "method": "POST",
@@ -78,10 +286,68 @@
       "status_code": 201,
       "expected": 201,
       "success": true,
-      "duration": 0.096,
-      "timestamp": "2025-07-05T02:16:49.746658",
+      "duration": 0.015,
+      "timestamp": "2025-07-05T09:59:28.512967",
+      "user_type": "cliente",
       "data_sent": {
-        "nome": "Rex",
+        "nome": "Rex Teste",
+        "especie": "Cachorro",
+        "raca": "Labrador",
+        "idade": 3,
+        "peso": 25.5,
+        "cor": "Dourado",
+        "observacoes": "Pet muito dócil e brincalhão"
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/pets/",
+      "status_code": 201,
+      "expected": 201,
+      "success": true,
+      "duration": 0.015,
+      "timestamp": "2025-07-05T09:59:28.531342",
+      "user_type": "admin",
+      "data_sent": {
+        "nome": "Rex Admin",
+        "especie": "Cachorro",
+        "raca": "Labrador",
+        "idade": 3,
+        "peso": 25.5,
+        "cor": "Dourado",
+        "observacoes": "Pet muito dócil e brincalhão"
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/pets/",
+      "status_code": 201,
+      "expected": 201,
+      "success": true,
+      "duration": 0.019,
+      "timestamp": "2025-07-05T09:59:28.552624",
+      "user_type": "funcionario",
+      "data_sent": {
+        "nome": "Rex Funcionário",
+        "especie": "Cachorro",
+        "raca": "Labrador",
+        "idade": 3,
+        "peso": 25.5,
+        "cor": "Dourado",
+        "observacoes": "Pet muito dócil e brincalhão"
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/pets/",
+      "status_code": 201,
+      "expected": 201,
+      "success": true,
+      "duration": 0.022,
+      "timestamp": "2025-07-05T09:59:28.576499",
+      "user_type": "veterinario",
+      "data_sent": {
+        "nome": "Rex Veterinário",
         "especie": "Cachorro",
         "raca": "Labrador",
         "idade": 3,
@@ -96,77 +362,202 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.017,
-      "timestamp": "2025-07-05T02:16:49.764173",
+      "duration": 0.006,
+      "timestamp": "2025-07-05T09:59:28.588106",
+      "user_type": "admin",
       "data_sent": null
     },
     {
       "method": "GET",
-      "endpoint": "/api/pets/16/",
+      "endpoint": "/api/pets/",
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.019,
-      "timestamp": "2025-07-05T02:16:49.783327",
+      "duration": 0.008,
+      "timestamp": "2025-07-05T09:59:28.604923",
+      "user_type": "veterinario",
       "data_sent": null
     },
     {
-      "method": "PUT",
-      "endpoint": "/api/pets/16/",
-      "status_code": 405,
-      "expected": 200,
-      "success": false,
-      "duration": 0.175,
-      "timestamp": "2025-07-05T02:16:49.958712",
-      "data_sent": {
-        "nome": "Rex Atualizado",
-        "especie": "Cachorro",
-        "raca": "Labrador",
-        "idade": 3,
-        "peso": 26.0,
-        "cor": "Dourado",
-        "observacoes": "Pet atualizado via API"
-      }
-    },
-    {
-      "method": "PATCH",
-      "endpoint": "/api/pets/16/",
+      "method": "GET",
+      "endpoint": "/api/pets/",
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.05,
-      "timestamp": "2025-07-05T02:16:50.008812",
+      "duration": 0.009,
+      "timestamp": "2025-07-05T09:59:28.615566",
+      "user_type": "funcionario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/pets/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.009,
+      "timestamp": "2025-07-05T09:59:28.629625",
+      "user_type": "cliente",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/pets/9/",
+      "status_code": 403,
+      "expected": 200,
+      "success": false,
+      "duration": 0.036,
+      "timestamp": "2025-07-05T09:59:28.668978",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/pets/9/",
+      "status_code": 403,
+      "expected": 200,
+      "success": false,
+      "duration": 0.022,
+      "timestamp": "2025-07-05T09:59:28.704607",
+      "user_type": "admin",
       "data_sent": {
-        "idade": 4
+        "peso": 26.0
+      }
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/pets/9/",
+      "status_code": 403,
+      "expected": 200,
+      "success": false,
+      "duration": 0.021,
+      "timestamp": "2025-07-05T09:59:28.736436",
+      "user_type": "veterinario",
+      "data_sent": null
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/pets/9/",
+      "status_code": 403,
+      "expected": 200,
+      "success": false,
+      "duration": 0.042,
+      "timestamp": "2025-07-05T09:59:28.791330",
+      "user_type": "veterinario",
+      "data_sent": {
+        "peso": 26.0
+      }
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/pets/9/",
+      "status_code": 403,
+      "expected": 200,
+      "success": false,
+      "duration": 0.039,
+      "timestamp": "2025-07-05T09:59:28.839775",
+      "user_type": "funcionario",
+      "data_sent": null
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/pets/9/",
+      "status_code": 403,
+      "expected": 200,
+      "success": false,
+      "duration": 0.024,
+      "timestamp": "2025-07-05T09:59:28.882400",
+      "user_type": "funcionario",
+      "data_sent": {
+        "peso": 26.0
+      }
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/pets/9/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.012,
+      "timestamp": "2025-07-05T09:59:28.896865",
+      "user_type": "cliente",
+      "data_sent": null
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/pets/9/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.077,
+      "timestamp": "2025-07-05T09:59:28.979537",
+      "user_type": "cliente",
+      "data_sent": {
+        "peso": 26.0
       }
     },
     {
       "method": "POST",
-      "endpoint": "/api/pets/",
+      "endpoint": "/api/agendamentos/servicos/",
       "status_code": 201,
       "expected": 201,
       "success": true,
-      "duration": 0.028,
-      "timestamp": "2025-07-05T02:16:50.036579",
+      "duration": 0.014,
+      "timestamp": "2025-07-05T09:59:29.003089",
+      "user_type": "admin",
       "data_sent": {
-        "nome": "Mia",
-        "especie": "Gato",
-        "raca": "Siamês",
-        "idade": 2,
-        "peso": 4.5,
-        "cor": "Branco e marrom"
+        "nome": "Consulta Veterinária Teste",
+        "descricao": "Consulta geral com veterinário",
+        "preco": "150.00",
+        "duracao_minutos": 60,
+        "ativo": true
       }
     },
     {
       "method": "POST",
-      "endpoint": "/api/servicos/",
-      "status_code": 404,
+      "endpoint": "/api/agendamentos/servicos/",
+      "status_code": 403,
       "expected": 201,
       "success": false,
-      "duration": 0.14,
-      "timestamp": "2025-07-05T02:16:50.177091",
+      "duration": 0.01,
+      "timestamp": "2025-07-05T09:59:29.015039",
+      "user_type": "funcionario",
       "data_sent": {
-        "nome": "Consulta Veterinária",
+        "nome": "Banho e Tosa",
+        "descricao": "Consulta geral com veterinário",
+        "preco": "150.00",
+        "duracao_minutos": 60,
+        "ativo": true
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/agendamentos/servicos/",
+      "status_code": 403,
+      "expected": 201,
+      "success": false,
+      "duration": 0.011,
+      "timestamp": "2025-07-05T09:59:29.030633",
+      "user_type": "veterinario",
+      "data_sent": {
+        "nome": "Cirurgia",
+        "descricao": "Consulta geral com veterinário",
+        "preco": "150.00",
+        "duracao_minutos": 60,
+        "ativo": true
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/agendamentos/servicos/",
+      "status_code": 403,
+      "expected": 403,
+      "success": true,
+      "duration": 0.012,
+      "timestamp": "2025-07-05T09:59:29.050978",
+      "user_type": "cliente",
+      "data_sent": {
+        "nome": "Consulta Veterinária Teste",
         "descricao": "Consulta geral com veterinário",
         "preco": "150.00",
         "duracao_minutos": 60,
@@ -175,42 +566,98 @@
     },
     {
       "method": "GET",
-      "endpoint": "/api/servicos/",
-      "status_code": 404,
+      "endpoint": "/api/agendamentos/servicos/",
+      "status_code": 200,
       "expected": 200,
-      "success": false,
-      "duration": 0.057,
-      "timestamp": "2025-07-05T02:16:50.234467",
+      "success": true,
+      "duration": 0.006,
+      "timestamp": "2025-07-05T09:59:29.063412",
+      "user_type": "admin",
       "data_sent": null
     },
     {
-      "method": "POST",
-      "endpoint": "/api/servicos/",
-      "status_code": 404,
-      "expected": 201,
-      "success": false,
-      "duration": 0.076,
-      "timestamp": "2025-07-05T02:16:50.310855",
+      "method": "GET",
+      "endpoint": "/api/agendamentos/servicos/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.003,
+      "timestamp": "2025-07-05T09:59:29.070577",
+      "user_type": "veterinario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/servicos/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.006,
+      "timestamp": "2025-07-05T09:59:29.079509",
+      "user_type": "funcionario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/servicos/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.006,
+      "timestamp": "2025-07-05T09:59:29.086003",
+      "user_type": "cliente",
+      "data_sent": null
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/agendamentos/servicos/3/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.02,
+      "timestamp": "2025-07-05T09:59:29.111399",
+      "user_type": "admin",
       "data_sent": {
-        "nome": "Banho e Tosa",
-        "descricao": "Banho completo com tosa",
-        "preco": "80.00",
-        "duracao_minutos": 120
+        "preco": "180.00"
       }
     },
     {
-      "method": "POST",
-      "endpoint": "/api/servicos/",
-      "status_code": 404,
-      "expected": 201,
+      "method": "PATCH",
+      "endpoint": "/api/agendamentos/servicos/3/",
+      "status_code": 403,
+      "expected": 200,
       "success": false,
-      "duration": 0.091,
-      "timestamp": "2025-07-05T02:16:50.402206",
+      "duration": 0.008,
+      "timestamp": "2025-07-05T09:59:29.121507",
+      "user_type": "veterinario",
       "data_sent": {
-        "nome": "Vacinação",
-        "descricao": "Aplicação de vacinas",
-        "preco": "50.00",
-        "duracao_minutos": 30
+        "preco": "180.00"
+      }
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/agendamentos/servicos/3/",
+      "status_code": 403,
+      "expected": 200,
+      "success": false,
+      "duration": 0.057,
+      "timestamp": "2025-07-05T09:59:29.219769",
+      "user_type": "funcionario",
+      "data_sent": {
+        "preco": "180.00"
+      }
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/agendamentos/servicos/3/",
+      "status_code": 403,
+      "expected": 403,
+      "success": true,
+      "duration": 0.01,
+      "timestamp": "2025-07-05T09:59:29.265334",
+      "user_type": "cliente",
+      "data_sent": {
+        "preco": "180.00"
       }
     },
     {
@@ -219,10 +666,71 @@
       "status_code": 403,
       "expected": 201,
       "success": false,
-      "duration": 0.034,
-      "timestamp": "2025-07-05T02:16:50.436368",
+      "duration": 0.013,
+      "timestamp": "2025-07-05T09:59:29.331399",
+      "user_type": "veterinario",
       "data_sent": {
-        "pet": 16,
+        "pet": 9,
+        "data_consulta": "2025-07-05",
+        "sintomas": "Animal apresentando letargia e falta de apetite",
+        "diagnostico": "Possível infecção gastrointestinal",
+        "tratamento": "Antibiótico por 7 dias + dieta leve",
+        "observacoes": "Retorno em 1 semana para avaliação",
+        "peso_atual": 25.8,
+        "temperatura": 38.5
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/prontuarios/",
+      "status_code": 400,
+      "expected": 201,
+      "success": false,
+      "duration": 0.008,
+      "timestamp": "2025-07-05T09:59:29.341610",
+      "user_type": "admin",
+      "data_sent": {
+        "pet": 9,
+        "data_consulta": "2025-07-05",
+        "sintomas": "Animal apresentando letargia e falta de apetite",
+        "diagnostico": "Possível infecção gastrointestinal",
+        "tratamento": "Antibiótico por 7 dias + dieta leve",
+        "observacoes": "Prontuário criado por admin",
+        "peso_atual": 25.8,
+        "temperatura": 38.5
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/prontuarios/",
+      "status_code": 403,
+      "expected": 201,
+      "success": false,
+      "duration": 0.013,
+      "timestamp": "2025-07-05T09:59:29.363444",
+      "user_type": "funcionario",
+      "data_sent": {
+        "pet": 9,
+        "data_consulta": "2025-07-05",
+        "sintomas": "Animal apresentando letargia e falta de apetite",
+        "diagnostico": "Possível infecção gastrointestinal",
+        "tratamento": "Antibiótico por 7 dias + dieta leve",
+        "observacoes": "Retorno em 1 semana para avaliação",
+        "peso_atual": 25.8,
+        "temperatura": 38.5
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/prontuarios/",
+      "status_code": 403,
+      "expected": 403,
+      "success": true,
+      "duration": 0.008,
+      "timestamp": "2025-07-05T09:59:29.374549",
+      "user_type": "cliente",
+      "data_sent": {
+        "pet": 9,
         "data_consulta": "2025-07-05",
         "sintomas": "Animal apresentando letargia e falta de apetite",
         "diagnostico": "Possível infecção gastrointestinal",
@@ -238,48 +746,481 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.034,
-      "timestamp": "2025-07-05T02:16:50.470565",
+      "duration": 0.017,
+      "timestamp": "2025-07-05T09:59:29.398816",
+      "user_type": "admin",
       "data_sent": null
     },
     {
       "method": "GET",
-      "endpoint": "/api/pets/16/prontuarios/",
-      "status_code": 404,
+      "endpoint": "/api/prontuarios/",
+      "status_code": 200,
       "expected": 200,
-      "success": false,
-      "duration": 0.146,
-      "timestamp": "2025-07-05T02:16:50.616522",
+      "success": true,
+      "duration": 0.009,
+      "timestamp": "2025-07-05T09:59:29.413388",
+      "user_type": "veterinario",
       "data_sent": null
     },
     {
       "method": "GET",
-      "endpoint": "/api/configuracao/horarios/",
+      "endpoint": "/api/prontuarios/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.005,
+      "timestamp": "2025-07-05T09:59:29.424379",
+      "user_type": "funcionario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/prontuarios/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.006,
+      "timestamp": "2025-07-05T09:59:29.437102",
+      "user_type": "cliente",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/prontuarios/?pet=9",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.06,
+      "timestamp": "2025-07-05T09:59:29.506136",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/prontuarios/?pet=9",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.009,
+      "timestamp": "2025-07-05T09:59:29.517390",
+      "user_type": "veterinario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/prontuarios/?pet=9",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.008,
+      "timestamp": "2025-07-05T09:59:29.537872",
+      "user_type": "funcionario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/prontuarios/?pet=9",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.011,
+      "timestamp": "2025-07-05T09:59:29.551525",
+      "user_type": "cliente",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/horarios-disponiveis/?data=2025-07-06",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.005,
+      "timestamp": "2025-07-05T09:59:29.600149",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/horarios-disponiveis/?data=2025-07-06",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.009,
+      "timestamp": "2025-07-05T09:59:29.617713",
+      "user_type": "veterinario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/horarios-disponiveis/?data=2025-07-06",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.008,
+      "timestamp": "2025-07-05T09:59:29.630827",
+      "user_type": "funcionario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/horarios-disponiveis/?data=2025-07-06",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.004,
+      "timestamp": "2025-07-05T09:59:29.639293",
+      "user_type": "cliente",
+      "data_sent": null
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/agendamentos/",
+      "status_code": 201,
+      "expected": 201,
+      "success": true,
+      "duration": 0.023,
+      "timestamp": "2025-07-05T09:59:29.670641",
+      "user_type": "cliente",
+      "data_sent": {
+        "pet_id": 9,
+        "servico_id": 3,
+        "data_hora": "2025-07-06T14:00:00",
+        "observacoes": "Agendamento teste via API"
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/agendamentos/",
+      "status_code": 201,
+      "expected": 201,
+      "success": true,
+      "duration": 0.019,
+      "timestamp": "2025-07-05T09:59:29.698468",
+      "user_type": "funcionario",
+      "data_sent": {
+        "pet_id": 9,
+        "servico_id": 3,
+        "data_hora": "2025-07-06T15:00:00",
+        "observacoes": "Agendamento teste via API"
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/agendamentos/",
+      "status_code": 201,
+      "expected": 201,
+      "success": true,
+      "duration": 0.017,
+      "timestamp": "2025-07-05T09:59:29.718363",
+      "user_type": "admin",
+      "data_sent": {
+        "pet_id": 9,
+        "servico_id": 3,
+        "data_hora": "2025-07-06T16:00:00",
+        "observacoes": "Agendamento teste via API"
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/agendamentos/",
+      "status_code": 201,
+      "expected": 201,
+      "success": true,
+      "duration": 0.017,
+      "timestamp": "2025-07-05T09:59:29.740016",
+      "user_type": "veterinario",
+      "data_sent": {
+        "pet_id": 9,
+        "servico_id": 3,
+        "data_hora": "2025-07-06T17:00:00",
+        "observacoes": "Agendamento teste via API"
+      }
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.015,
+      "timestamp": "2025-07-05T09:59:29.759477",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.004,
+      "timestamp": "2025-07-05T09:59:29.769650",
+      "user_type": "veterinario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.01,
+      "timestamp": "2025-07-05T09:59:29.782365",
+      "user_type": "funcionario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.038,
+      "timestamp": "2025-07-05T09:59:29.830286",
+      "user_type": "cliente",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/?data=2025-07-06",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.03,
+      "timestamp": "2025-07-05T09:59:29.865786",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/?data=2025-07-06",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.008,
+      "timestamp": "2025-07-05T09:59:29.888683",
+      "user_type": "veterinario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/?data=2025-07-06",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.005,
+      "timestamp": "2025-07-05T09:59:29.902465",
+      "user_type": "funcionario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/?data=2025-07-06",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.039,
+      "timestamp": "2025-07-05T09:59:29.946692",
+      "user_type": "cliente",
+      "data_sent": null
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/agendamentos/1/",
+      "status_code": 400,
+      "expected": 200,
+      "success": false,
+      "duration": 0.014,
+      "timestamp": "2025-07-05T09:59:29.964891",
+      "user_type": "admin",
+      "data_sent": {
+        "status": "confirmado"
+      }
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/agendamentos/1/",
       "status_code": 404,
       "expected": 200,
       "success": false,
-      "duration": 0.17,
-      "timestamp": "2025-07-05T02:16:50.786830",
+      "duration": 0.026,
+      "timestamp": "2025-07-05T09:59:29.997028",
+      "user_type": "veterinario",
+      "data_sent": {
+        "status": "confirmado"
+      }
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/agendamentos/1/",
+      "status_code": 404,
+      "expected": 200,
+      "success": false,
+      "duration": 0.016,
+      "timestamp": "2025-07-05T09:59:30.020570",
+      "user_type": "funcionario",
+      "data_sent": {
+        "status": "confirmado"
+      }
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/agendamentos/1/",
+      "status_code": 400,
+      "expected": 200,
+      "success": false,
+      "duration": 0.021,
+      "timestamp": "2025-07-05T09:59:30.044805",
+      "user_type": "cliente",
+      "data_sent": {
+        "status": "confirmado"
+      }
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/configuracao/horarios-funcionamento/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.011,
+      "timestamp": "2025-07-05T09:59:30.114221",
+      "user_type": "admin",
       "data_sent": null
     },
     {
       "method": "GET",
       "endpoint": "/api/configuracao/feriados/",
-      "status_code": 403,
+      "status_code": 200,
       "expected": 200,
-      "success": false,
-      "duration": 0.035,
-      "timestamp": "2025-07-05T02:16:50.821577",
+      "success": true,
+      "duration": 0.006,
+      "timestamp": "2025-07-05T09:59:30.174865",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/configuracao/horarios-funcionamento/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.004,
+      "timestamp": "2025-07-05T09:59:30.229141",
+      "user_type": "veterinario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/configuracao/feriados/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.019,
+      "timestamp": "2025-07-05T09:59:30.281675",
+      "user_type": "veterinario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/configuracao/horarios-funcionamento/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.006,
+      "timestamp": "2025-07-05T09:59:30.315693",
+      "user_type": "funcionario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/configuracao/feriados/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.003,
+      "timestamp": "2025-07-05T09:59:30.334726",
+      "user_type": "funcionario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/configuracao/horarios-funcionamento/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.008,
+      "timestamp": "2025-07-05T09:59:30.365648",
+      "user_type": "cliente",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/configuracao/feriados/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.005,
+      "timestamp": "2025-07-05T09:59:30.378936",
+      "user_type": "cliente",
       "data_sent": null
     },
     {
       "method": "POST",
-      "endpoint": "/api/configuracao/horarios/",
-      "status_code": 404,
+      "endpoint": "/api/configuracao/horarios-funcionamento/",
+      "status_code": 403,
       "expected": 201,
       "success": false,
-      "duration": 0.313,
-      "timestamp": "2025-07-05T02:16:51.134896",
+      "duration": 0.016,
+      "timestamp": "2025-07-05T09:59:30.403385",
+      "user_type": "admin",
+      "data_sent": {
+        "dia_semana": 1,
+        "hora_abertura": "08:00:00",
+        "hora_fechamento": "18:00:00",
+        "ativo": true
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/configuracao/horarios-funcionamento/",
+      "status_code": 403,
+      "expected": 201,
+      "success": false,
+      "duration": 0.021,
+      "timestamp": "2025-07-05T09:59:30.437245",
+      "user_type": "funcionario",
+      "data_sent": {
+        "dia_semana": 1,
+        "hora_abertura": "08:00:00",
+        "hora_fechamento": "18:00:00",
+        "ativo": true
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/configuracao/horarios-funcionamento/",
+      "status_code": 403,
+      "expected": 403,
+      "success": true,
+      "duration": 0.01,
+      "timestamp": "2025-07-05T09:59:30.454031",
+      "user_type": "veterinario",
+      "data_sent": {
+        "dia_semana": 1,
+        "hora_abertura": "08:00:00",
+        "hora_fechamento": "18:00:00",
+        "ativo": true
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/configuracao/horarios-funcionamento/",
+      "status_code": 403,
+      "expected": 403,
+      "success": true,
+      "duration": 0.013,
+      "timestamp": "2025-07-05T09:59:30.469396",
+      "user_type": "cliente",
       "data_sent": {
         "dia_semana": 1,
         "hora_abertura": "08:00:00",
@@ -293,8 +1234,54 @@
       "status_code": 403,
       "expected": 201,
       "success": false,
-      "duration": 0.092,
-      "timestamp": "2025-07-05T02:16:51.227328",
+      "duration": 0.011,
+      "timestamp": "2025-07-05T09:59:30.484243",
+      "user_type": "admin",
+      "data_sent": {
+        "nome": "Dia do Teste",
+        "data": "2025-08-04",
+        "ativo": true
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/configuracao/feriados/",
+      "status_code": 403,
+      "expected": 403,
+      "success": true,
+      "duration": 0.012,
+      "timestamp": "2025-07-05T09:59:30.499182",
+      "user_type": "veterinario",
+      "data_sent": {
+        "nome": "Dia do Teste",
+        "data": "2025-08-04",
+        "ativo": true
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/configuracao/feriados/",
+      "status_code": 403,
+      "expected": 403,
+      "success": true,
+      "duration": 0.006,
+      "timestamp": "2025-07-05T09:59:30.507066",
+      "user_type": "funcionario",
+      "data_sent": {
+        "nome": "Dia do Teste",
+        "data": "2025-08-04",
+        "ativo": true
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/configuracao/feriados/",
+      "status_code": 403,
+      "expected": 403,
+      "success": true,
+      "duration": 0.011,
+      "timestamp": "2025-07-05T09:59:30.518242",
+      "user_type": "cliente",
       "data_sent": {
         "nome": "Dia do Teste",
         "data": "2025-08-04",
@@ -303,75 +1290,248 @@
     },
     {
       "method": "DELETE",
-      "endpoint": "/api/pets/16/",
+      "endpoint": "/api/agendamentos/1/",
       "status_code": 204,
       "expected": 204,
       "success": true,
-      "duration": 0.093,
-      "timestamp": "2025-07-05T02:16:51.320441",
+      "duration": 0.022,
+      "timestamp": "2025-07-05T09:59:30.540977",
+      "user_type": "admin",
       "data_sent": null
     },
     {
       "method": "DELETE",
-      "endpoint": "/api/pets/17/",
+      "endpoint": "/api/agendamentos/2/",
       "status_code": 204,
       "expected": 204,
       "success": true,
-      "duration": 0.038,
-      "timestamp": "2025-07-05T02:16:51.358305",
+      "duration": 0.014,
+      "timestamp": "2025-07-05T09:59:30.555895",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "DELETE",
+      "endpoint": "/api/agendamentos/3/",
+      "status_code": 204,
+      "expected": 204,
+      "success": true,
+      "duration": 0.016,
+      "timestamp": "2025-07-05T09:59:30.579477",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "DELETE",
+      "endpoint": "/api/agendamentos/4/",
+      "status_code": 204,
+      "expected": 204,
+      "success": true,
+      "duration": 0.019,
+      "timestamp": "2025-07-05T09:59:30.601515",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "DELETE",
+      "endpoint": "/api/pets/9/",
+      "status_code": 403,
+      "expected": 204,
+      "success": false,
+      "duration": 0.013,
+      "timestamp": "2025-07-05T09:59:30.615801",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "DELETE",
+      "endpoint": "/api/pets/10/",
+      "status_code": 204,
+      "expected": 204,
+      "success": true,
+      "duration": 0.022,
+      "timestamp": "2025-07-05T09:59:30.643235",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "DELETE",
+      "endpoint": "/api/pets/11/",
+      "status_code": 403,
+      "expected": 204,
+      "success": false,
+      "duration": 0.009,
+      "timestamp": "2025-07-05T09:59:30.656364",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "DELETE",
+      "endpoint": "/api/pets/12/",
+      "status_code": 403,
+      "expected": 204,
+      "success": false,
+      "duration": 0.016,
+      "timestamp": "2025-07-05T09:59:30.674009",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "DELETE",
+      "endpoint": "/api/agendamentos/servicos/3/",
+      "status_code": 204,
+      "expected": 204,
+      "success": true,
+      "duration": 0.016,
+      "timestamp": "2025-07-05T09:59:30.698814",
+      "user_type": "admin",
       "data_sent": null
     }
   ],
   "errors": [
     {
-      "route": "POST /api/users/register/",
-      "error": "Status 400, esperado 201"
-    },
-    {
-      "route": "PUT /api/pets/16/",
-      "error": "Status 405, esperado 200"
-    },
-    {
-      "route": "POST /api/servicos/",
-      "error": "Status 404, esperado 201"
-    },
-    {
-      "route": "GET /api/servicos/",
-      "error": "Status 404, esperado 200"
-    },
-    {
-      "route": "POST /api/servicos/",
-      "error": "Status 404, esperado 201"
-    },
-    {
-      "route": "POST /api/servicos/",
-      "error": "Status 404, esperado 201"
-    },
-    {
-      "route": "POST /api/prontuarios/",
-      "error": "Status 403, esperado 201"
-    },
-    {
-      "route": "GET /api/pets/16/prontuarios/",
-      "error": "Status 404, esperado 200"
-    },
-    {
-      "route": "GET /api/configuracao/horarios/",
-      "error": "Status 404, esperado 200"
-    },
-    {
-      "route": "GET /api/configuracao/feriados/",
+      "route": "GET /api/pets/9/",
+      "user_type": "admin",
       "error": "Status 403, esperado 200"
     },
     {
-      "route": "POST /api/configuracao/horarios/",
-      "error": "Status 404, esperado 201"
+      "route": "PATCH /api/pets/9/",
+      "user_type": "admin",
+      "error": "Status 403, esperado 200"
+    },
+    {
+      "route": "GET /api/pets/9/",
+      "user_type": "veterinario",
+      "error": "Status 403, esperado 200"
+    },
+    {
+      "route": "PATCH /api/pets/9/",
+      "user_type": "veterinario",
+      "error": "Status 403, esperado 200"
+    },
+    {
+      "route": "GET /api/pets/9/",
+      "user_type": "funcionario",
+      "error": "Status 403, esperado 200"
+    },
+    {
+      "route": "PATCH /api/pets/9/",
+      "user_type": "funcionario",
+      "error": "Status 403, esperado 200"
+    },
+    {
+      "route": "POST /api/agendamentos/servicos/",
+      "user_type": "funcionario",
+      "error": "Status 403, esperado 201"
+    },
+    {
+      "route": "POST /api/agendamentos/servicos/",
+      "user_type": "veterinario",
+      "error": "Status 403, esperado 201"
+    },
+    {
+      "route": "PATCH /api/agendamentos/servicos/3/",
+      "user_type": "veterinario",
+      "error": "Status 403, esperado 200"
+    },
+    {
+      "route": "PATCH /api/agendamentos/servicos/3/",
+      "user_type": "funcionario",
+      "error": "Status 403, esperado 200"
+    },
+    {
+      "route": "POST /api/prontuarios/",
+      "user_type": "veterinario",
+      "error": "Status 403, esperado 201"
+    },
+    {
+      "route": "POST /api/prontuarios/",
+      "user_type": "admin",
+      "error": "Status 400, esperado 201"
+    },
+    {
+      "route": "POST /api/prontuarios/",
+      "user_type": "funcionario",
+      "error": "Status 403, esperado 201"
+    },
+    {
+      "route": "PATCH /api/agendamentos/1/",
+      "user_type": "admin",
+      "error": "Status 400, esperado 200"
+    },
+    {
+      "route": "PATCH /api/agendamentos/1/",
+      "user_type": "veterinario",
+      "error": "Status 404, esperado 200"
+    },
+    {
+      "route": "PATCH /api/agendamentos/1/",
+      "user_type": "funcionario",
+      "error": "Status 404, esperado 200"
+    },
+    {
+      "route": "PATCH /api/agendamentos/1/",
+      "user_type": "cliente",
+      "error": "Status 400, esperado 200"
+    },
+    {
+      "route": "POST /api/configuracao/horarios-funcionamento/",
+      "user_type": "admin",
+      "error": "Status 403, esperado 201"
+    },
+    {
+      "route": "POST /api/configuracao/horarios-funcionamento/",
+      "user_type": "funcionario",
+      "error": "Status 403, esperado 201"
     },
     {
       "route": "POST /api/configuracao/feriados/",
+      "user_type": "admin",
       "error": "Status 403, esperado 201"
+    },
+    {
+      "route": "DELETE /api/pets/9/",
+      "user_type": "admin",
+      "error": "Status 403, esperado 204"
+    },
+    {
+      "route": "DELETE /api/pets/11/",
+      "user_type": "admin",
+      "error": "Status 403, esperado 204"
+    },
+    {
+      "route": "DELETE /api/pets/12/",
+      "user_type": "admin",
+      "error": "Status 403, esperado 204"
     }
   ],
   "timing": {},
-  "total_duration": 7.626
+  "user_tests": {
+    "admin": {
+      "passed": 24,
+      "failed": 9,
+      "total": 33
+    },
+    "veterinario": {
+      "passed": 18,
+      "failed": 6,
+      "total": 24
+    },
+    "funcionario": {
+      "passed": 17,
+      "failed": 7,
+      "total": 24
+    },
+    "cliente": {
+      "passed": 23,
+      "failed": 1,
+      "total": 24
+    },
+    "anonimo": {
+      "passed": 3,
+      "failed": 0,
+      "total": 3
+    }
+  },
+  "total_duration": 8.319
 }

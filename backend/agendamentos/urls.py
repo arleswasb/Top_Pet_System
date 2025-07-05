@@ -7,12 +7,12 @@ from .views import ServicoViewSet, AgendamentoViewSet, horarios_disponiveis
 
 router = DefaultRouter()
 router.register(r'servicos', ServicoViewSet, basename='servico')
-router.register(r'agendamentos', AgendamentoViewSet, basename='agendamento')
+router.register(r'', AgendamentoViewSet, basename='agendamento')
 
 urlpatterns = [
+    # --- URL específica para verificar os horários disponíveis ---
+    path('horarios-disponiveis/', horarios_disponiveis, name='horarios-disponiveis'),
+    
     # Inclui as URLs geradas pelo router
     path('', include(router.urls)),
-    
-    # --- Nova URL para verificar os horários disponíveis ---
-    path('horarios-disponiveis/', horarios_disponiveis, name='horarios-disponiveis'),
 ]

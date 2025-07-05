@@ -69,8 +69,8 @@ class UserCreateView(generics.CreateAPIView):
     tags=["Usuários"],
     responses={200: UserDetailSerializer}
 )
-class UserProfileView(generics.RetrieveAPIView):
-    """View para o usuário visualizar seu próprio perfil."""
+class UserProfileView(generics.RetrieveUpdateAPIView):
+    """View para o usuário visualizar e atualizar seu próprio perfil."""
     serializer_class = UserDetailSerializer
     permission_classes = [permissions.IsAuthenticated]
 

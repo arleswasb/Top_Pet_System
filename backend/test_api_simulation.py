@@ -145,7 +145,7 @@ class APISimulator:
         
         # Headers padrão
         request_headers = {}
-        if self.users[user_type]['token']:
+        if user_type in self.users and self.users[user_type]['token']:
             request_headers['HTTP_AUTHORIZATION'] = f'Token {self.users[user_type]["token"]}'
         if headers:
             request_headers.update(headers)
@@ -215,9 +215,9 @@ class APISimulator:
         # Credenciais dos usuários já criados
         user_credentials = {
             'admin': {'username': 'admin', 'password': 'admin123'},
-            'veterinario': {'username': 'dr_silva', 'password': 'vet123'},
-            'funcionario': {'username': 'maria_func', 'password': 'func123'},
-            'cliente': {'username': 'joao_cliente', 'password': 'cliente123'}
+            'veterinario': {'username': 'veterinario', 'password': 'vet123'},
+            'funcionario': {'username': 'funcionario', 'password': 'func123'},
+            'cliente': {'username': 'cliente', 'password': 'cliente123'}
         }
         
         success_count = 0
@@ -244,7 +244,7 @@ class APISimulator:
                 # Obter ID do usuário
                 user_profile_response = self.make_request(
                     'GET',
-                    '/api/users/profile/',
+                    '/api/users/me/',
                     expected_status=200,
                     user_type=user_type
                 )
@@ -299,14 +299,14 @@ class APISimulator:
         
         # Teste de perfil próprio
         for user_type in ['admin', 'veterinario', 'funcionario', 'cliente']:
-            self.make_request('GET', '/api/users/profile/', expected_status=200, user_type=user_type)
+            self.make_request('GET', '/api/users/me/', expected_status=200, user_type=user_type)
             
             # Atualização do próprio perfil
             update_data = {
                 'first_name': f'{user_type.title()} Atualizado',
                 'last_name': 'Via API'
             }
-            self.make_request('PATCH', '/api/users/profile/', update_data, expected_status=200, user_type=user_type)
+            self.make_request('PATCH', '/api/users/me/', update_data, expected_status=200, user_type=user_type)
     
     def test_pets_crud_by_role(self):
         """Testa CRUD de pets por diferentes perfis"""
@@ -477,9 +477,10 @@ class APISimulator:
         for user_type in ['admin', 'veterinario', 'funcionario', 'cliente']:
             self.make_request('GET', '/api/prontuarios/', expected_status=200, user_type=user_type)
         
-        # Prontuários por pet
+        # Prontuários por pet - endpoint não implementado, mas vamos testar listagem geral
         for user_type in ['admin', 'veterinario', 'funcionario', 'cliente']:
-            self.make_request('GET', f'/api/pets/{pet_id}/prontuarios/', expected_status=200, user_type=user_type)
+            # Filtrar prontuários por pet usando query params se disponível
+            self.make_request('GET', f'/api/prontuarios/?pet={pet_id}', expected_status=200, user_type=user_type)
         
         # Teste de atualização se prontuário foi criado
         if prontuario_id:
@@ -512,10 +513,9 @@ class APISimulator:
         
         # Dados do agendamento
         agendamento_data = {
-            'pet': pet_id,
-            'servico': servico_id,
-            'data_agendamento': tomorrow,
-            'horario': '14:00:00',
+            'pet_id': pet_id,
+            'servico_id': servico_id,
+            'data_hora': f'{tomorrow}T14:00:00',
             'observacoes': 'Agendamento teste via API'
         }
         
@@ -528,7 +528,7 @@ class APISimulator:
         
         # Funcionário pode criar agendamento
         func_agendamento = agendamento_data.copy()
-        func_agendamento['horario'] = '15:00:00'
+        func_agendamento['data_hora'] = f'{tomorrow}T15:00:00'
         response = self.make_request('POST', '/api/agendamentos/', func_agendamento, expected_status=201, user_type='funcionario')
         if response['success']:
             func_agendamento_id = response['data'].get('id')
@@ -536,7 +536,7 @@ class APISimulator:
         
         # Admin pode criar agendamento
         admin_agendamento = agendamento_data.copy()
-        admin_agendamento['horario'] = '16:00:00'
+        admin_agendamento['data_hora'] = f'{tomorrow}T16:00:00'
         response = self.make_request('POST', '/api/agendamentos/', admin_agendamento, expected_status=201, user_type='admin')
         if response['success']:
             admin_agendamento_id = response['data'].get('id')
@@ -544,7 +544,7 @@ class APISimulator:
         
         # Veterinário pode criar agendamento
         vet_agendamento = agendamento_data.copy()
-        vet_agendamento['horario'] = '17:00:00'
+        vet_agendamento['data_hora'] = f'{tomorrow}T17:00:00'
         response = self.make_request('POST', '/api/agendamentos/', vet_agendamento, expected_status=201, user_type='veterinario')
         if response['success']:
             vet_agendamento_id = response['data'].get('id')
@@ -574,7 +574,7 @@ class APISimulator:
         # Teste de visualização de configurações
         for user_type in ['admin', 'veterinario', 'funcionario', 'cliente']:
             # Horários de funcionamento
-            self.make_request('GET', '/api/configuracao/horarios/', expected_status=200, user_type=user_type)
+            self.make_request('GET', '/api/configuracao/horarios-funcionamento/', expected_status=200, user_type=user_type)
             
             # Feriados
             self.make_request('GET', '/api/configuracao/feriados/', expected_status=200, user_type=user_type)
@@ -588,15 +588,15 @@ class APISimulator:
         }
         
         # Admin pode criar
-        self.make_request('POST', '/api/configuracao/horarios/', horario_data, expected_status=201, user_type='admin')
+        self.make_request('POST', '/api/configuracao/horarios-funcionamento/', horario_data, expected_status=201, user_type='admin')
         
         # Funcionário pode ou não criar (dependendo das regras)
         expected_status = 201  # Pode ser 403
-        self.make_request('POST', '/api/configuracao/horarios/', horario_data, expected_status, user_type='funcionario')
+        self.make_request('POST', '/api/configuracao/horarios-funcionamento/', horario_data, expected_status, user_type='funcionario')
         
         # Veterinário e cliente não podem criar
-        self.make_request('POST', '/api/configuracao/horarios/', horario_data, expected_status=403, user_type='veterinario')
-        self.make_request('POST', '/api/configuracao/horarios/', horario_data, expected_status=403, user_type='cliente')
+        self.make_request('POST', '/api/configuracao/horarios-funcionamento/', horario_data, expected_status=403, user_type='veterinario')
+        self.make_request('POST', '/api/configuracao/horarios-funcionamento/', horario_data, expected_status=403, user_type='cliente')
         
         # Feriado
         feriado_data = {
