@@ -62,10 +62,8 @@ docker-compose exec web python manage.py createsuperuser
 ### Vá em USERS/Profiles > Selecione seu usuário
 ### Em Role Settings/Role > Selecione "Admin" > SAVE
 
-docker-compose exec web python manage.py migrate
-
 # 3. Executar migrações no container
-docker-compose exec web python manage.py migrate
+docker-compose exec -T web python manage.py migrate
 
 # 4. Executar o script de simulação CRUD
 docker-compose exec web python test_api_simulation.py
