@@ -97,7 +97,7 @@ class AgendamentoIntegrationTest(APITestCase):
             'observacoes': 'Pet muito agitado'
         }
         
-        response = self.client.post('/api/agendamentos/agendamentos/', data, format='json')
+        response = self.client.post('/api/agendamentos/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Agendamento.objects.count(), 1)
@@ -133,7 +133,7 @@ class AgendamentoIntegrationTest(APITestCase):
         )
         
         self.client.force_authenticate(user=self.tutor_user, token=self.tutor_token)
-        response = self.client.get('/api/agendamentos/agendamentos/')
+        response = self.client.get('/api/agendamentos/')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Tutor deve ver apenas seus agendamentos
@@ -166,7 +166,7 @@ class AgendamentoIntegrationTest(APITestCase):
         )
         
         self.client.force_authenticate(user=self.funcionario_user, token=self.funcionario_token)
-        response = self.client.get('/api/agendamentos/agendamentos/')
+        response = self.client.get('/api/agendamentos/')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Funcionário deve ver todos os agendamentos
@@ -190,7 +190,7 @@ class AgendamentoIntegrationTest(APITestCase):
             'observacoes': 'Serviço realizado com sucesso'
         }
         
-        response = self.client.patch(f'/api/agendamentos/agendamentos/{agendamento.id}/', data, format='json')
+        response = self.client.patch(f'/api/agendamentos/{agendamento.id}/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         agendamento.refresh_from_db()
@@ -213,7 +213,7 @@ class AgendamentoIntegrationTest(APITestCase):
             'status': Agendamento.StatusChoices.CANCELADO
         }
         
-        response = self.client.patch(f'/api/agendamentos/agendamentos/{agendamento.id}/', data, format='json')
+        response = self.client.patch(f'/api/agendamentos/{agendamento.id}/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         agendamento.refresh_from_db()
@@ -246,7 +246,7 @@ class AgendamentoIntegrationTest(APITestCase):
             'status': Agendamento.StatusChoices.CANCELADO
         }
         
-        response = self.client.patch(f'/api/agendamentos/agendamentos/{agendamento_outro.id}/', data, format='json')
+        response = self.client.patch(f'/api/agendamentos/{agendamento_outro.id}/', data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         
@@ -259,7 +259,7 @@ class AgendamentoIntegrationTest(APITestCase):
         )
         
         self.client.force_authenticate(user=self.admin_user, token=self.admin_token)
-        response = self.client.delete(f'/api/agendamentos/agendamentos/{agendamento.id}/')
+        response = self.client.delete(f'/api/agendamentos/{agendamento.id}/')
         
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Agendamento.objects.count(), 0)
@@ -427,13 +427,13 @@ class AgendamentoWorkflowTest(APITestCase):
             'observacoes': 'Pet precisa de cuidado especial'
         }
         
-        response = self.client.post('/api/agendamentos/agendamentos/', data_criacao, format='json')
+        response = self.client.post('/api/agendamentos/', data_criacao, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         agendamento_id = response.data['id']
         
         # 2. Funcionário visualiza agendamento
         self.client.force_authenticate(user=self.funcionario_user, token=self.funcionario_token)
-        response = self.client.get(f'/api/agendamentos/agendamentos/{agendamento_id}/')
+        response = self.client.get(f'/api/agendamentos/{agendamento_id}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['status'], Agendamento.StatusChoices.AGENDADO)
         
@@ -446,7 +446,7 @@ class AgendamentoWorkflowTest(APITestCase):
             'observacoes': 'Serviço realizado com sucesso. Pet se comportou bem.'
         }
         
-        response = self.client.patch(f'/api/agendamentos/agendamentos/{agendamento_id}/', data_conclusao, format='json')
+        response = self.client.patch(f'/api/agendamentos/{agendamento_id}/', data_conclusao, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
         # 4. Verificar status final
@@ -476,7 +476,7 @@ class AgendamentoWorkflowTest(APITestCase):
             'observacoes': 'Reagendado por solicitação do cliente'
         }
         
-        response = self.client.patch(f'/api/agendamentos/agendamentos/{agendamento.id}/', data_reagendamento, format='json')
+        response = self.client.patch(f'/api/agendamentos/{agendamento.id}/', data_reagendamento, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         agendamento.refresh_from_db()
@@ -502,6 +502,6 @@ class AgendamentoWorkflowTest(APITestCase):
             'observacoes': 'Teste PUT'
         }
         
-        response = self.client.put(f'/api/agendamentos/agendamentos/{agendamento.id}/', data, format='json')
+        response = self.client.put(f'/api/agendamentos/{agendamento.id}/', data, format='json')
         # PUT deve retornar 405 Method Not Allowed - isso confirma nossa implementação
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
