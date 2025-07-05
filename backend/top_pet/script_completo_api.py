@@ -435,6 +435,7 @@ def main():
     results["Saúde do Django"] = test_django_health()
     
     # Gerar relatório
+    # pylint: disable-next=assignment-from-no-return
     success_rate = calculate_success_rate(results)
     
     # Recomendações finais
