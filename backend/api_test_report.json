@@ -1,0 +1,373 @@
+{
+  "total_tests": 25,
+  "passed": 14,
+  "failed": 11,
+  "routes_tested": [
+    {
+      "method": "POST",
+      "endpoint": "/api/users/register/",
+      "status_code": 400,
+      "expected": 201,
+      "success": false,
+      "duration": 2.666,
+      "timestamp": "2025-07-05T01:46:47.044470",
+      "data_sent": {
+        "username": "teste_api_2",
+        "email": "teste2@toppet.com",
+        "password": "senha123",
+        "first_name": "Usuário",
+        "last_name": "Teste 2"
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/auth/token/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.585,
+      "timestamp": "2025-07-05T01:46:47.630115",
+      "data_sent": {
+        "username": "teste_api",
+        "password": "senha123"
+      }
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.013,
+      "timestamp": "2025-07-05T01:46:47.643743",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/docs/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.393,
+      "timestamp": "2025-07-05T01:46:48.037097",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/schema/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 1.876,
+      "timestamp": "2025-07-05T01:46:49.913055",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/users/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.016,
+      "timestamp": "2025-07-05T01:46:49.930167",
+      "data_sent": null
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/pets/",
+      "status_code": 201,
+      "expected": 201,
+      "success": true,
+      "duration": 0.058,
+      "timestamp": "2025-07-05T01:46:49.988088",
+      "data_sent": {
+        "nome": "Rex",
+        "especie": "Cachorro",
+        "raca": "Labrador",
+        "idade": 3,
+        "peso": 25.5,
+        "cor": "Dourado",
+        "observacoes": "Pet muito dócil e brincalhão"
+      }
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/pets/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.012,
+      "timestamp": "2025-07-05T01:46:50.000703",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/pets/9/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.028,
+      "timestamp": "2025-07-05T01:46:50.029046",
+      "data_sent": null
+    },
+    {
+      "method": "PUT",
+      "endpoint": "/api/pets/9/",
+      "status_code": 405,
+      "expected": 200,
+      "success": false,
+      "duration": 0.033,
+      "timestamp": "2025-07-05T01:46:50.062170",
+      "data_sent": {
+        "nome": "Rex Atualizado",
+        "especie": "Cachorro",
+        "raca": "Labrador",
+        "idade": 3,
+        "peso": 26.0,
+        "cor": "Dourado",
+        "observacoes": "Pet atualizado via API"
+      }
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/pets/9/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.02,
+      "timestamp": "2025-07-05T01:46:50.082045",
+      "data_sent": {
+        "idade": 4
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/pets/",
+      "status_code": 201,
+      "expected": 201,
+      "success": true,
+      "duration": 0.022,
+      "timestamp": "2025-07-05T01:46:50.104299",
+      "data_sent": {
+        "nome": "Mia",
+        "especie": "Gato",
+        "raca": "Siamês",
+        "idade": 2,
+        "peso": 4.5,
+        "cor": "Branco e marrom"
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/agendamentos/servicos/",
+      "status_code": 403,
+      "expected": 201,
+      "success": false,
+      "duration": 0.019,
+      "timestamp": "2025-07-05T01:46:50.123990",
+      "data_sent": {
+        "nome": "Consulta Veterinária",
+        "descricao": "Consulta geral com veterinário",
+        "preco": "150.00",
+        "duracao_minutos": 60,
+        "ativo": true
+      }
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/servicos/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.012,
+      "timestamp": "2025-07-05T01:46:50.135756",
+      "data_sent": null
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/agendamentos/servicos/",
+      "status_code": 403,
+      "expected": 201,
+      "success": false,
+      "duration": 0.018,
+      "timestamp": "2025-07-05T01:46:50.153759",
+      "data_sent": {
+        "nome": "Banho e Tosa",
+        "descricao": "Banho completo com tosa",
+        "preco": "80.00",
+        "duracao_minutos": 120
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/agendamentos/servicos/",
+      "status_code": 403,
+      "expected": 201,
+      "success": false,
+      "duration": 0.012,
+      "timestamp": "2025-07-05T01:46:50.165697",
+      "data_sent": {
+        "nome": "Vacinação",
+        "descricao": "Aplicação de vacinas",
+        "preco": "50.00",
+        "duracao_minutos": 30
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/prontuarios/",
+      "status_code": 403,
+      "expected": 201,
+      "success": false,
+      "duration": 0.043,
+      "timestamp": "2025-07-05T01:46:50.208533",
+      "data_sent": {
+        "pet": 9,
+        "data_consulta": "2025-07-05",
+        "sintomas": "Animal apresentando letargia e falta de apetite",
+        "diagnostico": "Possível infecção gastrointestinal",
+        "tratamento": "Antibiótico por 7 dias + dieta leve",
+        "observacoes": "Retorno em 1 semana para avaliação",
+        "peso_atual": 25.8,
+        "temperatura": 38.5
+      }
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/prontuarios/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.023,
+      "timestamp": "2025-07-05T01:46:50.231700",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/pets/9/prontuarios/",
+      "status_code": 404,
+      "expected": 200,
+      "success": false,
+      "duration": 0.156,
+      "timestamp": "2025-07-05T01:46:50.388113",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/configuracao/horarios/",
+      "status_code": 404,
+      "expected": 200,
+      "success": false,
+      "duration": 0.086,
+      "timestamp": "2025-07-05T01:46:50.474582",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/configuracao/feriados/",
+      "status_code": 403,
+      "expected": 200,
+      "success": false,
+      "duration": 0.018,
+      "timestamp": "2025-07-05T01:46:50.492837",
+      "data_sent": null
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/configuracao/horarios/",
+      "status_code": 404,
+      "expected": 201,
+      "success": false,
+      "duration": 0.052,
+      "timestamp": "2025-07-05T01:46:50.544659",
+      "data_sent": {
+        "dia_semana": 1,
+        "hora_abertura": "08:00:00",
+        "hora_fechamento": "18:00:00",
+        "ativo": true
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/configuracao/feriados/",
+      "status_code": 403,
+      "expected": 201,
+      "success": false,
+      "duration": 0.015,
+      "timestamp": "2025-07-05T01:46:50.559857",
+      "data_sent": {
+        "nome": "Dia do Teste",
+        "data": "2025-08-04",
+        "ativo": true
+      }
+    },
+    {
+      "method": "DELETE",
+      "endpoint": "/api/pets/9/",
+      "status_code": 204,
+      "expected": 204,
+      "success": true,
+      "duration": 0.065,
+      "timestamp": "2025-07-05T01:46:50.625264",
+      "data_sent": null
+    },
+    {
+      "method": "DELETE",
+      "endpoint": "/api/pets/10/",
+      "status_code": 204,
+      "expected": 204,
+      "success": true,
+      "duration": 0.031,
+      "timestamp": "2025-07-05T01:46:50.656191",
+      "data_sent": null
+    }
+  ],
+  "errors": [
+    {
+      "route": "POST /api/users/register/",
+      "error": "Status 400, esperado 201"
+    },
+    {
+      "route": "PUT /api/pets/9/",
+      "error": "Status 405, esperado 200"
+    },
+    {
+      "route": "POST /api/agendamentos/servicos/",
+      "error": "Status 403, esperado 201"
+    },
+    {
+      "route": "POST /api/agendamentos/servicos/",
+      "error": "Status 403, esperado 201"
+    },
+    {
+      "route": "POST /api/agendamentos/servicos/",
+      "error": "Status 403, esperado 201"
+    },
+    {
+      "route": "POST /api/prontuarios/",
+      "error": "Status 403, esperado 201"
+    },
+    {
+      "route": "GET /api/pets/9/prontuarios/",
+      "error": "Status 404, esperado 200"
+    },
+    {
+      "route": "GET /api/configuracao/horarios/",
+      "error": "Status 404, esperado 200"
+    },
+    {
+      "route": "GET /api/configuracao/feriados/",
+      "error": "Status 403, esperado 200"
+    },
+    {
+      "route": "POST /api/configuracao/horarios/",
+      "error": "Status 404, esperado 201"
+    },
+    {
+      "route": "POST /api/configuracao/feriados/",
+      "error": "Status 403, esperado 201"
+    }
+  ],
+  "timing": {},
+  "total_duration": 6.278
+}

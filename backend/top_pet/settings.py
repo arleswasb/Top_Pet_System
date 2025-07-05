@@ -155,7 +155,6 @@ WSGI_APPLICATION = 'top_pet.wsgi.application'
 
 # Database configuration
 # PostgreSQL como banco principal
-# MySQL para testes
 if config('DATABASE_URL', default=None):
     import dj_database_url
     DATABASES = {
@@ -171,18 +170,6 @@ else:
             'PASSWORD': config('POSTGRES_PASSWORD', default='password'),
             'HOST': config('POSTGRES_HOST', default='db'),
             'PORT': config('DB_PORT', default='5432'),
-        },
-        # Banco para testes - MySQL
-        'test_mysql': {
-            'ENGINE': config('TEST_DB_ENGINE', default='django.db.backends.mysql'),
-            'NAME': config('TEST_MYSQL_NAME', default='top_pet_test_db'),
-            'USER': config('TEST_MYSQL_USER', default='test_user'),
-            'PASSWORD': config('TEST_MYSQL_PASSWORD', default='test_password'),
-            'HOST': config('TEST_MYSQL_HOST', default='localhost'),
-            'PORT': config('TEST_MYSQL_PORT', default='3306'),
-            'TEST': {
-                'NAME': config('TEST_MYSQL_NAME', default='top_pet_test_db'),
-            },
         }
     }
 
@@ -247,6 +234,10 @@ MEDIA_URL = '/media/'
 os.makedirs(MEDIA_ROOT, exist_ok=True)
 
 #conficuração do logging
+# Garantir que o diretório de logs existe
+LOGS_DIR = os.path.join(BASE_DIR, 'logs')
+os.makedirs(LOGS_DIR, exist_ok=True)
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -268,7 +259,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs', 'debug.log'), # Caminho do arquivo
+            'filename': os.path.join(LOGS_DIR, 'debug.log'), # Caminho do arquivo
             'maxBytes': 1024*1024*5,  # 5 MB
             'backupCount': 2,
             'formatter': 'verbose',
@@ -286,24 +277,11 @@ LOGGING = {
 # Configurações específicas para testes
 import sys
 if 'test' in sys.argv or 'pytest' in sys.modules or 'unittest' in sys.modules:
-    # Durante os testes, usar MySQL como banco principal
-    DATABASES['default'] = DATABASES.get('test_mysql', {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'top_pet_test_db',
-        'USER': 'test_user',
-        'PASSWORD': 'test_password',
-        'HOST': 'localhost',
-        'PORT': '3306',
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-            'charset': 'utf8mb4',
-        },
-        'TEST': {
-            'NAME': 'test_top_pet_test_db',
-            'CHARSET': 'utf8mb4',
-            'COLLATION': 'utf8mb4_unicode_ci',
-        },
-    })
+    # Durante os testes, usar SQLite em memória para rapidez
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:',
+    }
     
     # Durante os testes, usar um diretório temporário para mídia
     import tempfile
