@@ -258,7 +258,11 @@ class APISimulator:
                 if user_profile_response['success']:
                     self.users[user_type]['user_id'] = user_profile_response['data'].get('id')
                 
-                self.print_success(f"Token obtido para {user_type}: {self.users[user_type]['token'][:20]}...")
+                token = self.users[user_type].get('token', '')
+                if token:
+                    self.print_success(f"Token obtido para {user_type}: {token[:20]}...")
+                else:
+                    self.print_error(f"Token vazio para {user_type}")
                 success_count += 1
             else:
                 self.print_error(f"Falha na autenticação para {user_type}")
@@ -649,13 +653,17 @@ class APISimulator:
         """Testa endpoints de configuração por diferentes perfis"""
         self.print_header("TESTE - Configurações por Perfil")
         
-        # Teste de visualização de configurações
-        for user_type in ['admin', 'veterinario', 'funcionario', 'cliente']:
+        # Teste de visualização de configurações (apenas funcionários/veterinários/admins)
+        for user_type in ['admin', 'veterinario', 'funcionario']:
             # Horários de funcionamento
             self.make_request('GET', '/api/configuracao/horarios-funcionamento/', expected_status=200, user_type=user_type)
             
             # Feriados
             self.make_request('GET', '/api/configuracao/feriados/', expected_status=200, user_type=user_type)
+        
+        # Cliente não pode visualizar configurações (403)
+        self.make_request('GET', '/api/configuracao/horarios-funcionamento/', expected_status=403, user_type='cliente')
+        self.make_request('GET', '/api/configuracao/feriados/', expected_status=403, user_type='cliente')
         
         # Criação de configurações (apenas admin e funcionário devem conseguir)
         # Primeiro vamos listar os horários existentes para escolher um dia que não está cadastrado

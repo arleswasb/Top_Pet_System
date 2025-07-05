@@ -15,7 +15,7 @@ class ConfiguracaoAPITests(APITestCase):
     para os testes de permissão.
     """
     def setUp(self):
-        # Cria um usuário comum
+        # Cria um usuário comum (sem profile específico)
         self.user = User.objects.create_user(
             username='testuser',
             password='testpassword123'
@@ -41,6 +41,28 @@ class ConfiguracaoAPITests(APITestCase):
                 role=Profile.Role.ADMIN
             )
         
+        # Criar usuário funcionário
+        self.funcionario_user = User.objects.create_user(
+            username='funcionario',
+            email='funcionario@example.com',
+            password='funcionario123'
+        )
+        Profile.objects.create(
+            user=self.funcionario_user,
+            role=Profile.Role.FUNCIONARIO
+        )
+        
+        # Criar usuário veterinário
+        self.veterinario_user = User.objects.create_user(
+            username='veterinario',
+            email='veterinario@example.com',
+            password='veterinario123'
+        )
+        Profile.objects.create(
+            user=self.veterinario_user,
+            role=Profile.Role.VETERINARIO
+        )
+        
         # URLs que serão usadas nos testes
         self.horarios_list_url = reverse('horariofuncionamento-list')
         self.feriados_list_url = reverse('feriado-list')
@@ -54,12 +76,25 @@ class HorarioFuncionamentoPermissionTests(ConfiguracaoAPITests):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_common_user_cannot_access_horarios(self):
+        # Usuário comum (sem profile ou role específico) não pode acessar
         self.client.force_authenticate(user=self.user)
         response = self.client.get(self.horarios_list_url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_admin_user_can_list_horarios(self):
         self.client.force_authenticate(user=self.admin_user)
+        response = self.client.get(self.horarios_list_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_funcionario_user_can_list_horarios(self):
+        # Funcionário pode visualizar horários
+        self.client.force_authenticate(user=self.funcionario_user)
+        response = self.client.get(self.horarios_list_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_veterinario_user_can_list_horarios(self):
+        # Veterinário pode visualizar horários
+        self.client.force_authenticate(user=self.veterinario_user)
         response = self.client.get(self.horarios_list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -75,6 +110,30 @@ class HorarioFuncionamentoPermissionTests(ConfiguracaoAPITests):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(HorarioFuncionamento.objects.count(), 1)
         self.assertEqual(HorarioFuncionamento.objects.get().dia_semana, 0)
+
+    def test_funcionario_user_cannot_create_horario(self):
+        # Funcionário não pode criar horários (apenas admin)
+        self.client.force_authenticate(user=self.funcionario_user)
+        data = {
+            "dia_semana": 1,
+            "hora_abertura": "09:00:00",
+            "hora_fechamento": "18:00:00",
+            "ativo": True
+        }
+        response = self.client.post(self.horarios_list_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_veterinario_user_cannot_create_horario(self):
+        # Veterinário não pode criar horários (apenas admin)
+        self.client.force_authenticate(user=self.veterinario_user)
+        data = {
+            "dia_semana": 2,
+            "hora_abertura": "09:00:00",
+            "hora_fechamento": "18:00:00",
+            "ativo": True
+        }
+        response = self.client.post(self.horarios_list_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
     
     def test_validation_hora_fechamento_before_abertura(self):
         """Teste de validação: hora fechamento deve ser posterior à abertura"""
@@ -106,6 +165,18 @@ class FeriadoPermissionTests(ConfiguracaoAPITests):
         self.client.force_authenticate(user=self.admin_user)
         response = self.client.get(self.feriados_list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_funcionario_user_can_list_feriados(self):
+        # Funcionário pode visualizar feriados
+        self.client.force_authenticate(user=self.funcionario_user)
+        response = self.client.get(self.feriados_list_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_veterinario_user_can_list_feriados(self):
+        # Veterinário pode visualizar feriados
+        self.client.force_authenticate(user=self.veterinario_user)
+        response = self.client.get(self.feriados_list_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
     
     def test_admin_user_can_create_feriado(self):
         self.client.force_authenticate(user=self.admin_user)
@@ -117,6 +188,26 @@ class FeriadoPermissionTests(ConfiguracaoAPITests):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Feriado.objects.count(), 1)
         self.assertEqual(Feriado.objects.get().nome, "Ano Novo")
+
+    def test_funcionario_user_cannot_create_feriado(self):
+        # Funcionário não pode criar feriados (apenas admin)
+        self.client.force_authenticate(user=self.funcionario_user)
+        data = {
+            "nome": "Feriado Funcionário",
+            "data": "2026-02-01"
+        }
+        response = self.client.post(self.feriados_list_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_veterinario_user_cannot_create_feriado(self):
+        # Veterinário não pode criar feriados (apenas admin)
+        self.client.force_authenticate(user=self.veterinario_user)
+        data = {
+            "nome": "Feriado Veterinário",
+            "data": "2026-03-01"
+        }
+        response = self.client.post(self.feriados_list_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
     
     def test_validation_data_passado(self):
         """Teste de validação: data não pode ser no passado"""

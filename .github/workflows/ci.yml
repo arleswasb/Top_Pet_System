@@ -167,7 +167,7 @@ jobs:
     - name: Run other module tests
       run: |
         cd backend
-        coverage run --append --source='.' manage.py test users agendamentos configuracao --verbosity=2
+        coverage run --append --source='.' manage.py test users.tests_integracao users.tests_password_reset agendamentos.tests_integracao agendamentos.tests configuracao.tests --verbosity=2
     
     - name: Generate coverage report
       run: |

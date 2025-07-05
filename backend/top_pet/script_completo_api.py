@@ -425,7 +425,7 @@ def main():
     results["Saúde do Django"] = test_django_health()
     
     # Gerar relatório
-    success_rate = generate_test_report(results)
+    generate_test_report(results)
     
     # Recomendações finais
     print_header("🎯 RECOMENDAÇÕES")
