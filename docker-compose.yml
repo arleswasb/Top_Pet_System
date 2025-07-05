@@ -39,6 +39,26 @@ services:
       timeout: 5s
       retries: 5
 
+  # MySQL para testes
+  mysql_test:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: top_pet_test_db
+      MYSQL_USER: test_user
+      MYSQL_PASSWORD: test_password
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_test_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
 volumes:
   postgres_data:
+  mysql_test_data:
   media_data:

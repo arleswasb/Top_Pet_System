@@ -11,6 +11,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
+# Função para imprimir mensagens coloridas
 print_status() {
     echo -e "${GREEN}[INFO]${NC} $1"
 }
@@ -30,15 +31,9 @@ if [ ! -f "manage.py" ]; then
 fi
 
 # Configurar variáveis de ambiente para teste
-export DJANGO_SETTINGS_MODULE=top_pet.settings_test
+export DJANGO_SETTINGS_MODULE=top_pet.settings
 export DEBUG=True
 export SECRET_KEY=test-secret-key
-export TEST_DB_ENGINE=django.db.backends.mysql
-export TEST_MYSQL_NAME=top_pet_test_db
-export TEST_MYSQL_USER=test_user
-export TEST_MYSQL_PASSWORD=test_password
-export TEST_MYSQL_HOST=localhost
-export TEST_MYSQL_PORT=3306
 
 # Função para executar migrações
 run_migrations() {

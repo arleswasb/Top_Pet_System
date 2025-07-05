@@ -1,22 +1,26 @@
 # settings_test.py
-# Configurações específicas para testes - SQLite em memória (não persistido)
+# Configurações específicas para testes com MySQL
 
 from .settings import *
 from decouple import config
-import tempfile
-import os
 
-# Override database configuration for tests - SQLite em memória
-# Muito mais rápido e não precisa de configuração/persistência
+# Override database configuration for tests - Force MySQL
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': ':memory:',  # Banco em memória - não persistido
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': config('TEST_MYSQL_NAME', default='top_pet_test_db'),
+        'USER': config('TEST_MYSQL_USER', default='test_user'),
+        'PASSWORD': config('TEST_MYSQL_PASSWORD', default='test_password'),
+        'HOST': config('TEST_MYSQL_HOST', default='localhost'),
+        'PORT': config('TEST_MYSQL_PORT', default='3306'),
         'OPTIONS': {
-            'timeout': 20,
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'charset': 'utf8mb4',
         },
         'TEST': {
-            'NAME': ':memory:',
+            'NAME': 'test_top_pet_test_db',
+            'CHARSET': 'utf8mb4',
+            'COLLATION': 'utf8mb4_unicode_ci',
         },
     }
 }
@@ -34,32 +38,16 @@ EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 # Logs simplificados para testes
 LOGGING['loggers']['django']['level'] = 'ERROR'
 
-# Media files para testes - diretório temporário
+# Media files para testes
+import tempfile
+import os
 MEDIA_ROOT = os.path.join(tempfile.gettempdir(), 'test_media_pets')
 os.makedirs(MEDIA_ROOT, exist_ok=True)
 
-# Acelerar testes com hash mais simples
+# Acelerar testes
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.MD5PasswordHasher',
 ]
-
-# Desabilitar migrações para acelerar testes
-class DisableMigrations:
-    def __contains__(self, item):
-        return True
-    
-    def __getitem__(self, item):
-        return None
-
-MIGRATION_MODULES = DisableMigrations()
-
-# Configurações adicionais para acelerar testes
-DEBUG = False
-TEMPLATE_DEBUG = False
-
-# Desabilitar logs desnecessários
-import logging
-logging.disable(logging.CRITICAL)
 
 # Desabilitar migrações desnecessárias em testes
 class DisableMigrations:
