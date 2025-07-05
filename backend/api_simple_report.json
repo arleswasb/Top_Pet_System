@@ -1,0 +1,79 @@
+{
+  "total_tests": 9,
+  "passed": 2,
+  "failed": 7,
+  "tests": [
+    {
+      "method": "POST",
+      "endpoint": "/api/auth/token/",
+      "expected": 200,
+      "actual": 200,
+      "success": true,
+      "description": "Login usuário teste"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/",
+      "expected": "Status do sistema",
+      "actual": 200,
+      "success": false,
+      "description": ""
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/docs/",
+      "expected": "Documentação",
+      "actual": 200,
+      "success": false,
+      "description": ""
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/users/",
+      "expected": "Listar usuários",
+      "actual": 200,
+      "success": false,
+      "description": ""
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/pets/",
+      "expected": "Listar pets",
+      "actual": 200,
+      "success": false,
+      "description": ""
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/pets/",
+      "expected": 201,
+      "actual": 201,
+      "success": true,
+      "description": "Criar pet"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/prontuarios/",
+      "expected": "Listar prontuários",
+      "actual": 200,
+      "success": false,
+      "description": ""
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/servicos/",
+      "expected": "Listar serviços",
+      "actual": 200,
+      "success": false,
+      "description": ""
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/agendamentos/",
+      "expected": "Listar agendamentos",
+      "actual": 200,
+      "success": false,
+      "description": ""
+    }
+  ]
+}

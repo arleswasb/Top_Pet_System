@@ -1,7 +1,7 @@
 {
   "total_tests": 25,
-  "passed": 14,
-  "failed": 11,
+  "passed": 13,
+  "failed": 12,
   "routes_tested": [
     {
       "method": "POST",
@@ -9,14 +9,14 @@
       "status_code": 400,
       "expected": 201,
       "success": false,
-      "duration": 2.666,
-      "timestamp": "2025-07-05T01:46:47.044470",
+      "duration": 3.192,
+      "timestamp": "2025-07-05T02:16:46.924785",
       "data_sent": {
-        "username": "teste_api_2",
-        "email": "teste2@toppet.com",
+        "username": "teste_api",
+        "email": "teste@toppet.com",
         "password": "senha123",
         "first_name": "Usuário",
-        "last_name": "Teste 2"
+        "last_name": "Teste"
       }
     },
     {
@@ -25,8 +25,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.585,
-      "timestamp": "2025-07-05T01:46:47.630115",
+      "duration": 0.587,
+      "timestamp": "2025-07-05T02:16:47.512261",
       "data_sent": {
         "username": "teste_api",
         "password": "senha123"
@@ -38,8 +38,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.013,
-      "timestamp": "2025-07-05T01:46:47.643743",
+      "duration": 0.014,
+      "timestamp": "2025-07-05T02:16:47.526772",
       "data_sent": null
     },
     {
@@ -48,8 +48,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.393,
-      "timestamp": "2025-07-05T01:46:48.037097",
+      "duration": 0.29,
+      "timestamp": "2025-07-05T02:16:47.816975",
       "data_sent": null
     },
     {
@@ -58,8 +58,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 1.876,
-      "timestamp": "2025-07-05T01:46:49.913055",
+      "duration": 1.81,
+      "timestamp": "2025-07-05T02:16:49.627212",
       "data_sent": null
     },
     {
@@ -68,8 +68,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.016,
-      "timestamp": "2025-07-05T01:46:49.930167",
+      "duration": 0.007,
+      "timestamp": "2025-07-05T02:16:49.650667",
       "data_sent": null
     },
     {
@@ -78,8 +78,8 @@
       "status_code": 201,
       "expected": 201,
       "success": true,
-      "duration": 0.058,
-      "timestamp": "2025-07-05T01:46:49.988088",
+      "duration": 0.096,
+      "timestamp": "2025-07-05T02:16:49.746658",
       "data_sent": {
         "nome": "Rex",
         "especie": "Cachorro",
@@ -96,28 +96,28 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.012,
-      "timestamp": "2025-07-05T01:46:50.000703",
+      "duration": 0.017,
+      "timestamp": "2025-07-05T02:16:49.764173",
       "data_sent": null
     },
     {
       "method": "GET",
-      "endpoint": "/api/pets/9/",
+      "endpoint": "/api/pets/16/",
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.028,
-      "timestamp": "2025-07-05T01:46:50.029046",
+      "duration": 0.019,
+      "timestamp": "2025-07-05T02:16:49.783327",
       "data_sent": null
     },
     {
       "method": "PUT",
-      "endpoint": "/api/pets/9/",
+      "endpoint": "/api/pets/16/",
       "status_code": 405,
       "expected": 200,
       "success": false,
-      "duration": 0.033,
-      "timestamp": "2025-07-05T01:46:50.062170",
+      "duration": 0.175,
+      "timestamp": "2025-07-05T02:16:49.958712",
       "data_sent": {
         "nome": "Rex Atualizado",
         "especie": "Cachorro",
@@ -130,12 +130,12 @@
     },
     {
       "method": "PATCH",
-      "endpoint": "/api/pets/9/",
+      "endpoint": "/api/pets/16/",
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.02,
-      "timestamp": "2025-07-05T01:46:50.082045",
+      "duration": 0.05,
+      "timestamp": "2025-07-05T02:16:50.008812",
       "data_sent": {
         "idade": 4
       }
@@ -146,8 +146,8 @@
       "status_code": 201,
       "expected": 201,
       "success": true,
-      "duration": 0.022,
-      "timestamp": "2025-07-05T01:46:50.104299",
+      "duration": 0.028,
+      "timestamp": "2025-07-05T02:16:50.036579",
       "data_sent": {
         "nome": "Mia",
         "especie": "Gato",
@@ -159,12 +159,12 @@
     },
     {
       "method": "POST",
-      "endpoint": "/api/agendamentos/servicos/",
-      "status_code": 403,
+      "endpoint": "/api/servicos/",
+      "status_code": 404,
       "expected": 201,
       "success": false,
-      "duration": 0.019,
-      "timestamp": "2025-07-05T01:46:50.123990",
+      "duration": 0.14,
+      "timestamp": "2025-07-05T02:16:50.177091",
       "data_sent": {
         "nome": "Consulta Veterinária",
         "descricao": "Consulta geral com veterinário",
@@ -175,22 +175,22 @@
     },
     {
       "method": "GET",
-      "endpoint": "/api/agendamentos/servicos/",
-      "status_code": 200,
+      "endpoint": "/api/servicos/",
+      "status_code": 404,
       "expected": 200,
-      "success": true,
-      "duration": 0.012,
-      "timestamp": "2025-07-05T01:46:50.135756",
+      "success": false,
+      "duration": 0.057,
+      "timestamp": "2025-07-05T02:16:50.234467",
       "data_sent": null
     },
     {
       "method": "POST",
-      "endpoint": "/api/agendamentos/servicos/",
-      "status_code": 403,
+      "endpoint": "/api/servicos/",
+      "status_code": 404,
       "expected": 201,
       "success": false,
-      "duration": 0.018,
-      "timestamp": "2025-07-05T01:46:50.153759",
+      "duration": 0.076,
+      "timestamp": "2025-07-05T02:16:50.310855",
       "data_sent": {
         "nome": "Banho e Tosa",
         "descricao": "Banho completo com tosa",
@@ -200,12 +200,12 @@
     },
     {
       "method": "POST",
-      "endpoint": "/api/agendamentos/servicos/",
-      "status_code": 403,
+      "endpoint": "/api/servicos/",
+      "status_code": 404,
       "expected": 201,
       "success": false,
-      "duration": 0.012,
-      "timestamp": "2025-07-05T01:46:50.165697",
+      "duration": 0.091,
+      "timestamp": "2025-07-05T02:16:50.402206",
       "data_sent": {
         "nome": "Vacinação",
         "descricao": "Aplicação de vacinas",
@@ -219,10 +219,10 @@
       "status_code": 403,
       "expected": 201,
       "success": false,
-      "duration": 0.043,
-      "timestamp": "2025-07-05T01:46:50.208533",
+      "duration": 0.034,
+      "timestamp": "2025-07-05T02:16:50.436368",
       "data_sent": {
-        "pet": 9,
+        "pet": 16,
         "data_consulta": "2025-07-05",
         "sintomas": "Animal apresentando letargia e falta de apetite",
         "diagnostico": "Possível infecção gastrointestinal",
@@ -238,18 +238,18 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.023,
-      "timestamp": "2025-07-05T01:46:50.231700",
+      "duration": 0.034,
+      "timestamp": "2025-07-05T02:16:50.470565",
       "data_sent": null
     },
     {
       "method": "GET",
-      "endpoint": "/api/pets/9/prontuarios/",
+      "endpoint": "/api/pets/16/prontuarios/",
       "status_code": 404,
       "expected": 200,
       "success": false,
-      "duration": 0.156,
-      "timestamp": "2025-07-05T01:46:50.388113",
+      "duration": 0.146,
+      "timestamp": "2025-07-05T02:16:50.616522",
       "data_sent": null
     },
     {
@@ -258,8 +258,8 @@
       "status_code": 404,
       "expected": 200,
       "success": false,
-      "duration": 0.086,
-      "timestamp": "2025-07-05T01:46:50.474582",
+      "duration": 0.17,
+      "timestamp": "2025-07-05T02:16:50.786830",
       "data_sent": null
     },
     {
@@ -268,8 +268,8 @@
       "status_code": 403,
       "expected": 200,
       "success": false,
-      "duration": 0.018,
-      "timestamp": "2025-07-05T01:46:50.492837",
+      "duration": 0.035,
+      "timestamp": "2025-07-05T02:16:50.821577",
       "data_sent": null
     },
     {
@@ -278,8 +278,8 @@
       "status_code": 404,
       "expected": 201,
       "success": false,
-      "duration": 0.052,
-      "timestamp": "2025-07-05T01:46:50.544659",
+      "duration": 0.313,
+      "timestamp": "2025-07-05T02:16:51.134896",
       "data_sent": {
         "dia_semana": 1,
         "hora_abertura": "08:00:00",
@@ -293,8 +293,8 @@
       "status_code": 403,
       "expected": 201,
       "success": false,
-      "duration": 0.015,
-      "timestamp": "2025-07-05T01:46:50.559857",
+      "duration": 0.092,
+      "timestamp": "2025-07-05T02:16:51.227328",
       "data_sent": {
         "nome": "Dia do Teste",
         "data": "2025-08-04",
@@ -303,22 +303,22 @@
     },
     {
       "method": "DELETE",
-      "endpoint": "/api/pets/9/",
+      "endpoint": "/api/pets/16/",
       "status_code": 204,
       "expected": 204,
       "success": true,
-      "duration": 0.065,
-      "timestamp": "2025-07-05T01:46:50.625264",
+      "duration": 0.093,
+      "timestamp": "2025-07-05T02:16:51.320441",
       "data_sent": null
     },
     {
       "method": "DELETE",
-      "endpoint": "/api/pets/10/",
+      "endpoint": "/api/pets/17/",
       "status_code": 204,
       "expected": 204,
       "success": true,
-      "duration": 0.031,
-      "timestamp": "2025-07-05T01:46:50.656191",
+      "duration": 0.038,
+      "timestamp": "2025-07-05T02:16:51.358305",
       "data_sent": null
     }
   ],
@@ -328,27 +328,31 @@
       "error": "Status 400, esperado 201"
     },
     {
-      "route": "PUT /api/pets/9/",
+      "route": "PUT /api/pets/16/",
       "error": "Status 405, esperado 200"
     },
     {
-      "route": "POST /api/agendamentos/servicos/",
-      "error": "Status 403, esperado 201"
+      "route": "POST /api/servicos/",
+      "error": "Status 404, esperado 201"
     },
     {
-      "route": "POST /api/agendamentos/servicos/",
-      "error": "Status 403, esperado 201"
+      "route": "GET /api/servicos/",
+      "error": "Status 404, esperado 200"
     },
     {
-      "route": "POST /api/agendamentos/servicos/",
-      "error": "Status 403, esperado 201"
+      "route": "POST /api/servicos/",
+      "error": "Status 404, esperado 201"
+    },
+    {
+      "route": "POST /api/servicos/",
+      "error": "Status 404, esperado 201"
     },
     {
       "route": "POST /api/prontuarios/",
       "error": "Status 403, esperado 201"
     },
     {
-      "route": "GET /api/pets/9/prontuarios/",
+      "route": "GET /api/pets/16/prontuarios/",
       "error": "Status 404, esperado 200"
     },
     {
@@ -369,5 +373,5 @@
     }
   ],
   "timing": {},
-  "total_duration": 6.278
+  "total_duration": 7.626
 }

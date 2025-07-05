@@ -187,30 +187,7 @@ class APISimulator:
         """Configura autenticação para testes"""
         self.print_header("SETUP - Autenticação")
         
-        # Tentar registrar novo usuário (pode falhar se já existir)
-        user_data = {
-            'username': 'teste_api_2',
-            'email': 'teste2@toppet.com',
-            'password': 'senha123',
-            'first_name': 'Usuário',
-            'last_name': 'Teste 2'
-        }
-        
-        # Registrar usuário (pode dar 400 se já existir)
-        response = self.make_request(
-            'POST', 
-            '/api/users/register/', 
-            user_data, 
-            expected_status=201  # Se falhar, seguimos com o usuário existente
-        )
-        
-        if response['success']:
-            self.user_id = response['data'].get('user', {}).get('id')
-            self.print_info(f"Novo usuário criado com ID: {self.user_id}")
-        else:
-            self.print_info("Usando usuário existente para autenticação")
-        
-        # Login com usuário de teste existente
+        # Primeiro, tentar fazer login com usuário existente
         login_data = {
             'username': 'teste_api',
             'password': 'senha123'
@@ -225,9 +202,21 @@ class APISimulator:
         
         if response['success']:
             self.token = response['data'].get('token')
-            self.print_info(f"Token obtido: {self.token[:20]}...")
-        
-        return response['success']
+            self.print_info(f"Login realizado com sucesso. Token: {self.token[:20]}...")
+            
+            # Buscar ID do usuário
+            user_response = self.make_request('GET', '/api/users/', expected_status=200)
+            if user_response['success'] and user_response['data'].get('results'):
+                for user in user_response['data']['results']:
+                    if user.get('username') == 'teste_api':
+                        self.user_id = user.get('id')
+                        self.print_info(f"ID do usuário: {self.user_id}")
+                        break
+            
+            return True
+        else:
+            self.print_error("Falha no login. Verifique as credenciais.")
+            return False
     
     def test_users_crud(self):
         """Testa CRUD de usuários"""
@@ -483,7 +472,7 @@ class APISimulator:
         self.print_header("TESTE - Configurações")
         
         # GET - Horários de funcionamento
-        self.make_request('GET', '/api/configuracao/horarios/', expected_status=200)
+        self.make_request('GET', '/api/configuracao/horarios-funcionamento/', expected_status=200)
         
         # GET - Feriados
         self.make_request('GET', '/api/configuracao/feriados/', expected_status=200)
@@ -495,7 +484,7 @@ class APISimulator:
             'hora_fechamento': '18:00:00',
             'ativo': True
         }
-        self.make_request('POST', '/api/configuracao/horarios/', horario_data, expected_status=201)
+        self.make_request('POST', '/api/configuracao/horarios-funcionamento/', horario_data, expected_status=201)
         
         # POST - Criar feriado
         feriado_data = {
