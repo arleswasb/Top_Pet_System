@@ -52,27 +52,11 @@ docker-compose up -d -- build
 # 2. Aguardar containers ficarem prontos
 docker-compose ps
 
-### Criar superusuário
-docker-compose exec web python manage.py createsuperuser
-### Exemplo: username=admin, password=admin123
+# 3. Executar o script de simulação CRUD
+docker-compose exec web python script_api_simulation.py
 
-### Configure o perfil de administrador
-### Acesse: http://127.0.0.1:8000/admin/
-### Login com as credenciais criadas
-### Vá em USERS/Profiles > Selecione seu usuário
-### Em Role Settings/Role > Selecione "Admin" > SAVE
-
-# 3. Executar migrações no container
-docker-compose exec -T web python manage.py migrate
-
-# 4. Executar o script de simulação CRUD
-docker-compose exec web python test_api_simulation.py
-
-# 5. Analisar resultados
-docker-compose exec web python analyze_test_report.py
-
-# 6. Ver relatório JSON
-docker-compose exec web cat api_test_report.json
+# 4. Ver relatório JSON com os metodos aplicados
+docker-compose exec web cat api_test_report.json(opcional)
 
 ```
 
@@ -85,6 +69,7 @@ docker-compose exec web cat api_test_report.json
 ### 🛠️ Desenvolvimento Local (Opcional)
 
 ```bash
+
 ### Navegue até o Projeto
 cd \GitHub\Top_Pet_System\
 
@@ -101,32 +86,14 @@ pip install -r requirements.txt
 ### Execute migrações
 python manage.py migrate
 
-### Criar superusuário
-python manage.py createsuperuser
-
 ### Iniciar servidor
 python manage.py runserver
 
-### Configure o perfil de administrador
-### Acesse: http://127.0.0.1:8000/admin/
-### Login com as credenciais criadas
-### Vá em USERS/Profiles > Selecione seu usuário
-### Em Role Settings/Role > Selecione "Admin" > SAVE
+### Executar o script de simulação CRUD
+python script_api_simulation.py
 
-####1. Execução Automática (Linux/Mac):
-## Dar permissão de execução
-chmod +x run_crud_simulation_docker.sh
-
-## Executar simulação completa
-./run_crud_simulation_docker.sh
-
-####2. Execução Automática (Windows PowerShell):
-
-# Permitir execução de scripts
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-
-# Executar simulação completa
-.\run_crud_simulation_docker.ps1
+### Ver relatório JSON com os metodos aplicados(opcional)
+cat api_test_report.json
 
 ```
 ### ✅ Verificação
