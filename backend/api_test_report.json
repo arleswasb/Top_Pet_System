@@ -1,7 +1,7 @@
 {
-  "total_tests": 116,
-  "passed": 114,
-  "failed": 2,
+  "total_tests": 118,
+  "passed": 118,
+  "failed": 0,
   "routes_tested": [
     {
       "method": "POST",
@@ -9,8 +9,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 2.347,
-      "timestamp": "2025-07-05T13:57:30.443855",
+      "duration": 2.763,
+      "timestamp": "2025-07-05T14:15:32.166973",
       "user_type": "admin",
       "data_sent": {
         "username": "admin",
@@ -23,8 +23,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.019,
-      "timestamp": "2025-07-05T13:57:30.462619",
+      "duration": 0.023,
+      "timestamp": "2025-07-05T14:15:32.219553",
       "user_type": "admin",
       "data_sent": null
     },
@@ -34,8 +34,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.949,
-      "timestamp": "2025-07-05T13:57:31.424667",
+      "duration": 1.153,
+      "timestamp": "2025-07-05T14:15:33.438215",
       "user_type": "veterinario",
       "data_sent": {
         "username": "veterinario",
@@ -48,8 +48,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.006,
-      "timestamp": "2025-07-05T13:57:31.432311",
+      "duration": 0.012,
+      "timestamp": "2025-07-05T14:15:33.484479",
       "user_type": "veterinario",
       "data_sent": null
     },
@@ -59,8 +59,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.929,
-      "timestamp": "2025-07-05T13:57:32.388672",
+      "duration": 1.005,
+      "timestamp": "2025-07-05T14:15:34.623300",
       "user_type": "funcionario",
       "data_sent": {
         "username": "funcionario",
@@ -73,8 +73,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.006,
-      "timestamp": "2025-07-05T13:57:32.396702",
+      "duration": 0.008,
+      "timestamp": "2025-07-05T14:15:34.637530",
       "user_type": "funcionario",
       "data_sent": null
     },
@@ -84,8 +84,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 1.129,
-      "timestamp": "2025-07-05T13:57:33.541819",
+      "duration": 0.948,
+      "timestamp": "2025-07-05T14:15:35.617206",
       "user_type": "cliente",
       "data_sent": {
         "username": "cliente",
@@ -98,8 +98,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.016,
-      "timestamp": "2025-07-05T13:57:33.557443",
+      "duration": 0.008,
+      "timestamp": "2025-07-05T14:15:35.631328",
       "user_type": "cliente",
       "data_sent": null
     },
@@ -109,8 +109,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.002,
-      "timestamp": "2025-07-05T13:57:33.560661",
+      "duration": 0.004,
+      "timestamp": "2025-07-05T14:15:35.667716",
       "user_type": "anonimo",
       "data_sent": null
     },
@@ -120,8 +120,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.099,
-      "timestamp": "2025-07-05T13:57:33.660754",
+      "duration": 0.113,
+      "timestamp": "2025-07-05T14:15:35.787028",
       "user_type": "anonimo",
       "data_sent": null
     },
@@ -131,8 +131,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.914,
-      "timestamp": "2025-07-05T13:57:34.576986",
+      "duration": 0.997,
+      "timestamp": "2025-07-05T14:15:36.785831",
       "user_type": "anonimo",
       "data_sent": null
     },
@@ -142,8 +142,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.004,
-      "timestamp": "2025-07-05T13:57:34.587162",
+      "duration": 0.016,
+      "timestamp": "2025-07-05T14:15:36.879948",
       "user_type": "admin",
       "data_sent": null
     },
@@ -153,8 +153,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.001,
-      "timestamp": "2025-07-05T13:57:34.590217",
+      "duration": 0.004,
+      "timestamp": "2025-07-05T14:15:36.886906",
       "user_type": "funcionario",
       "data_sent": null
     },
@@ -164,8 +164,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.002,
-      "timestamp": "2025-07-05T13:57:34.594262",
+      "duration": 0.012,
+      "timestamp": "2025-07-05T14:15:36.903041",
       "user_type": "cliente",
       "data_sent": null
     },
@@ -175,8 +175,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.004,
-      "timestamp": "2025-07-05T13:57:34.600120",
+      "duration": 0.011,
+      "timestamp": "2025-07-05T14:15:36.916092",
       "user_type": "veterinario",
       "data_sent": null
     },
@@ -187,7 +187,7 @@
       "expected": 200,
       "success": true,
       "duration": 0.016,
-      "timestamp": "2025-07-05T13:57:34.631477",
+      "timestamp": "2025-07-05T14:15:36.936454",
       "user_type": "admin",
       "data_sent": null
     },
@@ -197,8 +197,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.029,
-      "timestamp": "2025-07-05T13:57:34.662938",
+      "duration": 0.041,
+      "timestamp": "2025-07-05T14:15:36.980058",
       "user_type": "admin",
       "data_sent": {
         "first_name": "Admin Atualizado",
@@ -211,8 +211,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.01,
-      "timestamp": "2025-07-05T13:57:34.759927",
+      "duration": 0.008,
+      "timestamp": "2025-07-05T14:15:36.990377",
       "user_type": "veterinario",
       "data_sent": null
     },
@@ -222,8 +222,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.018,
-      "timestamp": "2025-07-05T13:57:34.835102",
+      "duration": 0.015,
+      "timestamp": "2025-07-05T14:15:37.008476",
       "user_type": "veterinario",
       "data_sent": {
         "first_name": "Veterinario Atualizado",
@@ -237,7 +237,7 @@
       "expected": 200,
       "success": true,
       "duration": 0.008,
-      "timestamp": "2025-07-05T13:57:34.855213",
+      "timestamp": "2025-07-05T14:15:37.019236",
       "user_type": "funcionario",
       "data_sent": null
     },
@@ -247,8 +247,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.016,
-      "timestamp": "2025-07-05T13:57:34.873464",
+      "duration": 0.018,
+      "timestamp": "2025-07-05T14:15:37.037484",
       "user_type": "funcionario",
       "data_sent": {
         "first_name": "Funcionario Atualizado",
@@ -261,8 +261,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.013,
-      "timestamp": "2025-07-05T13:57:34.927070",
+      "duration": 0.01,
+      "timestamp": "2025-07-05T14:15:37.047466",
       "user_type": "cliente",
       "data_sent": null
     },
@@ -272,8 +272,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.015,
-      "timestamp": "2025-07-05T13:57:34.958728",
+      "duration": 0.019,
+      "timestamp": "2025-07-05T14:15:37.068223",
       "user_type": "cliente",
       "data_sent": {
         "first_name": "Cliente Atualizado",
@@ -286,8 +286,8 @@
       "status_code": 201,
       "expected": 201,
       "success": true,
-      "duration": 0.017,
-      "timestamp": "2025-07-05T13:57:34.990314",
+      "duration": 0.021,
+      "timestamp": "2025-07-05T14:15:37.095545",
       "user_type": "cliente",
       "data_sent": {
         "nome": "Rex Teste",
@@ -302,8 +302,8 @@
       "status_code": 201,
       "expected": 201,
       "success": true,
-      "duration": 0.019,
-      "timestamp": "2025-07-05T13:57:35.009268",
+      "duration": 0.017,
+      "timestamp": "2025-07-05T14:15:37.118288",
       "user_type": "admin",
       "data_sent": {
         "nome": "Rex Admin",
@@ -319,8 +319,8 @@
       "status_code": 201,
       "expected": 201,
       "success": true,
-      "duration": 0.016,
-      "timestamp": "2025-07-05T13:57:35.025404",
+      "duration": 0.02,
+      "timestamp": "2025-07-05T14:15:37.140270",
       "user_type": "funcionario",
       "data_sent": {
         "nome": "Rex Funcionário",
@@ -336,8 +336,8 @@
       "status_code": 201,
       "expected": 201,
       "success": true,
-      "duration": 0.017,
-      "timestamp": "2025-07-05T13:57:35.044003",
+      "duration": 0.019,
+      "timestamp": "2025-07-05T14:15:37.165689",
       "user_type": "veterinario",
       "data_sent": {
         "nome": "Rex Veterinário",
@@ -353,8 +353,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.009,
-      "timestamp": "2025-07-05T13:57:35.055084",
+      "duration": 0.01,
+      "timestamp": "2025-07-05T14:15:37.178040",
       "user_type": "admin",
       "data_sent": null
     },
@@ -364,8 +364,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.007,
-      "timestamp": "2025-07-05T13:57:35.068154",
+      "duration": 0.008,
+      "timestamp": "2025-07-05T14:15:37.188553",
       "user_type": "veterinario",
       "data_sent": null
     },
@@ -375,8 +375,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.007,
-      "timestamp": "2025-07-05T13:57:35.079960",
+      "duration": 0.011,
+      "timestamp": "2025-07-05T14:15:37.201707",
       "user_type": "funcionario",
       "data_sent": null
     },
@@ -386,30 +386,30 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.028,
-      "timestamp": "2025-07-05T13:57:35.108232",
+      "duration": 0.025,
+      "timestamp": "2025-07-05T14:15:37.229450",
       "user_type": "cliente",
       "data_sent": null
     },
     {
       "method": "GET",
-      "endpoint": "/api/pets/125/",
+      "endpoint": "/api/pets/145/",
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.014,
-      "timestamp": "2025-07-05T13:57:35.124353",
+      "duration": 0.023,
+      "timestamp": "2025-07-05T14:15:37.255458",
       "user_type": "admin",
       "data_sent": null
     },
     {
       "method": "PATCH",
-      "endpoint": "/api/pets/125/",
+      "endpoint": "/api/pets/145/",
       "status_code": 200,
       "expected": 200,
       "success": true,
       "duration": 0.029,
-      "timestamp": "2025-07-05T13:57:35.157088",
+      "timestamp": "2025-07-05T14:15:37.291897",
       "user_type": "admin",
       "data_sent": {
         "peso": 26.0
@@ -417,71 +417,71 @@
     },
     {
       "method": "GET",
-      "endpoint": "/api/pets/125/",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.007,
-      "timestamp": "2025-07-05T13:57:35.166709",
-      "user_type": "veterinario",
-      "data_sent": null
-    },
-    {
-      "method": "PATCH",
-      "endpoint": "/api/pets/125/",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.018,
-      "timestamp": "2025-07-05T13:57:35.192666",
-      "user_type": "veterinario",
-      "data_sent": {
-        "peso": 26.0
-      }
-    },
-    {
-      "method": "GET",
-      "endpoint": "/api/pets/125/",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.007,
-      "timestamp": "2025-07-05T13:57:35.202864",
-      "user_type": "funcionario",
-      "data_sent": null
-    },
-    {
-      "method": "PATCH",
-      "endpoint": "/api/pets/125/",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.016,
-      "timestamp": "2025-07-05T13:57:35.224136",
-      "user_type": "funcionario",
-      "data_sent": {
-        "peso": 26.0
-      }
-    },
-    {
-      "method": "GET",
-      "endpoint": "/api/pets/125/",
+      "endpoint": "/api/pets/145/",
       "status_code": 200,
       "expected": 200,
       "success": true,
       "duration": 0.006,
-      "timestamp": "2025-07-05T13:57:35.234244",
+      "timestamp": "2025-07-05T14:15:37.303766",
+      "user_type": "veterinario",
+      "data_sent": null
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/pets/145/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.022,
+      "timestamp": "2025-07-05T14:15:37.329268",
+      "user_type": "veterinario",
+      "data_sent": {
+        "peso": 26.0
+      }
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/pets/145/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.004,
+      "timestamp": "2025-07-05T14:15:37.342343",
+      "user_type": "funcionario",
+      "data_sent": null
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/pets/145/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.019,
+      "timestamp": "2025-07-05T14:15:37.365968",
+      "user_type": "funcionario",
+      "data_sent": {
+        "peso": 26.0
+      }
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/pets/145/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.006,
+      "timestamp": "2025-07-05T14:15:37.374419",
       "user_type": "cliente",
       "data_sent": null
     },
     {
       "method": "PATCH",
-      "endpoint": "/api/pets/125/",
+      "endpoint": "/api/pets/145/",
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.018,
-      "timestamp": "2025-07-05T13:57:35.259166",
+      "duration": 0.026,
+      "timestamp": "2025-07-05T14:15:37.413254",
       "user_type": "cliente",
       "data_sent": {
         "peso": 26.0
@@ -493,11 +493,28 @@
       "status_code": 201,
       "expected": 201,
       "success": true,
-      "duration": 0.016,
-      "timestamp": "2025-07-05T13:57:35.295708",
+      "duration": 0.015,
+      "timestamp": "2025-07-05T14:15:37.437539",
       "user_type": "admin",
       "data_sent": {
-        "nome": "Consulta Veterinária 1751734655",
+        "nome": "Consulta Veterinária 1751735737",
+        "descricao": "Consulta geral com veterinário",
+        "preco": "150.00",
+        "duracao": "01:00:00",
+        "disponivel": true
+      }
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/agendamentos/servicos/",
+      "status_code": 201,
+      "expected": 201,
+      "success": true,
+      "duration": 0.015,
+      "timestamp": "2025-07-05T14:15:37.454866",
+      "user_type": "funcionario",
+      "data_sent": {
+        "nome": "Banho e Tosa 1751735738",
         "descricao": "Consulta geral com veterinário",
         "preco": "150.00",
         "duracao": "01:00:00",
@@ -511,27 +528,10 @@
       "expected": 201,
       "success": true,
       "duration": 0.014,
-      "timestamp": "2025-07-05T13:57:35.313779",
-      "user_type": "funcionario",
-      "data_sent": {
-        "nome": "Banho e Tosa 1751734656",
-        "descricao": "Consulta geral com veterinário",
-        "preco": "150.00",
-        "duracao": "01:00:00",
-        "disponivel": true
-      }
-    },
-    {
-      "method": "POST",
-      "endpoint": "/api/agendamentos/servicos/",
-      "status_code": 201,
-      "expected": 201,
-      "success": true,
-      "duration": 0.017,
-      "timestamp": "2025-07-05T13:57:35.330455",
+      "timestamp": "2025-07-05T14:15:37.470676",
       "user_type": "veterinario",
       "data_sent": {
-        "nome": "Cirurgia 1751734657",
+        "nome": "Cirurgia 1751735739",
         "descricao": "Consulta geral com veterinário",
         "preco": "150.00",
         "duracao": "01:00:00",
@@ -541,111 +541,111 @@
     {
       "method": "POST",
       "endpoint": "/api/agendamentos/servicos/",
+      "status_code": 403,
+      "expected": 403,
+      "success": true,
+      "duration": 0.013,
+      "timestamp": "2025-07-05T14:15:37.485998",
+      "user_type": "cliente",
+      "data_sent": {
+        "nome": "Consulta Veterinária 1751735737",
+        "descricao": "Consulta geral com veterinário",
+        "preco": "150.00",
+        "duracao": "01:00:00",
+        "disponivel": true
+      }
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/servicos/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.005,
+      "timestamp": "2025-07-05T14:15:37.491278",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/servicos/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.006,
+      "timestamp": "2025-07-05T14:15:37.502602",
+      "user_type": "veterinario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/servicos/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.003,
+      "timestamp": "2025-07-05T14:15:37.506326",
+      "user_type": "funcionario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/servicos/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.007,
+      "timestamp": "2025-07-05T14:15:37.519050",
+      "user_type": "cliente",
+      "data_sent": null
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/agendamentos/servicos/90/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.03,
+      "timestamp": "2025-07-05T14:15:37.551404",
+      "user_type": "admin",
+      "data_sent": {
+        "preco": "180.00"
+      }
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/agendamentos/servicos/90/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.017,
+      "timestamp": "2025-07-05T14:15:37.570281",
+      "user_type": "veterinario",
+      "data_sent": {
+        "preco": "180.00"
+      }
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/agendamentos/servicos/90/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.016,
+      "timestamp": "2025-07-05T14:15:37.588763",
+      "user_type": "funcionario",
+      "data_sent": {
+        "preco": "180.00"
+      }
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/agendamentos/servicos/90/",
       "status_code": 403,
       "expected": 403,
       "success": true,
       "duration": 0.011,
-      "timestamp": "2025-07-05T13:57:35.342150",
-      "user_type": "cliente",
-      "data_sent": {
-        "nome": "Consulta Veterinária 1751734655",
-        "descricao": "Consulta geral com veterinário",
-        "preco": "150.00",
-        "duracao": "01:00:00",
-        "disponivel": true
-      }
-    },
-    {
-      "method": "GET",
-      "endpoint": "/api/agendamentos/servicos/",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.003,
-      "timestamp": "2025-07-05T13:57:35.346167",
-      "user_type": "admin",
-      "data_sent": null
-    },
-    {
-      "method": "GET",
-      "endpoint": "/api/agendamentos/servicos/",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.004,
-      "timestamp": "2025-07-05T13:57:35.350726",
-      "user_type": "veterinario",
-      "data_sent": null
-    },
-    {
-      "method": "GET",
-      "endpoint": "/api/agendamentos/servicos/",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.009,
-      "timestamp": "2025-07-05T13:57:35.359572",
-      "user_type": "funcionario",
-      "data_sent": null
-    },
-    {
-      "method": "GET",
-      "endpoint": "/api/agendamentos/servicos/",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.003,
-      "timestamp": "2025-07-05T13:57:35.362811",
-      "user_type": "cliente",
-      "data_sent": null
-    },
-    {
-      "method": "PATCH",
-      "endpoint": "/api/agendamentos/servicos/75/",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.018,
-      "timestamp": "2025-07-05T13:57:35.384550",
-      "user_type": "admin",
-      "data_sent": {
-        "preco": "180.00"
-      }
-    },
-    {
-      "method": "PATCH",
-      "endpoint": "/api/agendamentos/servicos/75/",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.092,
-      "timestamp": "2025-07-05T13:57:35.476588",
-      "user_type": "veterinario",
-      "data_sent": {
-        "preco": "180.00"
-      }
-    },
-    {
-      "method": "PATCH",
-      "endpoint": "/api/agendamentos/servicos/75/",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.015,
-      "timestamp": "2025-07-05T13:57:35.493849",
-      "user_type": "funcionario",
-      "data_sent": {
-        "preco": "180.00"
-      }
-    },
-    {
-      "method": "PATCH",
-      "endpoint": "/api/agendamentos/servicos/75/",
-      "status_code": 403,
-      "expected": 403,
-      "success": true,
-      "duration": 0.006,
-      "timestamp": "2025-07-05T13:57:35.502224",
+      "timestamp": "2025-07-05T14:15:37.601818",
       "user_type": "cliente",
       "data_sent": {
         "preco": "180.00"
@@ -657,13 +657,13 @@
       "status_code": 201,
       "expected": 201,
       "success": true,
-      "duration": 0.018,
-      "timestamp": "2025-07-05T13:57:35.526233",
+      "duration": 0.146,
+      "timestamp": "2025-07-05T14:15:37.984915",
       "user_type": "veterinario",
       "data_sent": {
-        "pet": 125,
+        "pet": 145,
         "veterinario": 2,
-        "data_consulta": "2025-07-05T13:57:35.508070",
+        "data_consulta": "2025-07-05T14:15:37.839011",
         "motivo_consulta": "Animal apresentando letargia e falta de apetite",
         "exame_fisico": "Animal responsivo, mucosas pálidas",
         "diagnostico": "Possível infecção gastrointestinal",
@@ -679,13 +679,13 @@
       "status_code": 201,
       "expected": 201,
       "success": true,
-      "duration": 0.015,
-      "timestamp": "2025-07-05T13:57:35.544437",
+      "duration": 0.018,
+      "timestamp": "2025-07-05T14:15:38.004934",
       "user_type": "admin",
       "data_sent": {
-        "pet": 125,
+        "pet": 145,
         "veterinario": 2,
-        "data_consulta": "2025-07-05T13:57:35.508070",
+        "data_consulta": "2025-07-05T14:15:37.839011",
         "motivo_consulta": "Animal apresentando letargia e falta de apetite",
         "exame_fisico": "Animal responsivo, mucosas pálidas",
         "diagnostico": "Possível infecção gastrointestinal",
@@ -701,13 +701,13 @@
       "status_code": 201,
       "expected": 201,
       "success": true,
-      "duration": 0.016,
-      "timestamp": "2025-07-05T13:57:35.562157",
+      "duration": 0.022,
+      "timestamp": "2025-07-05T14:15:38.029962",
       "user_type": "funcionario",
       "data_sent": {
-        "pet": 125,
+        "pet": 145,
         "veterinario": 2,
-        "data_consulta": "2025-07-05T13:57:35.508070",
+        "data_consulta": "2025-07-05T14:15:37.839011",
         "motivo_consulta": "Animal apresentando letargia e falta de apetite",
         "exame_fisico": "Animal responsivo, mucosas pálidas",
         "diagnostico": "Possível infecção gastrointestinal",
@@ -724,12 +724,12 @@
       "expected": 403,
       "success": true,
       "duration": 0.008,
-      "timestamp": "2025-07-05T13:57:35.582320",
+      "timestamp": "2025-07-05T14:15:38.038689",
       "user_type": "cliente",
       "data_sent": {
-        "pet": 125,
+        "pet": 145,
         "veterinario": 2,
-        "data_consulta": "2025-07-05T13:57:35.508070",
+        "data_consulta": "2025-07-05T14:15:37.839011",
         "motivo_consulta": "Animal apresentando letargia e falta de apetite",
         "exame_fisico": "Animal responsivo, mucosas pálidas",
         "diagnostico": "Possível infecção gastrointestinal",
@@ -745,146 +745,157 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.012,
-      "timestamp": "2025-07-05T13:57:35.601295",
+      "duration": 0.027,
+      "timestamp": "2025-07-05T14:15:38.072520",
       "user_type": "admin",
       "data_sent": null
     },
     {
       "method": "GET",
       "endpoint": "/api/prontuarios/",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.006,
-      "timestamp": "2025-07-05T13:57:35.610315",
-      "user_type": "veterinario",
-      "data_sent": null
-    },
-    {
-      "method": "GET",
-      "endpoint": "/api/prontuarios/",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.05,
-      "timestamp": "2025-07-05T13:57:35.661862",
-      "user_type": "funcionario",
-      "data_sent": null
-    },
-    {
-      "method": "GET",
-      "endpoint": "/api/prontuarios/",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.014,
-      "timestamp": "2025-07-05T13:57:35.725794",
-      "user_type": "cliente",
-      "data_sent": null
-    },
-    {
-      "method": "GET",
-      "endpoint": "/api/prontuarios/?pet=125",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.008,
-      "timestamp": "2025-07-05T13:57:35.783123",
-      "user_type": "admin",
-      "data_sent": null
-    },
-    {
-      "method": "GET",
-      "endpoint": "/api/prontuarios/?pet=125",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.011,
-      "timestamp": "2025-07-05T13:57:35.831329",
-      "user_type": "veterinario",
-      "data_sent": null
-    },
-    {
-      "method": "GET",
-      "endpoint": "/api/prontuarios/?pet=125",
       "status_code": 200,
       "expected": 200,
       "success": true,
       "duration": 0.015,
-      "timestamp": "2025-07-05T13:57:35.866066",
+      "timestamp": "2025-07-05T14:15:38.087623",
+      "user_type": "veterinario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/prontuarios/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.017,
+      "timestamp": "2025-07-05T14:15:38.104889",
       "user_type": "funcionario",
       "data_sent": null
     },
     {
       "method": "GET",
-      "endpoint": "/api/prontuarios/?pet=125",
+      "endpoint": "/api/prontuarios/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.02,
+      "timestamp": "2025-07-05T14:15:38.125190",
+      "user_type": "cliente",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/prontuarios/?pet=145",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.019,
+      "timestamp": "2025-07-05T14:15:38.149168",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/prontuarios/?pet=145",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.017,
+      "timestamp": "2025-07-05T14:15:38.166063",
+      "user_type": "veterinario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/prontuarios/?pet=145",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.017,
+      "timestamp": "2025-07-05T14:15:38.184718",
+      "user_type": "funcionario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/prontuarios/?pet=145",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.021,
+      "timestamp": "2025-07-05T14:15:38.206523",
+      "user_type": "cliente",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/prontuarios/94/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.014,
+      "timestamp": "2025-07-05T14:15:38.222538",
+      "user_type": "veterinario",
+      "data_sent": null
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/prontuarios/94/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.041,
+      "timestamp": "2025-07-05T14:15:38.263137",
+      "user_type": "veterinario",
+      "data_sent": {
+        "temperatura": "37.8"
+      }
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/prontuarios/95/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.02,
+      "timestamp": "2025-07-05T14:15:38.285689",
+      "user_type": "admin",
+      "data_sent": {
+        "temperatura": "37.8"
+      }
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/prontuarios/95/",
+      "status_code": 403,
+      "expected": 403,
+      "success": true,
+      "duration": 0.006,
+      "timestamp": "2025-07-05T14:15:38.291706",
+      "user_type": "cliente",
+      "data_sent": {
+        "temperatura": "37.8"
+      }
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/horarios-disponiveis/?data=2025-07-06",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.007,
+      "timestamp": "2025-07-05T14:15:38.305517",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/agendamentos/horarios-disponiveis/?data=2025-07-06",
       "status_code": 200,
       "expected": 200,
       "success": true,
       "duration": 0.009,
-      "timestamp": "2025-07-05T13:57:35.898430",
-      "user_type": "cliente",
-      "data_sent": null
-    },
-    {
-      "method": "PATCH",
-      "endpoint": "/api/prontuarios/79/",
-      "status_code": 404,
-      "expected": 200,
-      "success": false,
-      "duration": 0.024,
-      "timestamp": "2025-07-05T13:57:35.924364",
-      "user_type": "veterinario",
-      "data_sent": {
-        "temperatura": "37.8"
-      }
-    },
-    {
-      "method": "PATCH",
-      "endpoint": "/api/prontuarios/80/",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.025,
-      "timestamp": "2025-07-05T13:57:35.957384",
-      "user_type": "admin",
-      "data_sent": {
-        "temperatura": "37.8"
-      }
-    },
-    {
-      "method": "PATCH",
-      "endpoint": "/api/prontuarios/80/",
-      "status_code": 403,
-      "expected": 403,
-      "success": true,
-      "duration": 0.008,
-      "timestamp": "2025-07-05T13:57:35.966924",
-      "user_type": "cliente",
-      "data_sent": {
-        "temperatura": "37.8"
-      }
-    },
-    {
-      "method": "GET",
-      "endpoint": "/api/agendamentos/horarios-disponiveis/?data=2025-07-06",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.004,
-      "timestamp": "2025-07-05T13:57:35.981658",
-      "user_type": "admin",
-      "data_sent": null
-    },
-    {
-      "method": "GET",
-      "endpoint": "/api/agendamentos/horarios-disponiveis/?data=2025-07-06",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.006,
-      "timestamp": "2025-07-05T13:57:35.990730",
+      "timestamp": "2025-07-05T14:15:38.315961",
       "user_type": "veterinario",
       "data_sent": null
     },
@@ -894,8 +905,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.004,
-      "timestamp": "2025-07-05T13:57:36.000514",
+      "duration": 0.009,
+      "timestamp": "2025-07-05T14:15:38.329003",
       "user_type": "funcionario",
       "data_sent": null
     },
@@ -905,8 +916,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.003,
-      "timestamp": "2025-07-05T13:57:36.011573",
+      "duration": 0.004,
+      "timestamp": "2025-07-05T14:15:38.337530",
       "user_type": "cliente",
       "data_sent": null
     },
@@ -916,12 +927,12 @@
       "status_code": 201,
       "expected": 201,
       "success": true,
-      "duration": 0.025,
-      "timestamp": "2025-07-05T13:57:36.041612",
+      "duration": 0.036,
+      "timestamp": "2025-07-05T14:15:38.374393",
       "user_type": "cliente",
       "data_sent": {
-        "pet_id": 125,
-        "servico_id": 75,
+        "pet_id": 145,
+        "servico_id": 90,
         "data_hora": "2025-07-06T14:00:00",
         "observacoes": "Agendamento teste via API"
       }
@@ -932,12 +943,12 @@
       "status_code": 201,
       "expected": 201,
       "success": true,
-      "duration": 0.019,
-      "timestamp": "2025-07-05T13:57:36.062181",
+      "duration": 0.023,
+      "timestamp": "2025-07-05T14:15:38.401858",
       "user_type": "funcionario",
       "data_sent": {
-        "pet_id": 125,
-        "servico_id": 75,
+        "pet_id": 145,
+        "servico_id": 90,
         "data_hora": "2025-07-06T15:00:00",
         "observacoes": "Agendamento teste via API"
       }
@@ -948,12 +959,12 @@
       "status_code": 201,
       "expected": 201,
       "success": true,
-      "duration": 0.021,
-      "timestamp": "2025-07-05T13:57:36.085568",
+      "duration": 0.053,
+      "timestamp": "2025-07-05T14:15:38.457259",
       "user_type": "admin",
       "data_sent": {
-        "pet_id": 125,
-        "servico_id": 75,
+        "pet_id": 145,
+        "servico_id": 90,
         "data_hora": "2025-07-06T16:00:00",
         "observacoes": "Agendamento teste via API"
       }
@@ -964,12 +975,12 @@
       "status_code": 201,
       "expected": 201,
       "success": true,
-      "duration": 0.019,
-      "timestamp": "2025-07-05T13:57:36.110238",
+      "duration": 0.026,
+      "timestamp": "2025-07-05T14:15:38.549286",
       "user_type": "veterinario",
       "data_sent": {
-        "pet_id": 125,
-        "servico_id": 75,
+        "pet_id": 145,
+        "servico_id": 90,
         "data_hora": "2025-07-06T17:00:00",
         "observacoes": "Agendamento teste via API"
       }
@@ -980,8 +991,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.037,
-      "timestamp": "2025-07-05T13:57:36.147008",
+      "duration": 0.044,
+      "timestamp": "2025-07-05T14:15:38.665243",
       "user_type": "admin",
       "data_sent": null
     },
@@ -991,8 +1002,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.009,
-      "timestamp": "2025-07-05T13:57:36.157503",
+      "duration": 0.045,
+      "timestamp": "2025-07-05T14:15:38.722979",
       "user_type": "veterinario",
       "data_sent": null
     },
@@ -1002,8 +1013,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.047,
-      "timestamp": "2025-07-05T13:57:36.206752",
+      "duration": 0.068,
+      "timestamp": "2025-07-05T14:15:38.825286",
       "user_type": "funcionario",
       "data_sent": null
     },
@@ -1013,8 +1024,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.039,
-      "timestamp": "2025-07-05T13:57:36.247646",
+      "duration": 0.067,
+      "timestamp": "2025-07-05T14:15:38.903208",
       "user_type": "cliente",
       "data_sent": null
     },
@@ -1024,8 +1035,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.058,
-      "timestamp": "2025-07-05T13:57:36.311468",
+      "duration": 0.055,
+      "timestamp": "2025-07-05T14:15:38.973400",
       "user_type": "admin",
       "data_sent": null
     },
@@ -1035,8 +1046,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.006,
-      "timestamp": "2025-07-05T13:57:36.327531",
+      "duration": 0.056,
+      "timestamp": "2025-07-05T14:15:39.037684",
       "user_type": "veterinario",
       "data_sent": null
     },
@@ -1046,8 +1057,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.049,
-      "timestamp": "2025-07-05T13:57:36.382650",
+      "duration": 0.067,
+      "timestamp": "2025-07-05T14:15:39.114089",
       "user_type": "funcionario",
       "data_sent": null
     },
@@ -1057,32 +1068,43 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.036,
-      "timestamp": "2025-07-05T13:57:36.433614",
+      "duration": 0.05,
+      "timestamp": "2025-07-05T14:15:39.169906",
       "user_type": "cliente",
       "data_sent": null
     },
     {
       "method": "PATCH",
-      "endpoint": "/api/agendamentos/99/",
+      "endpoint": "/api/agendamentos/119/",
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.021,
-      "timestamp": "2025-07-05T13:57:36.462268",
+      "duration": 0.026,
+      "timestamp": "2025-07-05T14:15:39.206429",
       "user_type": "admin",
       "data_sent": {
         "status": "CONCLUIDO"
       }
     },
     {
-      "method": "PATCH",
-      "endpoint": "/api/agendamentos/100/",
-      "status_code": 404,
+      "method": "GET",
+      "endpoint": "/api/agendamentos/120/",
+      "status_code": 200,
       "expected": 200,
-      "success": false,
+      "success": true,
       "duration": 0.016,
-      "timestamp": "2025-07-05T13:57:36.489890",
+      "timestamp": "2025-07-05T14:15:39.222706",
+      "user_type": "veterinario",
+      "data_sent": null
+    },
+    {
+      "method": "PATCH",
+      "endpoint": "/api/agendamentos/120/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.029,
+      "timestamp": "2025-07-05T14:15:39.251279",
       "user_type": "veterinario",
       "data_sent": {
         "status": "CONCLUIDO"
@@ -1090,12 +1112,12 @@
     },
     {
       "method": "PATCH",
-      "endpoint": "/api/agendamentos/98/",
+      "endpoint": "/api/agendamentos/118/",
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.019,
-      "timestamp": "2025-07-05T13:57:36.516820",
+      "duration": 0.03,
+      "timestamp": "2025-07-05T14:15:39.281928",
       "user_type": "funcionario",
       "data_sent": {
         "status": "CONCLUIDO"
@@ -1103,12 +1125,12 @@
     },
     {
       "method": "PATCH",
-      "endpoint": "/api/agendamentos/97/",
+      "endpoint": "/api/agendamentos/117/",
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.02,
-      "timestamp": "2025-07-05T13:57:36.543056",
+      "duration": 0.029,
+      "timestamp": "2025-07-05T14:15:39.314033",
       "user_type": "cliente",
       "data_sent": {
         "status": "CONCLUIDO"
@@ -1120,8 +1142,8 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.01,
-      "timestamp": "2025-07-05T13:57:36.574660",
+      "duration": 0.011,
+      "timestamp": "2025-07-05T14:15:39.333481",
       "user_type": "admin",
       "data_sent": null
     },
@@ -1131,75 +1153,9 @@
       "status_code": 200,
       "expected": 200,
       "success": true,
-      "duration": 0.006,
-      "timestamp": "2025-07-05T13:57:36.587452",
+      "duration": 0.004,
+      "timestamp": "2025-07-05T14:15:39.339433",
       "user_type": "admin",
-      "data_sent": null
-    },
-    {
-      "method": "GET",
-      "endpoint": "/api/configuracao/horarios-funcionamento/",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.004,
-      "timestamp": "2025-07-05T13:57:36.598488",
-      "user_type": "veterinario",
-      "data_sent": null
-    },
-    {
-      "method": "GET",
-      "endpoint": "/api/configuracao/feriados/",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.004,
-      "timestamp": "2025-07-05T13:57:36.608783",
-      "user_type": "veterinario",
-      "data_sent": null
-    },
-    {
-      "method": "GET",
-      "endpoint": "/api/configuracao/horarios-funcionamento/",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.004,
-      "timestamp": "2025-07-05T13:57:36.614837",
-      "user_type": "funcionario",
-      "data_sent": null
-    },
-    {
-      "method": "GET",
-      "endpoint": "/api/configuracao/feriados/",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.005,
-      "timestamp": "2025-07-05T13:57:36.630283",
-      "user_type": "funcionario",
-      "data_sent": null
-    },
-    {
-      "method": "GET",
-      "endpoint": "/api/configuracao/horarios-funcionamento/",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.008,
-      "timestamp": "2025-07-05T13:57:36.645775",
-      "user_type": "cliente",
-      "data_sent": null
-    },
-    {
-      "method": "GET",
-      "endpoint": "/api/configuracao/feriados/",
-      "status_code": 200,
-      "expected": 200,
-      "success": true,
-      "duration": 0.004,
-      "timestamp": "2025-07-05T13:57:36.661045",
-      "user_type": "cliente",
       "data_sent": null
     },
     {
@@ -1209,7 +1165,73 @@
       "expected": 200,
       "success": true,
       "duration": 0.011,
-      "timestamp": "2025-07-05T13:57:36.679954",
+      "timestamp": "2025-07-05T14:15:39.350474",
+      "user_type": "veterinario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/configuracao/feriados/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.005,
+      "timestamp": "2025-07-05T14:15:39.355906",
+      "user_type": "veterinario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/configuracao/horarios-funcionamento/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.019,
+      "timestamp": "2025-07-05T14:15:39.375409",
+      "user_type": "funcionario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/configuracao/feriados/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.05,
+      "timestamp": "2025-07-05T14:15:39.429802",
+      "user_type": "funcionario",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/configuracao/horarios-funcionamento/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.007,
+      "timestamp": "2025-07-05T14:15:39.497392",
+      "user_type": "cliente",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/configuracao/feriados/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.014,
+      "timestamp": "2025-07-05T14:15:39.551541",
+      "user_type": "cliente",
+      "data_sent": null
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/configuracao/horarios-funcionamento/",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "duration": 0.009,
+      "timestamp": "2025-07-05T14:15:39.594193",
       "user_type": "admin",
       "data_sent": null
     },
@@ -1219,8 +1241,8 @@
       "status_code": 403,
       "expected": 403,
       "success": true,
-      "duration": 0.015,
-      "timestamp": "2025-07-05T13:57:36.706104",
+      "duration": 0.016,
+      "timestamp": "2025-07-05T14:15:39.634512",
       "user_type": "funcionario",
       "data_sent": {
         "dia_semana": 0,
@@ -1235,8 +1257,8 @@
       "status_code": 403,
       "expected": 403,
       "success": true,
-      "duration": 0.014,
-      "timestamp": "2025-07-05T13:57:36.727354",
+      "duration": 0.036,
+      "timestamp": "2025-07-05T14:15:39.672725",
       "user_type": "veterinario",
       "data_sent": {
         "dia_semana": 0,
@@ -1251,8 +1273,8 @@
       "status_code": 403,
       "expected": 403,
       "success": true,
-      "duration": 0.1,
-      "timestamp": "2025-07-05T13:57:36.833261",
+      "duration": 0.013,
+      "timestamp": "2025-07-05T14:15:39.704675",
       "user_type": "cliente",
       "data_sent": {
         "dia_semana": 0,
@@ -1267,12 +1289,12 @@
       "status_code": 201,
       "expected": 201,
       "success": true,
-      "duration": 0.018,
-      "timestamp": "2025-07-05T13:57:36.899139",
+      "duration": 0.024,
+      "timestamp": "2025-07-05T14:15:39.730418",
       "user_type": "admin",
       "data_sent": {
-        "nome": "Teste API 1751734656",
-        "data": "2026-04-27",
+        "nome": "Teste API Feriado 1751735739",
+        "data": "2027-03-27",
         "recorrente": false,
         "ativo": true
       }
@@ -1283,12 +1305,12 @@
       "status_code": 403,
       "expected": 403,
       "success": true,
-      "duration": 0.042,
-      "timestamp": "2025-07-05T13:57:36.963710",
+      "duration": 0.006,
+      "timestamp": "2025-07-05T14:15:39.738329",
       "user_type": "veterinario",
       "data_sent": {
-        "nome": "Teste API 1751734656",
-        "data": "2026-04-27",
+        "nome": "Teste API Feriado 1751735739",
+        "data": "2027-03-27",
         "recorrente": false,
         "ativo": true
       }
@@ -1299,12 +1321,12 @@
       "status_code": 403,
       "expected": 403,
       "success": true,
-      "duration": 0.056,
-      "timestamp": "2025-07-05T13:57:37.031816",
+      "duration": 0.005,
+      "timestamp": "2025-07-05T14:15:39.743567",
       "user_type": "funcionario",
       "data_sent": {
-        "nome": "Teste API 1751734656",
-        "data": "2026-04-27",
+        "nome": "Teste API Feriado 1751735739",
+        "data": "2027-03-27",
         "recorrente": false,
         "ativo": true
       }
@@ -1316,182 +1338,171 @@
       "expected": 403,
       "success": true,
       "duration": 0.008,
-      "timestamp": "2025-07-05T13:57:37.042378",
+      "timestamp": "2025-07-05T14:15:39.752517",
       "user_type": "cliente",
       "data_sent": {
-        "nome": "Teste API 1751734656",
-        "data": "2026-04-27",
+        "nome": "Teste API Feriado 1751735739",
+        "data": "2027-03-27",
         "recorrente": false,
         "ativo": true
       }
     },
     {
       "method": "DELETE",
-      "endpoint": "/api/agendamentos/97/",
-      "status_code": 204,
-      "expected": 204,
-      "success": true,
-      "duration": 0.019,
-      "timestamp": "2025-07-05T13:57:37.080711",
-      "user_type": "admin",
-      "data_sent": null
-    },
-    {
-      "method": "DELETE",
-      "endpoint": "/api/agendamentos/98/",
+      "endpoint": "/api/agendamentos/117/",
       "status_code": 204,
       "expected": 204,
       "success": true,
       "duration": 0.016,
-      "timestamp": "2025-07-05T13:57:37.098541",
+      "timestamp": "2025-07-05T14:15:39.768896",
       "user_type": "admin",
       "data_sent": null
     },
     {
       "method": "DELETE",
-      "endpoint": "/api/agendamentos/99/",
-      "status_code": 204,
-      "expected": 204,
-      "success": true,
-      "duration": 0.013,
-      "timestamp": "2025-07-05T13:57:37.111637",
-      "user_type": "admin",
-      "data_sent": null
-    },
-    {
-      "method": "DELETE",
-      "endpoint": "/api/agendamentos/100/",
+      "endpoint": "/api/agendamentos/118/",
       "status_code": 204,
       "expected": 204,
       "success": true,
       "duration": 0.015,
-      "timestamp": "2025-07-05T13:57:37.129598",
+      "timestamp": "2025-07-05T14:15:39.784862",
       "user_type": "admin",
       "data_sent": null
     },
     {
       "method": "DELETE",
-      "endpoint": "/api/prontuarios/79/",
+      "endpoint": "/api/agendamentos/119/",
       "status_code": 204,
       "expected": 204,
       "success": true,
       "duration": 0.017,
-      "timestamp": "2025-07-05T13:57:37.157797",
+      "timestamp": "2025-07-05T14:15:39.802195",
       "user_type": "admin",
       "data_sent": null
     },
     {
       "method": "DELETE",
-      "endpoint": "/api/prontuarios/80/",
+      "endpoint": "/api/agendamentos/120/",
       "status_code": 204,
       "expected": 204,
       "success": true,
-      "duration": 0.021,
-      "timestamp": "2025-07-05T13:57:37.183059",
+      "duration": 0.017,
+      "timestamp": "2025-07-05T14:15:39.819939",
       "user_type": "admin",
       "data_sent": null
     },
     {
       "method": "DELETE",
-      "endpoint": "/api/prontuarios/81/",
-      "status_code": 204,
-      "expected": 204,
-      "success": true,
-      "duration": 0.013,
-      "timestamp": "2025-07-05T13:57:37.203295",
-      "user_type": "admin",
-      "data_sent": null
-    },
-    {
-      "method": "DELETE",
-      "endpoint": "/api/pets/125/",
+      "endpoint": "/api/prontuarios/94/",
       "status_code": 204,
       "expected": 204,
       "success": true,
       "duration": 0.016,
-      "timestamp": "2025-07-05T13:57:37.226089",
+      "timestamp": "2025-07-05T14:15:39.836480",
       "user_type": "admin",
       "data_sent": null
     },
     {
       "method": "DELETE",
-      "endpoint": "/api/pets/126/",
+      "endpoint": "/api/prontuarios/95/",
+      "status_code": 204,
+      "expected": 204,
+      "success": true,
+      "duration": 0.018,
+      "timestamp": "2025-07-05T14:15:39.855821",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "DELETE",
+      "endpoint": "/api/prontuarios/96/",
+      "status_code": 204,
+      "expected": 204,
+      "success": true,
+      "duration": 0.02,
+      "timestamp": "2025-07-05T14:15:39.877468",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "DELETE",
+      "endpoint": "/api/pets/145/",
+      "status_code": 204,
+      "expected": 204,
+      "success": true,
+      "duration": 0.018,
+      "timestamp": "2025-07-05T14:15:39.897132",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "DELETE",
+      "endpoint": "/api/pets/146/",
       "status_code": 204,
       "expected": 204,
       "success": true,
       "duration": 0.019,
-      "timestamp": "2025-07-05T13:57:37.247645",
+      "timestamp": "2025-07-05T14:15:39.917251",
       "user_type": "admin",
       "data_sent": null
     },
     {
       "method": "DELETE",
-      "endpoint": "/api/pets/127/",
+      "endpoint": "/api/pets/147/",
       "status_code": 204,
       "expected": 204,
       "success": true,
-      "duration": 0.023,
-      "timestamp": "2025-07-05T13:57:37.272810",
+      "duration": 0.02,
+      "timestamp": "2025-07-05T14:15:39.937600",
       "user_type": "admin",
       "data_sent": null
     },
     {
       "method": "DELETE",
-      "endpoint": "/api/pets/128/",
+      "endpoint": "/api/pets/148/",
+      "status_code": 204,
+      "expected": 204,
+      "success": true,
+      "duration": 0.021,
+      "timestamp": "2025-07-05T14:15:39.958267",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "DELETE",
+      "endpoint": "/api/agendamentos/servicos/90/",
+      "status_code": 204,
+      "expected": 204,
+      "success": true,
+      "duration": 0.014,
+      "timestamp": "2025-07-05T14:15:39.972229",
+      "user_type": "admin",
+      "data_sent": null
+    },
+    {
+      "method": "DELETE",
+      "endpoint": "/api/agendamentos/servicos/91/",
       "status_code": 204,
       "expected": 204,
       "success": true,
       "duration": 0.015,
-      "timestamp": "2025-07-05T13:57:37.289652",
+      "timestamp": "2025-07-05T14:15:39.989378",
       "user_type": "admin",
       "data_sent": null
     },
     {
       "method": "DELETE",
-      "endpoint": "/api/agendamentos/servicos/75/",
+      "endpoint": "/api/agendamentos/servicos/92/",
       "status_code": 204,
       "expected": 204,
       "success": true,
-      "duration": 0.016,
-      "timestamp": "2025-07-05T13:57:37.309654",
-      "user_type": "admin",
-      "data_sent": null
-    },
-    {
-      "method": "DELETE",
-      "endpoint": "/api/agendamentos/servicos/76/",
-      "status_code": 204,
-      "expected": 204,
-      "success": true,
-      "duration": 0.015,
-      "timestamp": "2025-07-05T13:57:37.326398",
-      "user_type": "admin",
-      "data_sent": null
-    },
-    {
-      "method": "DELETE",
-      "endpoint": "/api/agendamentos/servicos/77/",
-      "status_code": 204,
-      "expected": 204,
-      "success": true,
-      "duration": 0.016,
-      "timestamp": "2025-07-05T13:57:37.344610",
+      "duration": 0.017,
+      "timestamp": "2025-07-05T14:15:40.006474",
       "user_type": "admin",
       "data_sent": null
     }
   ],
-  "errors": [
-    {
-      "route": "PATCH /api/prontuarios/79/",
-      "user_type": "veterinario",
-      "error": "Status 404, esperado 200"
-    },
-    {
-      "route": "PATCH /api/agendamentos/100/",
-      "user_type": "veterinario",
-      "error": "Status 404, esperado 200"
-    }
-  ],
+  "errors": [],
   "timing": {},
   "user_tests": {
     "admin": {
@@ -1500,9 +1511,9 @@
       "total": 39
     },
     "veterinario": {
-      "passed": 23,
-      "failed": 2,
-      "total": 25
+      "passed": 27,
+      "failed": 0,
+      "total": 27
     },
     "funcionario": {
       "passed": 24,
@@ -1520,5 +1531,5 @@
       "total": 3
     }
   },
-  "total_duration": 9.571
+  "total_duration": 11.075
 }

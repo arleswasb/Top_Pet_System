@@ -475,11 +475,8 @@ class APISimulator:
         prontuario_id = None
         if response['success']:
             prontuario_id = response['data'].get('id')
-            print(f"DEBUG: Veterinário criou prontuário com ID {prontuario_id}")
             self.created_objects['prontuarios'].append(prontuario_id)
             self.user_created_objects['veterinario']['prontuarios'].append(prontuario_id)
-        else:
-            print(f"DEBUG: Veterinário falhou em criar prontuário: {response}")
         
         # Admin pode criar prontuário
         admin_prontuario = prontuario_data.copy()
@@ -517,11 +514,16 @@ class APISimulator:
             # Veterinário pode atualizar apenas o prontuário que ele criou
             if self.user_created_objects['veterinario']['prontuarios']:
                 vet_prontuario_id = self.user_created_objects['veterinario']['prontuarios'][0]
-                print(f"DEBUG: Tentando PATCH prontuário ID {vet_prontuario_id} criado pelo veterinário")
-                self.make_request('PATCH', f'/api/prontuarios/{vet_prontuario_id}/', update_data, expected_status=200, user_type='veterinario')
+                # Primeiro verificar se o prontuário existe e se o veterinário tem permissão
+                response = self.make_request('GET', f'/api/prontuarios/{vet_prontuario_id}/', expected_status=200, user_type='veterinario')
+                if response['success']:
+                    # Se conseguiu GET, tentar PATCH
+                    self.make_request('PATCH', f'/api/prontuarios/{vet_prontuario_id}/', update_data, expected_status=200, user_type='veterinario')
+                else:
+                    # Se não conseguiu GET, pular PATCH
+                    self.print_warning(f"Veterinário não conseguiu acessar prontuário {vet_prontuario_id} - pulando PATCH")
             else:
                 # Se não conseguiu criar um prontuário como veterinário, pular o teste
-                print(f"DEBUG: Lista de prontuários do veterinário está vazia: {self.user_created_objects['veterinario']['prontuarios']}")
                 self.print_warning("Veterinário não criou prontuário - pulando teste de PATCH")
             
             # Admin pode atualizar qualquer prontuário
@@ -593,11 +595,8 @@ class APISimulator:
         response = self.make_request('POST', '/api/agendamentos/', vet_agendamento, expected_status=201, user_type='veterinario')
         if response['success']:
             vet_agendamento_id = response['data'].get('id')
-            print(f"DEBUG: Veterinário criou agendamento com ID {vet_agendamento_id}")
             self.created_objects['agendamentos'].append(vet_agendamento_id)
             self.user_created_objects['veterinario']['agendamentos'].append(vet_agendamento_id)
-        else:
-            print(f"DEBUG: Veterinário falhou em criar agendamento: {response}")
         
         # Teste de listagem
         for user_type in ['admin', 'veterinario', 'funcionario', 'cliente']:
@@ -621,11 +620,16 @@ class APISimulator:
             # Veterinário atualiza seu próprio agendamento se existe
             if self.user_created_objects['veterinario']['agendamentos']:
                 vet_agendamento_id = self.user_created_objects['veterinario']['agendamentos'][0]
-                print(f"DEBUG: Tentando PATCH agendamento ID {vet_agendamento_id} criado pelo veterinário")
-                self.make_request('PATCH', f'/api/agendamentos/{vet_agendamento_id}/', update_data, expected_status=200, user_type='veterinario')
+                # Primeiro verificar se o agendamento existe e se o veterinário tem permissão
+                response = self.make_request('GET', f'/api/agendamentos/{vet_agendamento_id}/', expected_status=200, user_type='veterinario')
+                if response['success']:
+                    # Se conseguiu GET, tentar PATCH
+                    self.make_request('PATCH', f'/api/agendamentos/{vet_agendamento_id}/', update_data, expected_status=200, user_type='veterinario')
+                else:
+                    # Se não conseguiu GET, pular PATCH
+                    self.print_warning(f"Veterinário não conseguiu acessar agendamento {vet_agendamento_id} - pulando PATCH")
             else:
                 # Se não conseguiu criar um agendamento como veterinário, pular o teste
-                print(f"DEBUG: Lista de agendamentos do veterinário está vazia: {self.user_created_objects['veterinario']['agendamentos']}")
                 self.print_warning("Veterinário não criou agendamento - pulando teste de PATCH")
             
             # Funcionário e cliente podem atualizar (dependendo das regras)
@@ -698,14 +702,15 @@ class APISimulator:
         self.make_request('POST', '/api/configuracao/horarios-funcionamento/', horario_data, expected_status=403, user_type='cliente')
         
         # Feriado
-        # Usar data única para evitar duplicatas
+        # Usar data específica e timestamp para garantir unicidade
         import random
         import time
-        dias_futuro = random.randint(100, 365)  # Entre 100 e 365 dias no futuro
         timestamp = int(time.time())
+        # Usar uma data muito específica no futuro para evitar conflitos
+        data_feriado = datetime.now() + timedelta(days=random.randint(500, 1000))
         feriado_data = {
-            'nome': f'Teste API {timestamp}',
-            'data': (datetime.now() + timedelta(days=dias_futuro)).date().isoformat(),
+            'nome': f'Teste API Feriado {timestamp}',
+            'data': data_feriado.date().isoformat(),
             'recorrente': False,
             'ativo': True
         }

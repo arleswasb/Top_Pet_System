@@ -65,8 +65,8 @@ class ProntuarioViewSet(viewsets.ModelViewSet):
             # Se não tem profile, assumir que é cliente e só ver prontuários dos seus pets
             return Prontuario.objects.filter(pet__tutor=user)
         
-        if profile.role in [Profile.Role.ADMIN, Profile.Role.FUNCIONARIO] or user.is_staff:
-            # Admins e funcionários veem todos os prontuários
+        if profile.role in [Profile.Role.ADMIN, Profile.Role.FUNCIONARIO, Profile.Role.VETERINARIO] or user.is_staff:
+            # Admins, funcionários e veterinários veem todos os prontuários
             return self.queryset.all()
         
         # Clientes/tutores veem apenas prontuários de seus pets
