@@ -235,41 +235,76 @@ MEDIA_URL = '/media/'
 os.makedirs(MEDIA_ROOT, exist_ok=True)
 
 #conficuração do logging
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
+# Detectar se estamos em ambiente CI/CD
+IS_CI = bool(os.getenv('CI') or os.getenv('GITHUB_ACTIONS'))
+
+# Configuração de logging baseada no ambiente
+if IS_CI:
+    # Em CI/CD: apenas console logging
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'simple': {
+                'format': '{levelname} {message}',
+                'style': '{',
+            },
         },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+                'formatter': 'simple',
+            },
         },
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple',
+        'loggers': {
+            'django': {
+                'handlers': ['console'],
+                'level': 'ERROR',
+                'propagate': True,
+            },
         },
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs', 'debug.log'), # Caminho do arquivo
-            'maxBytes': 1024*1024*5,  # 5 MB
-            'backupCount': 2,
-            'formatter': 'verbose',
+    }
+else:
+    # Em desenvolvimento local: console + arquivo
+    # Garantir que o diretório de logs existe
+    LOGS_DIR = os.path.join(BASE_DIR, 'logs')
+    os.makedirs(LOGS_DIR, exist_ok=True)
+    
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'verbose': {
+                'format': '{levelname} {asctime} {module} {message}',
+                'style': '{',
+            },
+            'simple': {
+                'format': '{levelname} {message}',
+                'style': '{',
+            },
         },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console', 'file'],
-            'level': 'INFO',
-            'propagate': True,
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+                'formatter': 'simple',
+            },
+            'file': {
+                'level': 'INFO',
+                'class': 'logging.handlers.RotatingFileHandler',
+                'filename': os.path.join(LOGS_DIR, 'debug.log'),
+                'maxBytes': 1024*1024*5,  # 5 MB
+                'backupCount': 2,
+                'formatter': 'verbose',
+            },
         },
-    },
-}
+        'loggers': {
+            'django': {
+                'handlers': ['console', 'file'],
+                'level': 'INFO',
+                'propagate': True,
+            },
+        },
+    }
 
 # Configurações específicas para testes
 import sys
@@ -293,6 +328,7 @@ if 'test' in sys.argv or 'pytest' in sys.modules or 'unittest' in sys.modules:
     
     # Desabilitar logs durante testes para performance
     LOGGING['loggers']['django']['level'] = 'ERROR'
+    LOGGING['loggers']['django']['handlers'] = ['console']  # Garantir apenas console
 
     # Configuração de Email para testes (console)
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
