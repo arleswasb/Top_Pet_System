@@ -21,20 +21,7 @@ class HorarioFuncionamentoViewSet(viewsets.ModelViewSet):
     """ViewSet para gerenciar horários de funcionamento da clínica"""
     queryset = HorarioFuncionamento.objects.all()
     serializer_class = HorarioFuncionamentoSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_permissions(self):
-        """
-        Instantiate and return the list of permissions that this view requires.
-        """
-        if self.action in ['list', 'retrieve']:
-            # Qualquer usuário autenticado pode visualizar
-            permission_classes = [permissions.IsAuthenticated]
-        else:
-            # Apenas admins podem criar/editar/deletar
-            permission_classes = [permissions.IsAuthenticated, IsAdminRole]
-        
-        return [permission() for permission in permission_classes]
+    permission_classes = [permissions.IsAuthenticated, IsAdminRole]
 
 @extend_schema_view(
     list=extend_schema(summary="Listar feriados", tags=["Configuração"]),
@@ -48,17 +35,4 @@ class FeriadoViewSet(viewsets.ModelViewSet):
     """ViewSet para gerenciar feriados da clínica"""
     queryset = Feriado.objects.all()
     serializer_class = FeriadoSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_permissions(self):
-        """
-        Instantiate and return the list of permissions that this view requires.
-        """
-        if self.action in ['list', 'retrieve']:
-            # Qualquer usuário autenticado pode visualizar
-            permission_classes = [permissions.IsAuthenticated]
-        else:
-            # Apenas admins podem criar/editar/deletar
-            permission_classes = [permissions.IsAuthenticated, IsAdminRole]
-        
-        return [permission() for permission in permission_classes]
+    permission_classes = [permissions.IsAuthenticated, IsAdminRole]
