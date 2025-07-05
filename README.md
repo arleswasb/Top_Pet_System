@@ -55,8 +55,11 @@ docker-compose ps
 # 3. Executar o script de simulação CRUD
 docker-compose exec web python script_api_simulation.py
 
-# 4. Ver relatório JSON com os metodos aplicados
-docker-compose exec web cat api_test_report.json(opcional)
+# 4. Ver relatório JSON com os metodos aplicados(opcional)
+docker-compose exec web cat api_test_report.json
+
+# 5. Executar os testes de integração, unidade e validação (opcional)
+docker-compose exec web python manage.py test -v 2
 
 ```
 
@@ -94,6 +97,9 @@ python script_api_simulation.py
 
 ### Ver relatório JSON com os metodos aplicados(opcional)
 cat api_test_report.json
+
+### Executar os testes de integração, unidade e validação (opcional)
+python manage.py test -v 2
 
 ```
 ### ✅ Verificação
