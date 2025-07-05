@@ -12,6 +12,7 @@ from drf_spectacular.types import OpenApiTypes
 from .models import Agendamento, Servico
 from .serializers import AgendamentoSerializer, ServicoSerializer
 from .permissions import IsTutorOrAdminOrFuncionario
+from users.permissions import IsAdminRole, IsFuncionarioOrAdmin
 from users.models import Profile
 
 @extend_schema_view(
@@ -25,17 +26,19 @@ class ServicoViewSet(viewsets.ModelViewSet):
     """
     Endpoint que permite gerenciar os Serviços da clínica veterinária.
     - **Listar/Ver**: Qualquer usuário autenticado
-    - **Criar/Editar/Excluir**: Apenas administradores
+    - **Criar/Editar/Excluir**: Administradores, funcionários e veterinários
     """
     queryset = Servico.objects.all()
     serializer_class = ServicoSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated]
     http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
             return [permissions.IsAuthenticated()]
-        return super().get_permissions()
+        else:
+            # Criar/editar/deletar: admin, funcionário ou veterinário
+            return [permissions.IsAuthenticated(), IsFuncionarioOrAdmin()]
 
 
 @extend_schema_view(

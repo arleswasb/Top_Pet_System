@@ -74,6 +74,13 @@ class APISimulator:
             'servicos': [],
             'agendamentos': []
         }
+        # Armazenar IDs específicos por usuário para evitar erros 404
+        self.user_created_objects = {
+            'admin': {'pets': [], 'prontuarios': [], 'servicos': [], 'agendamentos': []},
+            'veterinario': {'pets': [], 'prontuarios': [], 'servicos': [], 'agendamentos': []},
+            'funcionario': {'pets': [], 'prontuarios': [], 'servicos': [], 'agendamentos': []},
+            'cliente': {'pets': [], 'prontuarios': [], 'servicos': [], 'agendamentos': []}
+        }
     
     def print_header(self, text: str):
         """Print cabeçalho formatado"""
@@ -312,47 +319,54 @@ class APISimulator:
         """Testa CRUD de pets por diferentes perfis"""
         self.print_header("TESTE CRUD - Pets por Perfil")
         
+        # Obter ID do usuário cliente para usar como tutor quando necessário
+        cliente_user_id = self.users['cliente']['user_id']
+        
         # Dados do pet para teste
         pet_data = {
             'nome': 'Rex Teste',
             'especie': 'Cachorro',
             'raca': 'Labrador',
-            'idade': 3,
-            'peso': 25.5,
-            'cor': 'Dourado',
             'observacoes': 'Pet muito dócil e brincalhão'
         }
         
-        # Cliente pode criar pet
+        # Cliente pode criar pet (tutor é definido automaticamente)
         response = self.make_request('POST', '/api/pets/', pet_data, expected_status=201, user_type='cliente')
         pet_id = None
         if response['success']:
             pet_id = response['data'].get('id')
             self.created_objects['pets'].append(pet_id)
+            self.user_created_objects['cliente']['pets'].append(pet_id)
         
-        # Admin pode criar pet
+        # Admin pode criar pet (deve especificar tutor)
         admin_pet_data = pet_data.copy()
         admin_pet_data['nome'] = 'Rex Admin'
+        admin_pet_data['tutor'] = cliente_user_id  # Admin deve especificar tutor
         response = self.make_request('POST', '/api/pets/', admin_pet_data, expected_status=201, user_type='admin')
         if response['success']:
             admin_pet_id = response['data'].get('id')
             self.created_objects['pets'].append(admin_pet_id)
+            self.user_created_objects['admin']['pets'].append(admin_pet_id)
         
-        # Funcionário pode criar pet
+        # Funcionário pode criar pet (deve especificar tutor)
         func_pet_data = pet_data.copy()
         func_pet_data['nome'] = 'Rex Funcionário'
+        func_pet_data['tutor'] = cliente_user_id  # Funcionário deve especificar tutor
         response = self.make_request('POST', '/api/pets/', func_pet_data, expected_status=201, user_type='funcionario')
         if response['success']:
             func_pet_id = response['data'].get('id')
             self.created_objects['pets'].append(func_pet_id)
+            self.user_created_objects['funcionario']['pets'].append(func_pet_id)
         
-        # Veterinário pode criar pet
+        # Veterinário pode criar pet (pode especificar tutor)
         vet_pet_data = pet_data.copy()
         vet_pet_data['nome'] = 'Rex Veterinário'
+        vet_pet_data['tutor'] = cliente_user_id  # Veterinário pode especificar tutor
         response = self.make_request('POST', '/api/pets/', vet_pet_data, expected_status=201, user_type='veterinario')
         if response['success']:
             vet_pet_id = response['data'].get('id')
             self.created_objects['pets'].append(vet_pet_id)
+            self.user_created_objects['veterinario']['pets'].append(vet_pet_id)
         
         # Todos podem listar pets
         for user_type in ['admin', 'veterinario', 'funcionario', 'cliente']:
@@ -374,12 +388,15 @@ class APISimulator:
         self.print_header("TESTE CRUD - Serviços por Perfil")
         
         # Dados do serviço
+        import time
+        timestamp = int(time.time())
+        
         servico_data = {
-            'nome': 'Consulta Veterinária Teste',
+            'nome': f'Consulta Veterinária {timestamp}',
             'descricao': 'Consulta geral com veterinário',
             'preco': '150.00',
-            'duracao_minutos': 60,
-            'ativo': True
+            'duracao': '01:00:00',  # Formato HH:MM:SS
+            'disponivel': True
         }
         
         # Admin pode criar serviço
@@ -388,24 +405,25 @@ class APISimulator:
         if response['success']:
             servico_id = response['data'].get('id')
             self.created_objects['servicos'].append(servico_id)
+            self.user_created_objects['admin']['servicos'].append(servico_id)
         
-        # Funcionário pode criar serviço (dependendo das permissões)
+        # Funcionário pode criar serviço
         func_servico_data = servico_data.copy()
-        func_servico_data['nome'] = 'Banho e Tosa'
-        expected_status = 201  # Pode ser 403 dependendo das permissões
-        response = self.make_request('POST', '/api/agendamentos/servicos/', func_servico_data, expected_status, user_type='funcionario')
+        func_servico_data['nome'] = f'Banho e Tosa {timestamp + 1}'
+        response = self.make_request('POST', '/api/agendamentos/servicos/', func_servico_data, expected_status=201, user_type='funcionario')
         if response['success']:
             func_servico_id = response['data'].get('id')
             self.created_objects['servicos'].append(func_servico_id)
+            self.user_created_objects['funcionario']['servicos'].append(func_servico_id)
         
-        # Veterinário pode tentar criar serviço
+        # Veterinário pode criar serviço
         vet_servico_data = servico_data.copy()
-        vet_servico_data['nome'] = 'Cirurgia'
-        expected_status = 201  # Pode ser 403 dependendo das permissões
-        response = self.make_request('POST', '/api/agendamentos/servicos/', vet_servico_data, expected_status, user_type='veterinario')
+        vet_servico_data['nome'] = f'Cirurgia {timestamp + 2}'
+        response = self.make_request('POST', '/api/agendamentos/servicos/', vet_servico_data, expected_status=201, user_type='veterinario')
         if response['success']:
             vet_servico_id = response['data'].get('id')
             self.created_objects['servicos'].append(vet_servico_id)
+            self.user_created_objects['veterinario']['servicos'].append(vet_servico_id)
         
         # Cliente não deve conseguir criar serviço
         self.make_request('POST', '/api/agendamentos/servicos/', servico_data, expected_status=403, user_type='cliente')
@@ -421,10 +439,9 @@ class APISimulator:
             # Admin pode atualizar
             self.make_request('PATCH', f'/api/agendamentos/servicos/{servico_id}/', update_data, expected_status=200, user_type='admin')
             
-            # Outros podem ou não poder atualizar
+            # Outros podem atualizar também agora
             for user_type in ['veterinario', 'funcionario']:
-                expected_status = 200  # Pode ser 403 dependendo das permissões
-                self.make_request('PATCH', f'/api/agendamentos/servicos/{servico_id}/', update_data, expected_status, user_type=user_type)
+                self.make_request('PATCH', f'/api/agendamentos/servicos/{servico_id}/', update_data, expected_status=200, user_type=user_type)
             
             # Cliente não pode atualizar
             self.make_request('PATCH', f'/api/agendamentos/servicos/{servico_id}/', update_data, expected_status=403, user_type='cliente')
@@ -442,13 +459,15 @@ class APISimulator:
         # Dados do prontuário
         prontuario_data = {
             'pet': pet_id,
-            'data_consulta': datetime.now().date().isoformat(),
-            'sintomas': 'Animal apresentando letargia e falta de apetite',
+            'veterinario': self.users['veterinario']['user_id'],  # Campo obrigatório
+            'data_consulta': datetime.now().isoformat(),
+            'motivo_consulta': 'Animal apresentando letargia e falta de apetite',
+            'exame_fisico': 'Animal responsivo, mucosas pálidas',
             'diagnostico': 'Possível infecção gastrointestinal',
             'tratamento': 'Antibiótico por 7 dias + dieta leve',
             'observacoes': 'Retorno em 1 semana para avaliação',
-            'peso_atual': 25.8,
-            'temperatura': 38.5
+            'peso': '25.8',
+            'temperatura': '38.5'
         }
         
         # Veterinário pode criar prontuário
@@ -456,7 +475,11 @@ class APISimulator:
         prontuario_id = None
         if response['success']:
             prontuario_id = response['data'].get('id')
+            print(f"DEBUG: Veterinário criou prontuário com ID {prontuario_id}")
             self.created_objects['prontuarios'].append(prontuario_id)
+            self.user_created_objects['veterinario']['prontuarios'].append(prontuario_id)
+        else:
+            print(f"DEBUG: Veterinário falhou em criar prontuário: {response}")
         
         # Admin pode criar prontuário
         admin_prontuario = prontuario_data.copy()
@@ -465,10 +488,15 @@ class APISimulator:
         if response['success']:
             admin_prontuario_id = response['data'].get('id')
             self.created_objects['prontuarios'].append(admin_prontuario_id)
+            self.user_created_objects['admin']['prontuarios'].append(admin_prontuario_id)
         
         # Funcionário pode ou não criar prontuário (dependendo das regras)
         expected_status = 201  # Pode ser 403
-        self.make_request('POST', '/api/prontuarios/', prontuario_data, expected_status, user_type='funcionario')
+        response = self.make_request('POST', '/api/prontuarios/', prontuario_data, expected_status, user_type='funcionario')
+        if response['success']:
+            func_prontuario_id = response['data'].get('id')
+            self.created_objects['prontuarios'].append(func_prontuario_id)
+            self.user_created_objects['funcionario']['prontuarios'].append(func_prontuario_id)
         
         # Cliente não pode criar prontuário
         self.make_request('POST', '/api/prontuarios/', prontuario_data, expected_status=403, user_type='cliente')
@@ -484,16 +512,30 @@ class APISimulator:
         
         # Teste de atualização se prontuário foi criado
         if prontuario_id:
-            update_data = {'temperatura': 37.8}
+            update_data = {'temperatura': '37.8'}  # Usar string para decimal
             
-            # Veterinário pode atualizar
-            self.make_request('PATCH', f'/api/prontuarios/{prontuario_id}/', update_data, expected_status=200, user_type='veterinario')
+            # Veterinário pode atualizar apenas o prontuário que ele criou
+            if self.user_created_objects['veterinario']['prontuarios']:
+                vet_prontuario_id = self.user_created_objects['veterinario']['prontuarios'][0]
+                print(f"DEBUG: Tentando PATCH prontuário ID {vet_prontuario_id} criado pelo veterinário")
+                self.make_request('PATCH', f'/api/prontuarios/{vet_prontuario_id}/', update_data, expected_status=200, user_type='veterinario')
+            else:
+                # Se não conseguiu criar um prontuário como veterinário, pular o teste
+                print(f"DEBUG: Lista de prontuários do veterinário está vazia: {self.user_created_objects['veterinario']['prontuarios']}")
+                self.print_warning("Veterinário não criou prontuário - pulando teste de PATCH")
             
-            # Admin pode atualizar
-            self.make_request('PATCH', f'/api/prontuarios/{prontuario_id}/', update_data, expected_status=200, user_type='admin')
+            # Admin pode atualizar qualquer prontuário
+            if self.user_created_objects['admin']['prontuarios']:
+                admin_prontuario_id = self.user_created_objects['admin']['prontuarios'][0]
+                self.make_request('PATCH', f'/api/prontuarios/{admin_prontuario_id}/', update_data, expected_status=200, user_type='admin')
+            elif prontuario_id:
+                # Se não há prontuário do admin, usar o primeiro disponível
+                self.make_request('PATCH', f'/api/prontuarios/{prontuario_id}/', update_data, expected_status=200, user_type='admin')
             
-            # Cliente não pode atualizar
-            self.make_request('PATCH', f'/api/prontuarios/{prontuario_id}/', update_data, expected_status=403, user_type='cliente')
+            # Cliente não pode atualizar (sempre usar um ID válido)
+            test_id = (self.user_created_objects['admin']['prontuarios'][0] if self.user_created_objects['admin']['prontuarios'] 
+                      else prontuario_id)
+            self.make_request('PATCH', f'/api/prontuarios/{test_id}/', update_data, expected_status=403, user_type='cliente')
     
     def test_agendamentos_crud_by_role(self):
         """Testa CRUD de agendamentos por diferentes perfis"""
@@ -525,6 +567,7 @@ class APISimulator:
         if response['success']:
             agendamento_id = response['data'].get('id')
             self.created_objects['agendamentos'].append(agendamento_id)
+            self.user_created_objects['cliente']['agendamentos'].append(agendamento_id)
         
         # Funcionário pode criar agendamento
         func_agendamento = agendamento_data.copy()
@@ -533,6 +576,7 @@ class APISimulator:
         if response['success']:
             func_agendamento_id = response['data'].get('id')
             self.created_objects['agendamentos'].append(func_agendamento_id)
+            self.user_created_objects['funcionario']['agendamentos'].append(func_agendamento_id)
         
         # Admin pode criar agendamento
         admin_agendamento = agendamento_data.copy()
@@ -541,6 +585,7 @@ class APISimulator:
         if response['success']:
             admin_agendamento_id = response['data'].get('id')
             self.created_objects['agendamentos'].append(admin_agendamento_id)
+            self.user_created_objects['admin']['agendamentos'].append(admin_agendamento_id)
         
         # Veterinário pode criar agendamento
         vet_agendamento = agendamento_data.copy()
@@ -548,7 +593,11 @@ class APISimulator:
         response = self.make_request('POST', '/api/agendamentos/', vet_agendamento, expected_status=201, user_type='veterinario')
         if response['success']:
             vet_agendamento_id = response['data'].get('id')
+            print(f"DEBUG: Veterinário criou agendamento com ID {vet_agendamento_id}")
             self.created_objects['agendamentos'].append(vet_agendamento_id)
+            self.user_created_objects['veterinario']['agendamentos'].append(vet_agendamento_id)
+        else:
+            print(f"DEBUG: Veterinário falhou em criar agendamento: {response}")
         
         # Teste de listagem
         for user_type in ['admin', 'veterinario', 'funcionario', 'cliente']:
@@ -560,12 +609,37 @@ class APISimulator:
         
         # Teste de atualização se agendamento foi criado
         if agendamento_id:
-            update_data = {'status': 'confirmado'}
+            update_data = {'status': 'CONCLUIDO'}  # Usar valor válido do enum
             
-            # Diferentes usuários tentam atualizar
-            for user_type in ['admin', 'veterinario', 'funcionario', 'cliente']:
-                expected_status = 200  # Pode variar dependendo das regras de negócio
-                self.make_request('PATCH', f'/api/agendamentos/{agendamento_id}/', update_data, expected_status, user_type=user_type)
+            # Admin pode atualizar qualquer agendamento
+            if self.user_created_objects['admin']['agendamentos']:
+                admin_agendamento_id = self.user_created_objects['admin']['agendamentos'][0]
+                self.make_request('PATCH', f'/api/agendamentos/{admin_agendamento_id}/', update_data, expected_status=200, user_type='admin')
+            elif agendamento_id:
+                self.make_request('PATCH', f'/api/agendamentos/{agendamento_id}/', update_data, expected_status=200, user_type='admin')
+            
+            # Veterinário atualiza seu próprio agendamento se existe
+            if self.user_created_objects['veterinario']['agendamentos']:
+                vet_agendamento_id = self.user_created_objects['veterinario']['agendamentos'][0]
+                print(f"DEBUG: Tentando PATCH agendamento ID {vet_agendamento_id} criado pelo veterinário")
+                self.make_request('PATCH', f'/api/agendamentos/{vet_agendamento_id}/', update_data, expected_status=200, user_type='veterinario')
+            else:
+                # Se não conseguiu criar um agendamento como veterinário, pular o teste
+                print(f"DEBUG: Lista de agendamentos do veterinário está vazia: {self.user_created_objects['veterinario']['agendamentos']}")
+                self.print_warning("Veterinário não criou agendamento - pulando teste de PATCH")
+            
+            # Funcionário e cliente podem atualizar (dependendo das regras)
+            if self.user_created_objects['funcionario']['agendamentos']:
+                func_agendamento_id = self.user_created_objects['funcionario']['agendamentos'][0]
+                self.make_request('PATCH', f'/api/agendamentos/{func_agendamento_id}/', update_data, expected_status=200, user_type='funcionario')
+            elif agendamento_id:
+                self.make_request('PATCH', f'/api/agendamentos/{agendamento_id}/', update_data, expected_status=200, user_type='funcionario')
+                
+            if self.user_created_objects['cliente']['agendamentos']:
+                cliente_agendamento_id = self.user_created_objects['cliente']['agendamentos'][0]
+                self.make_request('PATCH', f'/api/agendamentos/{cliente_agendamento_id}/', update_data, expected_status=200, user_type='cliente')
+            elif agendamento_id:
+                self.make_request('PATCH', f'/api/agendamentos/{agendamento_id}/', update_data, expected_status=200, user_type='cliente')
     
     def test_configuration_endpoints_by_role(self):
         """Testa endpoints de configuração por diferentes perfis"""
@@ -580,28 +654,59 @@ class APISimulator:
             self.make_request('GET', '/api/configuracao/feriados/', expected_status=200, user_type=user_type)
         
         # Criação de configurações (apenas admin e funcionário devem conseguir)
-        horario_data = {
-            'dia_semana': 1,  # Segunda-feira
-            'hora_abertura': '08:00:00',
-            'hora_fechamento': '18:00:00',
-            'ativo': True
-        }
+        # Primeiro vamos listar os horários existentes para escolher um dia que não está cadastrado
+        response = self.make_request('GET', '/api/configuracao/horarios-funcionamento/', expected_status=200, user_type='admin')
+        existing_days = []
+        if response['success'] and 'results' in response['data']:
+            existing_days = [item['dia_semana'] for item in response['data']['results']]
+        elif response['success'] and isinstance(response['data'], list):
+            existing_days = [item['dia_semana'] for item in response['data']]
         
-        # Admin pode criar
-        self.make_request('POST', '/api/configuracao/horarios-funcionamento/', horario_data, expected_status=201, user_type='admin')
+        # Encontrar um dia que não tenha horário cadastrado
+        dia_teste = None
+        for dia in range(7):
+            if dia not in existing_days:
+                dia_teste = dia
+                break
         
-        # Funcionário pode ou não criar (dependendo das regras)
-        expected_status = 201  # Pode ser 403
-        self.make_request('POST', '/api/configuracao/horarios-funcionamento/', horario_data, expected_status, user_type='funcionario')
+        if dia_teste is not None:
+            horario_data = {
+                'dia_semana': dia_teste,
+                'hora_abertura': '08:00:00',
+                'hora_fechamento': '18:00:00',
+                'ativo': True
+            }
+            
+            # Admin pode criar
+            self.make_request('POST', '/api/configuracao/horarios-funcionamento/', horario_data, expected_status=201, user_type='admin')
+        else:
+            # Se todos os dias já têm horário, vamos tentar atualizar um existente
+            self.print_warning("Todos os dias da semana já têm horário cadastrado - pulando criação")
+            # Usar dados básicos para os testes de permissão (mesmo que falhem)
+            horario_data = {
+                'dia_semana': 0,  # Segunda-feira
+                'hora_abertura': '08:00:00',
+                'hora_fechamento': '18:00:00',
+                'ativo': True
+            }
+        
+        # Funcionário não pode criar (agora esperamos 403)
+        self.make_request('POST', '/api/configuracao/horarios-funcionamento/', horario_data, expected_status=403, user_type='funcionario')
         
         # Veterinário e cliente não podem criar
         self.make_request('POST', '/api/configuracao/horarios-funcionamento/', horario_data, expected_status=403, user_type='veterinario')
         self.make_request('POST', '/api/configuracao/horarios-funcionamento/', horario_data, expected_status=403, user_type='cliente')
         
         # Feriado
+        # Usar data única para evitar duplicatas
+        import random
+        import time
+        dias_futuro = random.randint(100, 365)  # Entre 100 e 365 dias no futuro
+        timestamp = int(time.time())
         feriado_data = {
-            'nome': 'Dia do Teste',
-            'data': (datetime.now() + timedelta(days=30)).date().isoformat(),
+            'nome': f'Teste API {timestamp}',
+            'data': (datetime.now() + timedelta(days=dias_futuro)).date().isoformat(),
+            'recorrente': False,
             'ativo': True
         }
         

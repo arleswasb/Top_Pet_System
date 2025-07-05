@@ -81,7 +81,7 @@ def create_all_users():
             'password': 'admin123',
             'first_name': 'Administrador',
             'last_name': 'Sistema',
-            'role': 'Admin',
+            'role': Profile.Role.ADMIN,
             'is_superuser': True
         },
         {
@@ -90,7 +90,7 @@ def create_all_users():
             'password': 'vet123',
             'first_name': 'Dr. João',
             'last_name': 'Veterinário',
-            'role': 'Veterinario',
+            'role': Profile.Role.VETERINARIO,
             'is_superuser': False
         },
         {
@@ -99,7 +99,7 @@ def create_all_users():
             'password': 'func123',
             'first_name': 'Maria',
             'last_name': 'Funcionária',
-            'role': 'Funcionario',
+            'role': Profile.Role.FUNCIONARIO,
             'is_superuser': False
         },
         {
@@ -108,7 +108,7 @@ def create_all_users():
             'password': 'cliente123',
             'first_name': 'Carlos',
             'last_name': 'Cliente',
-            'role': 'Cliente',
+            'role': Profile.Role.CLIENTE,
             'is_superuser': False
         },
         {
@@ -117,7 +117,7 @@ def create_all_users():
             'password': 'senha123',
             'first_name': 'Usuário',
             'last_name': 'Teste',
-            'role': 'Cliente',
+            'role': Profile.Role.CLIENTE,
             'is_superuser': False
         }
     ]
