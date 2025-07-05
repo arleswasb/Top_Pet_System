@@ -66,7 +66,7 @@ class AgendamentoViewSet(viewsets.ModelViewSet):
         if not hasattr(user, 'profile'):
             return Agendamento.objects.filter(pet__tutor=user)
         
-        if user.profile.role in [Profile.Role.ADMIN, Profile.Role.FUNCIONARIO, Profile.Role.VETERINARIO] or user.is_staff:
+        if user.profile.role in [Profile.Role.ADMIN, Profile.Role.VETERINARIO, Profile.Role.FUNCIONARIO] or user.is_staff:
             return Agendamento.objects.all()
         
         return Agendamento.objects.filter(pet__tutor=user)

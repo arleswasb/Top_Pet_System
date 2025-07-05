@@ -7,7 +7,6 @@ from users.models import Profile
 class IsTutorOrAdminOrFuncionario(permissions.BasePermission):
     """
     Permissão customizada para Agendamentos.
-    Permite acesso a tutores, admins, funcionários e veterinários.
     """
 
     def has_permission(self, request, view):
@@ -36,7 +35,6 @@ class IsTutorOrAdminOrFuncionario(permissions.BasePermission):
         if hasattr(obj, 'pet') and obj.pet.tutor == request.user:
             return True
 
-        # Funcionários e veterinários têm acesso total
         if user_profile.role in [Profile.Role.FUNCIONARIO, Profile.Role.VETERINARIO] or request.user.is_staff:
             return True
 
