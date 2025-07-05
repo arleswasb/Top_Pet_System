@@ -155,7 +155,6 @@ WSGI_APPLICATION = 'top_pet.wsgi.application'
 
 # Database configuration
 # PostgreSQL como banco principal
-# MySQL para testes
 if config('DATABASE_URL', default=None):
     import dj_database_url
     DATABASES = {
@@ -172,16 +171,22 @@ else:
             'HOST': config('POSTGRES_HOST', default='db'),
             'PORT': config('DB_PORT', default='5432'),
         },
-        # Banco para testes - MySQL
+        # Banco para testes de unidade, validação e integração - MySQL
         'test_mysql': {
             'ENGINE': config('TEST_DB_ENGINE', default='django.db.backends.mysql'),
             'NAME': config('TEST_MYSQL_NAME', default='top_pet_test_db'),
             'USER': config('TEST_MYSQL_USER', default='test_user'),
             'PASSWORD': config('TEST_MYSQL_PASSWORD', default='test_password'),
-            'HOST': config('TEST_MYSQL_HOST', default='localhost'),
+            'HOST': config('TEST_MYSQL_HOST', default='mysql_test'),
             'PORT': config('TEST_MYSQL_PORT', default='3306'),
             'TEST': {
                 'NAME': config('TEST_MYSQL_NAME', default='top_pet_test_db'),
+                'CHARSET': 'utf8mb4',
+                'COLLATION': 'utf8mb4_unicode_ci',
+            },
+            'OPTIONS': {
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+                'charset': 'utf8mb4',
             },
         }
     }
@@ -286,24 +291,15 @@ LOGGING = {
 # Configurações específicas para testes
 import sys
 if 'test' in sys.argv or 'pytest' in sys.modules or 'unittest' in sys.modules:
-    # Durante os testes, usar MySQL como banco principal
-    DATABASES['default'] = DATABASES.get('test_mysql', {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'top_pet_test_db',
-        'USER': 'test_user',
-        'PASSWORD': 'test_password',
-        'HOST': 'localhost',
-        'PORT': '3306',
+    # Para TODOS os tipos de testes - usar SQLite em memória para máxima velocidade
+    # Inclui: testes rápidos, validação, unidade e integração
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:',
         'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-            'charset': 'utf8mb4',
-        },
-        'TEST': {
-            'NAME': 'test_top_pet_test_db',
-            'CHARSET': 'utf8mb4',
-            'COLLATION': 'utf8mb4_unicode_ci',
-        },
-    })
+            'timeout': 20,
+        }
+    }
     
     # Durante os testes, usar um diretório temporário para mídia
     import tempfile
@@ -317,6 +313,18 @@ if 'test' in sys.argv or 'pytest' in sys.modules or 'unittest' in sys.modules:
 
     # Configuração de Email para testes (console)
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    
+    # Configurações otimizadas para testes rápidos
+    PASSWORD_HASHERS = [
+        'django.contrib.auth.hashers.MD5PasswordHasher',  # Mais rápido para testes
+    ]
+    
+    # Desabilitar migrações desnecessárias durante testes
+    MIGRATION_MODULES = {
+        'auth': None,
+        'contenttypes': None,
+        'sessions': None,
+    }
 
 # ======================================
 # CONFIGURAÇÃO DE EMAIL PARA PRODUÇÃO

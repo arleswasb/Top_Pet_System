@@ -1,61 +1,61 @@
-# settings_test.py
-# Configurações específicas para testes com MySQL
+"""
+Configurações específicas para TODOS os tipos de testes
+- Testes rápidos
+- Testes de validação 
+- Testes de unidade
+- Testes de integração
+
+Utiliza SQLite em memória para máxima velocidade e sem persistência
+"""
 
 from .settings import *
-from decouple import config
-
-# Override database configuration for tests - Force MySQL
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('TEST_MYSQL_NAME', default='top_pet_test_db'),
-        'USER': config('TEST_MYSQL_USER', default='test_user'),
-        'PASSWORD': config('TEST_MYSQL_PASSWORD', default='test_password'),
-        'HOST': config('TEST_MYSQL_HOST', default='localhost'),
-        'PORT': config('TEST_MYSQL_PORT', default='3306'),
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-            'charset': 'utf8mb4',
-        },
-        'TEST': {
-            'NAME': 'test_top_pet_test_db',
-            'CHARSET': 'utf8mb4',
-            'COLLATION': 'utf8mb4_unicode_ci',
-        },
-    }
-}
-
-# Configurações otimizadas para testes
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-    }
-}
-
-# Email para testes
-EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
-
-# Logs simplificados para testes
-LOGGING['loggers']['django']['level'] = 'ERROR'
-
-# Media files para testes
 import tempfile
 import os
+
+# Banco de dados - SQLite em memória para TODOS os testes
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:',
+        'OPTIONS': {
+            'timeout': 20,
+        }
+    }
+}
+
+# Configurações de mídia para testes
 MEDIA_ROOT = os.path.join(tempfile.gettempdir(), 'test_media_pets')
 os.makedirs(MEDIA_ROOT, exist_ok=True)
 
-# Acelerar testes
+# Email para testes (console)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Configurações otimizadas para velocidade de testes
 PASSWORD_HASHERS = [
-    'django.contrib.auth.hashers.MD5PasswordHasher',
+    'django.contrib.auth.hashers.MD5PasswordHasher',  # Mais rápido para testes
 ]
 
-# Desabilitar migrações desnecessárias em testes
-class DisableMigrations:
-    def __contains__(self, item):
-        return True
+# Cache simples para testes
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'test-cache',
+    }
+}
 
-    def __getitem__(self, item):
-        return None
+# Desabilitar logs durante testes para performance
+LOGGING['loggers']['django']['level'] = 'ERROR'
 
-# Comentar a linha abaixo se precisar rodar migrações nos testes
-# MIGRATION_MODULES = DisableMigrations()
+# Desabilitar migrações desnecessárias durante testes
+MIGRATION_MODULES = {
+    'auth': None,
+    'contenttypes': None,
+    'sessions': None,
+}
+
+# Configurações de segurança relaxadas para testes
+DEBUG = False
+SECRET_KEY = 'test-secret-key-not-for-production'
+ALLOWED_HOSTS = ['*']
+
+print("🧪 Configurações de teste carregadas - SQLite em memória para todos os tipos de testes")
