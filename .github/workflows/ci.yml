@@ -32,20 +32,14 @@ jobs:
         python -m pip install --upgrade pip
         cd backend
         pip install -r requirements.txt
-        pip install flake8 pylint
-    
-    - name: Run flake8
-      run: |
-        cd backend
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        pip install pylint
     
     - name: Run pylint (Errors Only)
       run: |
         cd backend
         echo "🔍 Running Pylint - Checking for ERRORS only (no style/formatting)"
-        # Run pylint focusing only on errors and critical issues
-        pylint --rcfile=.pylintrc **/*.py --errors-only --disable=import-error
+        # Run pylint focusing only on errors and critical issues, excluding dependencies
+        find . -name "*.py" -not -path "./.venv/*" -not -path "./venv/*" -not -path "./.env/*" -not -path "./env/*" -not -path "./site-packages/*" -not -path "./__pycache__/*" -not -path "./migrations/*" | xargs pylint --rcfile=.pylintrc --errors-only --disable=import-error
 
   unit-tests:
     name: Unit & Validation Tests

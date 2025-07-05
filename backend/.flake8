@@ -7,11 +7,15 @@ exclude =
     manage.py
     settings/
     venv/
+    .venv/
     env/
+    .env/
     .git/
     .tox/
     build/
     dist/
+    site-packages/
+    node_modules/
 ignore =
     E501,
     W503,

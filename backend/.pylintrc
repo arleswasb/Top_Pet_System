@@ -8,6 +8,13 @@ django-settings-module=top_pet.settings
 # Use multiple processes to speed up Pylint
 jobs=1
 
+# Ignore patterns for files/directories to exclude
+ignore-patterns=.venv,venv,.env,env,site-packages,__pycache__,migrations,.git,.tox,build,dist,node_modules
+
+[FILES]
+# Ignore certain files or directories completely
+ignore=.venv,.env,venv,env,site-packages,node_modules
+
 [MESSAGES CONTROL]
 # Focus ONLY on actual errors and critical issues, not style/formatting
 disable=
