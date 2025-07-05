@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 from .models import Agendamento, Servico
-from .serializers import AgendamentoSerializer, ServicoSerializer
+from .serializers import AgendamentoSerializer, ServicoSerializer, HorarioDisponivelSerializer
 from .permissions import IsTutorOrAdminOrFuncionario
 from users.permissions import IsAdminRole, IsFuncionarioOrAdmin
 from users.models import Profile
@@ -94,7 +94,11 @@ class AgendamentoViewSet(viewsets.ModelViewSet):
             required=True,
             type=OpenApiTypes.DATE
         )
-    ]
+    ],
+    responses={
+        200: HorarioDisponivelSerializer,
+        400: {"description": "Parâmetro de data inválido ou ausente"}
+    }
 )
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])

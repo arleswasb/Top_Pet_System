@@ -81,7 +81,7 @@ SPECTACULAR_SETTINGS = {
     'SORT_OPERATIONS': False,
     'SCHEMA_PATH_PREFIX': '/api/',
     'SCHEMA_PATH_PREFIX_TRIM': False,
-    'DISABLE_ERRORS_AND_WARNINGS': False,
+    'DISABLE_ERRORS_AND_WARNINGS': True,
     'SWAGGER_UI_SETTINGS': {
         'deepLinking': True,
         'persistAuthorization': True,

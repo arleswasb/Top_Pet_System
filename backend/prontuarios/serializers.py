@@ -165,7 +165,8 @@ class ProntuarioSerializer(serializers.ModelSerializer):
             return diferenca.days // 365
         return None
 
-    def get_data_de_nascimento(self, obj):
+    @extend_schema_field(serializers.DateField())
+    def get_data_de_nascimento(self, obj) -> date:
         """
         Retorna a data de nascimento do pet associado ao prontuário.
         

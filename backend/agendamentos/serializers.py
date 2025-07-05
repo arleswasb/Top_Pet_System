@@ -139,3 +139,26 @@ class AgendamentoSerializer(serializers.ModelSerializer):
             'pet_id',
             'servico_id',
         ]
+
+
+class HorarioDisponivelSerializer(serializers.Serializer):
+    """
+    Serializer para resposta de horários disponíveis.
+    Usado apenas para documentação da API.
+    """
+    horarios = serializers.ListField(
+        child=serializers.CharField(max_length=5),
+        help_text="Lista de horários disponíveis no formato HH:MM"
+    )
+
+    class Meta:
+        swagger_schema_fields = {
+            "type": "object",
+            "properties": {
+                "horarios": {
+                    "type": "array",
+                    "items": {"type": "string", "format": "time"},
+                    "example": ["08:00", "09:00", "10:00", "14:00", "15:00"]
+                }
+            }
+        }

@@ -462,6 +462,62 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserDetail'
           description: ''
+    put:
+      operationId: users_me_update
+      description: Retorna informações detalhadas do perfil do usuário atualmente
+        logado.
+      summary: Meu perfil
+      tags:
+      - Usuários
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDetailRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserDetailRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserDetailRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+          description: ''
+    patch:
+      operationId: users_me_partial_update
+      description: Retorna informações detalhadas do perfil do usuário atualmente
+        logado.
+      summary: Meu perfil
+      tags:
+      - Usuários
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserDetailRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserDetailRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserDetailRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+          description: ''
   /api/users/admin/users/:
     get:
       operationId: users_admin_users_list
@@ -1064,13 +1120,45 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/agendamentos/horarios-disponiveis/:
+    get:
+      operationId: agendamentos_horarios_disponiveis_retrieve
+      description: Retorna uma lista de horários disponíveis para agendamento em um
+        dia específico.
+      summary: Listar horários disponíveis
+      parameters:
+      - in: query
+        name: data
+        schema:
+          type: string
+          format: date
+        description: Data para consulta no formato YYYY-MM-DD.
+        required: true
+      tags:
+      - Horários
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HorarioDisponivel'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Parâmetro de data inválido ou ausente
+          description: ''
   /api/agendamentos/servicos/:
     get:
       operationId: agendamentos_servicos_list
       description: |-
         Endpoint que permite gerenciar os Serviços da clínica veterinária.
         - **Listar/Ver**: Qualquer usuário autenticado
-        - **Criar/Editar/Excluir**: Apenas administradores
+        - **Criar/Editar/Excluir**: Administradores, funcionários e veterinários
       summary: Listar serviços
       tags:
       - Serviços
@@ -1091,7 +1179,7 @@ paths:
       description: |-
         Endpoint que permite gerenciar os Serviços da clínica veterinária.
         - **Listar/Ver**: Qualquer usuário autenticado
-        - **Criar/Editar/Excluir**: Apenas administradores
+        - **Criar/Editar/Excluir**: Administradores, funcionários e veterinários
       summary: Criar serviço
       tags:
       - Serviços
@@ -1123,7 +1211,7 @@ paths:
       description: |-
         Endpoint que permite gerenciar os Serviços da clínica veterinária.
         - **Listar/Ver**: Qualquer usuário autenticado
-        - **Criar/Editar/Excluir**: Apenas administradores
+        - **Criar/Editar/Excluir**: Administradores, funcionários e veterinários
       summary: Detalhes do serviço
       parameters:
       - in: path
@@ -1149,7 +1237,7 @@ paths:
       description: |-
         Endpoint que permite gerenciar os Serviços da clínica veterinária.
         - **Listar/Ver**: Qualquer usuário autenticado
-        - **Criar/Editar/Excluir**: Apenas administradores
+        - **Criar/Editar/Excluir**: Administradores, funcionários e veterinários
       summary: Atualizar serviço
       parameters:
       - in: path
@@ -1186,7 +1274,7 @@ paths:
       description: |-
         Endpoint que permite gerenciar os Serviços da clínica veterinária.
         - **Listar/Ver**: Qualquer usuário autenticado
-        - **Criar/Editar/Excluir**: Apenas administradores
+        - **Criar/Editar/Excluir**: Administradores, funcionários e veterinários
       summary: Deletar serviço
       parameters:
       - in: path
@@ -1203,9 +1291,9 @@ paths:
       responses:
         '204':
           description: No response body
-  /api/agendamentos/agendamentos/:
+  /api/agendamentos/:
     get:
-      operationId: agendamentos_agendamentos_list
+      operationId: agendamentos_list
       description: |-
         Endpoint para gerenciar agendamentos de consultas e serviços.
         **Permissões:**
@@ -1228,7 +1316,7 @@ paths:
                   $ref: '#/components/schemas/Agendamento'
           description: ''
     post:
-      operationId: agendamentos_agendamentos_create
+      operationId: agendamentos_create
       description: |-
         Endpoint para gerenciar agendamentos de consultas e serviços.
         **Permissões:**
@@ -1260,9 +1348,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Agendamento'
           description: ''
-  /api/agendamentos/agendamentos/{id}/:
+  /api/agendamentos/{id}/:
     get:
-      operationId: agendamentos_agendamentos_retrieve
+      operationId: agendamentos_retrieve
       description: |-
         Endpoint para gerenciar agendamentos de consultas e serviços.
         **Permissões:**
@@ -1290,7 +1378,7 @@ paths:
                 $ref: '#/components/schemas/Agendamento'
           description: ''
     patch:
-      operationId: agendamentos_agendamentos_partial_update
+      operationId: agendamentos_partial_update
       description: |-
         Endpoint para gerenciar agendamentos de consultas e serviços.
         **Permissões:**
@@ -1329,7 +1417,7 @@ paths:
                 $ref: '#/components/schemas/Agendamento'
           description: ''
     delete:
-      operationId: agendamentos_agendamentos_destroy
+      operationId: agendamentos_destroy
       description: |-
         Endpoint para gerenciar agendamentos de consultas e serviços.
         **Permissões:**
@@ -1351,28 +1439,6 @@ paths:
       - cookieAuth: []
       responses:
         '204':
-          description: No response body
-  /api/agendamentos/horarios-disponiveis/:
-    get:
-      operationId: agendamentos_horarios_disponiveis_retrieve
-      description: Retorna uma lista de horários disponíveis para agendamento em um
-        dia específico.
-      summary: Listar horários disponíveis
-      parameters:
-      - in: query
-        name: data
-        schema:
-          type: string
-          format: date
-        description: Data para consulta no formato YYYY-MM-DD.
-        required: true
-      tags:
-      - Horários
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
           description: No response body
   /api/prontuarios/:
     get:
@@ -1728,6 +1794,20 @@ components:
       required:
       - data
       - nome
+    HorarioDisponivel:
+      type: object
+      description: |-
+        Serializer para resposta de horários disponíveis.
+        Usado apenas para documentação da API.
+      properties:
+        horarios:
+          type: array
+          items:
+            type: string
+            maxLength: 5
+          description: Lista de horários disponíveis no formato HH:MM
+      required:
+      - horarios
     HorarioFuncionamento:
       type: object
       properties:
@@ -1737,8 +1817,8 @@ components:
         dia_semana:
           allOf:
           - $ref: '#/components/schemas/DiaSemanaEnum'
-          minimum: -2147483648
-          maximum: 2147483647
+          minimum: -9223372036854775808
+          maximum: 9223372036854775807
         dia_semana_display:
           type: string
           readOnly: true
@@ -1762,8 +1842,8 @@ components:
         dia_semana:
           allOf:
           - $ref: '#/components/schemas/DiaSemanaEnum'
-          minimum: -2147483648
-          maximum: 2147483647
+          minimum: -9223372036854775808
+          maximum: 9223372036854775807
         hora_abertura:
           type: string
           format: time
@@ -1886,8 +1966,8 @@ components:
         dia_semana:
           allOf:
           - $ref: '#/components/schemas/DiaSemanaEnum'
-          minimum: -2147483648
-          maximum: 2147483647
+          minimum: -9223372036854775808
+          maximum: 9223372036854775807
         hora_abertura:
           type: string
           format: time
@@ -2127,6 +2207,26 @@ components:
             this instead of deleting accounts.
         profile:
           $ref: '#/components/schemas/ProfileRequest'
+    PatchedUserDetailRequest:
+      type: object
+      description: Serializer para visualização completa do usuário
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        is_active:
+          type: boolean
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
     Pet:
       type: object
       description: |-
@@ -2378,6 +2478,7 @@ components:
           readOnly: true
         data_de_nascimento:
           type: string
+          format: date
           readOnly: true
         pet:
           type: integer
@@ -3028,6 +3129,26 @@ components:
       - id
       - profile
       - username
+    UserDetailRequest:
+      type: object
+      description: Serializer para visualização completa do usuário
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        is_active:
+          type: boolean
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
     UserFuncionarioCreate:
       type: object
       description: |-
