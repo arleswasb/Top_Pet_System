@@ -154,39 +154,22 @@ WSGI_APPLICATION = 'top_pet.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 # Database configuration
-# PostgreSQL como banco principal
+# PostgreSQL apenas para produção real (via DATABASE_URL)
+# SQLite para desenvolvimento e simulação (não interferem na produção)
 if config('DATABASE_URL', default=None):
+    # Produção: PostgreSQL via DATABASE_URL
     import dj_database_url
     DATABASES = {
         'default': dj_database_url.parse(config('DATABASE_URL'))
     }
 else:
-    # Configuração principal - PostgreSQL
+    # Desenvolvimento e Simulação: SQLite (arquivo local, não interfere na produção)
     DATABASES = {
         'default': {
-            'ENGINE': config('DB_ENGINE', default='django.db.backends.postgresql'),
-            'NAME': config('POSTGRES_NAME', default='top_pet_db'),
-            'USER': config('POSTGRES_USER', default='user'),
-            'PASSWORD': config('POSTGRES_PASSWORD', default='password'),
-            'HOST': config('POSTGRES_HOST', default='db'),
-            'PORT': config('DB_PORT', default='5432'),
-        },
-        # Banco para testes de unidade, validação e integração - MySQL
-        'test_mysql': {
-            'ENGINE': config('TEST_DB_ENGINE', default='django.db.backends.mysql'),
-            'NAME': config('TEST_MYSQL_NAME', default='top_pet_test_db'),
-            'USER': config('TEST_MYSQL_USER', default='test_user'),
-            'PASSWORD': config('TEST_MYSQL_PASSWORD', default='test_password'),
-            'HOST': config('TEST_MYSQL_HOST', default='mysql_test'),
-            'PORT': config('TEST_MYSQL_PORT', default='3306'),
-            'TEST': {
-                'NAME': config('TEST_MYSQL_NAME', default='top_pet_test_db'),
-                'CHARSET': 'utf8mb4',
-                'COLLATION': 'utf8mb4_unicode_ci',
-            },
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
             'OPTIONS': {
-                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-                'charset': 'utf8mb4',
+                'timeout': 20,
             },
         }
     }
@@ -291,8 +274,8 @@ LOGGING = {
 # Configurações específicas para testes
 import sys
 if 'test' in sys.argv or 'pytest' in sys.modules or 'unittest' in sys.modules:
-    # Para TODOS os tipos de testes - usar SQLite em memória para máxima velocidade
-    # Inclui: testes rápidos, validação, unidade e integração
+    # Para TODOS os tipos de testes (rápidos, unidade, validação e integração) 
+    # usar SQLite em memória para máxima velocidade e isolamento completo
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': ':memory:',
